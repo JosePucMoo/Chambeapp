@@ -1,0 +1,15 @@
+# Python / Backend
+backend/venv/
+backend/__pycache__/
+*.pyc
+.env
+
+# Node / Frontend (pnpm)
+frontend/node_modules/
+frontend/dist/
+.npm
+pnpm-debug.log*
+
+# OS / Editor
+.DS_Store
+.vscode/
