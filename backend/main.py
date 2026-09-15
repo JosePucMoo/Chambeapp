@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from infrastructure.api.api_router import api_router
 from infrastructure.db.database import engine
-from infrastructure.db.models.base import Base
+from backend.infrastructure.db.models.base_model import Base
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)

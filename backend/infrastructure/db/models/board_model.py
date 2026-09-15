@@ -6,7 +6,7 @@ import uuid
 from sqlalchemy import Date, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from infrastructure.db.models.base import Base
+from infrastructure.db.models.base_model import Base
 
 class BoardModel(Base):
     __tablename__= 'boards'

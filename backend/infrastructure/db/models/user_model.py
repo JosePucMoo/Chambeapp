@@ -4,7 +4,7 @@ import uuid
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Boolean
-from infrastructure.db.models.base import Base
+from infrastructure.db.models.base_model import Base
 
 class UserModel(Base):
     __tablename__ = "users"

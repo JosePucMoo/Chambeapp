@@ -1,9 +1,9 @@
-from .base import Base
-from .user import UserModel
-from .board import BoardModel
-from .user_board_link import UserBoardLinkModel
-from .task import TaskModel
-from. column import ColumnModel
+from .base_model import Base
+from .user_model import UserModel
+from .board_model import BoardModel
+from .user_board_link_model import UserBoardLinkModel
+from .task_model import TaskModel
+from.column_model import ColumnModel
 
 __all__ = [
     "Base",

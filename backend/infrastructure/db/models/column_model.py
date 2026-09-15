@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy import ForeignKey, Integer, String
 
-from infrastructure.db.models.base import Base
+from infrastructure.db.models.base_model import Base
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

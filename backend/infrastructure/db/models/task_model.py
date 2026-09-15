@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from infrastructure.db.models.base import Base
+from infrastructure.db.models.base_model import Base
 from domain.entities.enums import PriorityLevelEnum
 from sqlalchemy import Date, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
