@@ -20,7 +20,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DATABASE_URL: postgresql+asyncpg://admin:secretpassword@db:5432/chambeapp_db
+      DATABASE_URL: postgresql+psycopg://admin:secretpassword@db:5432/chambeapp_db
     depends_on:
       - db
 
