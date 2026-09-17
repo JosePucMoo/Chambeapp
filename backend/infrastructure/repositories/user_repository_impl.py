@@ -1,5 +1,7 @@
 
-from sqlalchemy import select
+from typing import List
+
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from infrastructure.db.models.user_model import UserModel
 from infrastructure.mappers.user_mappers import map_user_entity_to_model, map_user_model_to_entity
@@ -22,3 +24,16 @@ class UserRepositoryImpl(UserRepository):
     def get_by_email(self, email:str) -> User | None:
         query = select(UserModel).where(UserModel.email == email)
         return self.db.scalars(query).one_or_none()
+
+    def get_all(self, page: int, page_size: int) -> List[User]:
+        count_query = select(func.count()).select_from(UserModel)
+        total_count = self.db.execute(count_query).scalar()
+
+        offset = (page - 1) * page_size
+        query = select(UserModel).offset(offset).limit(page_size)
+
+        user_models = self.db.scalars(query).all()
+
+        users = [map_user_model_to_entity(user_model) for user_model in user_models]
+
+        return users, total_count

@@ -1,7 +1,3 @@
-
-
-from fastapi import HTTPException
-
 from application.interfaces.password_hasher import PasswordHasher
 from domain.entities.user import User
 from domain.repositories.user_repository import UserRepository
