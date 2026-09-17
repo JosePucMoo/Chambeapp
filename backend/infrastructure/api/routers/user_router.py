@@ -7,6 +7,7 @@ from application.interfaces.password_hasher import PasswordHasher
 from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyExistsException
 from domain.repositories.user_repository import UserRepository
 from domain.exceptions.cannot_create_exception import CannotCreateException
+from domain.exceptions.not_found_exception import NotFoundException
 from domain.utils.constants import UNEXPECTED_ERROR
 from infrastructure.api.dependencies import get_user_repository, get_password_hasher
 from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
@@ -57,3 +58,19 @@ async def create_user(user_data: CreateUserDTO, repository: UserRepository = Dep
             detail=UNEXPECTED_ERROR + str(e)
         )
 
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponseDTO)
+def get_user(id: str, respository: UserRepository = Depends(get_user_repository)):
+    try:
+        use_case = GetUserUseCase(respository)
+        user = use_case.execute_by_id(id)
+        return UserResponseDTO.model_validate(user)
+    except NotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail= str(e)
+        )
+    except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=UNEXPECTED_ERROR + str(e)
+            )

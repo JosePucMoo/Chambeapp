@@ -37,3 +37,12 @@ class UserRepositoryImpl(UserRepository):
         users = [map_user_model_to_entity(user_model) for user_model in user_models]
 
         return users, total_count
+
+    def get_by_id(self, id: str) -> User | None:
+        query = select(UserModel).where(UserModel.id == id)
+        user = self.db.scalar(query)
+
+        if not user: 
+            return None
+        
+        return map_user_model_to_entity(user)

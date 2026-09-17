@@ -12,3 +12,7 @@ class UserRepository(ABC):
     @abstractmethod
     def get_all(self, page: int, page_size: int) -> List[User]:
         pass
+
+    @abstractmethod
+    def get_by_id(self, id: str) -> User | None:
+        pass
