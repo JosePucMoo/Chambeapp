@@ -3,6 +3,10 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 from typing import Optional
 from typing_extensions import Self
 
+class UserBaseDTO(BaseModel):
+    name: str
+    email: EmailStr
+
 class CreateUserDTO(BaseModel):
     name: str = Field(
         ..., 
@@ -21,20 +25,21 @@ class CreateUserDTO(BaseModel):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class UpdateUserDTO(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    password: Optional[str] = None
-    is_verified: Optional[str] = None
+class UpdateProfileUserDTO(BaseModel):
+    name: str = Field(
+        ..., 
+        min_length=2, 
+        max_length=50, 
+        strip_whitespace=True,
+        description="Nombre completo del usuario"
+    )
 
 class LoginUserDTO(BaseModel):
     email: EmailStr
     password: str
 
-class UserResponseDTO(BaseModel):
+class UserResponseDTO(UserBaseDTO):
     id: str
-    name: str
-    email: EmailStr
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.entities.user import User
+from domain.entities.user import UpdateProfileUser, User
 
 class UserRepository(ABC):
 
@@ -15,4 +15,8 @@ class UserRepository(ABC):
 
     @abstractmethod
     def get_by_id(self, id: str) -> User | None:
+        pass
+
+    @abstractmethod
+    def update(self, user: UpdateProfileUser) -> User:
         pass

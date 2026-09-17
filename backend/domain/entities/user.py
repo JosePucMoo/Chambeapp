@@ -9,4 +9,9 @@ class User:
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     is_verified: bool = False
+
+@dataclass
+class UpdateProfileUser:
+    id: str
+    name: str = None
     

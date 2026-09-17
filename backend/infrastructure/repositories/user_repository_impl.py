@@ -4,9 +4,9 @@ from typing import List
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from infrastructure.db.models.user_model import UserModel
-from infrastructure.mappers.user_mappers import map_user_entity_to_model, map_user_model_to_entity
+from infrastructure.mappers.user_mappers import map_update_profile_user_dto_to_entity, map_user_entity_to_model, map_user_model_to_entity
 from domain.repositories.user_repository import UserRepository
-from domain.entities.user import User 
+from domain.entities.user import UpdateProfileUser, User 
 
 
 class UserRepositoryImpl(UserRepository):
@@ -46,3 +46,14 @@ class UserRepositoryImpl(UserRepository):
             return None
         
         return map_user_model_to_entity(user)
+
+    def update(self, user: UpdateProfileUser) -> User:
+        query = select(UserModel).where(UserModel.id == user.id)
+        user_updated = self.db.scalar(query)
+
+        user_updated.name = user.name
+
+        self.db.commit()
+        self.db.refresh(user_updated)
+
+        return map_user_model_to_entity(user_updated)
