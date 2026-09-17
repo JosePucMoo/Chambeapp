@@ -4,9 +4,9 @@ from venv import logger
 
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from infrastructure.api.api_router import api_router
+from infrastructure.api.routers.router import router
 from infrastructure.db.database import engine
-from backend.infrastructure.db.models.base_model import Base
+from infrastructure.db.models.base_model import Base
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -51,4 +51,4 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-app.include_router(api_router)
+app.include_router(router)

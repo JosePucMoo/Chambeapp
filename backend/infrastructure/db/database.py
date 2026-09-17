@@ -18,7 +18,7 @@ print('Conectado a:', DATABASE_URL)
 
 engine = create_engine(DATABASE_URL, echo=True, future=True)
 
-SessionLocal = sessionmaker(bind=engine, autoflush=false, autocommit=false, class_=Session)
+SessionLocal = sessionmaker(bind=engine, autoflush=false, class_=Session)
 
 def get_db():
     db = SessionLocal()
