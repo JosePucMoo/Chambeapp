@@ -5,21 +5,23 @@ from application.use_cases.users.create_user import CreateUserUseCase
 from application.use_cases.users.get_user import GetUserUseCase
 from application.interfaces.password_hasher import PasswordHasher
 from application.use_cases.users.update_profile_user import UpdateUserUseCase
+from application.use_cases.users.change_password_user import ChangePasswordUseCase
 from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyExistsException
 from domain.repositories.user_repository import UserRepository
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.exceptions.not_found_exception import NotFoundException
+from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.utils.constants import UNEXPECTED_ERROR
 from infrastructure.api.dependencies import get_user_repository, get_password_hasher
-from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity, map_update_profile_user_dto_to_entity
-from infrastructure.schemas.user_schema import CreateUserDTO, UpdateProfileUserDTO, UserResponseDTO
+from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
+from infrastructure.schemas.user_schema import ChangePasswordUserDTO, CreateUserDTO, UpdateProfileUserDTO, UserResponseDTO
 from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
 
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
 @router.get('/', status_code=status.HTTP_200_OK, response_model=PaginatedResponseDTO[UserResponseDTO])
-async def get_user(
+async def get_users(
     page: Annotated[int, Query(ge=1)] = 1, 
     size: Annotated[int, Query(ge=1, le=100)] = 10, 
     repository: UserRepository = Depends(get_user_repository)
@@ -76,12 +78,12 @@ def get_user(id: str, respository: UserRepository = Depends(get_user_repository)
             detail=UNEXPECTED_ERROR + str(e)
         )
 
-@router.put('/{id}', status_code=status.HTTP_200_OK, response_model=UpdateProfileUserDTO)
+@router.put('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponseDTO)
 def update_profile_user(id: str, user_data: UpdateProfileUserDTO, repository: UserRepository = Depends(get_user_repository)):
     try:
         use_case = UpdateUserUseCase(repository)
         user = use_case.execute(
-            map_update_profile_user_dto_to_entity(id, user_data)
+            id, user_data.name
         )
         return UserResponseDTO.model_validate(user)
     except NotFoundException as e:
@@ -95,5 +97,29 @@ def update_profile_user(id: str, user_data: UpdateProfileUserDTO, repository: Us
             detail=UNEXPECTED_ERROR + str(e)
         )
 
-
+@router.put('/change-password/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def change_password_user(id: str, user_data: ChangePasswordUserDTO, repository: UserRepository = Depends(get_user_repository), password_hasher: PasswordHasher = Depends(get_password_hasher)):
+    try:
+        use_case = ChangePasswordUseCase(repository, password_hasher)
+        use_case.execute(
+            user_id=id, 
+            old_password=user_data.old_password,
+            new_password=user_data.new_password
+        )
+        return
+    except NotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail= str(e)
+        )
+    except InvalidCredentialsException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail= str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=UNEXPECTED_ERROR + str(e)
+        )
 

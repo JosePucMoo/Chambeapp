@@ -1,6 +1,5 @@
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-from typing import Optional
 from typing_extensions import Self
 
 class UserBaseDTO(BaseModel):
@@ -33,6 +32,16 @@ class UpdateProfileUserDTO(BaseModel):
         strip_whitespace=True,
         description="Nombre completo del usuario"
     )
+
+class ChangePasswordUserDTO(BaseModel):
+    old_password: str = Field(...)
+    new_password: str = Field(..., min_length=8, description="Nueva contraseña")
+
+    @model_validator(mode='after')
+    def passwords_must_be_different(self) -> Self:
+        if self.old_password == self.new_password:
+            raise ValueError("La nueva contraseña no puede ser igual a la anterior")
+        return self
 
 class LoginUserDTO(BaseModel):
     email: EmailStr

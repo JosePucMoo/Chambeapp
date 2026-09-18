@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.entities.user import UpdateProfileUser, User
+from domain.entities.user import User
 
 class UserRepository(ABC):
 
@@ -18,5 +18,5 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, user: UpdateProfileUser) -> User:
+    def update(self, user: User) -> User:
         pass

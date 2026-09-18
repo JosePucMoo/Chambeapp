@@ -1,6 +1,6 @@
 from infrastructure.db.models.user_model import UserModel
-from domain.entities.user import UpdateProfileUser, User
-from infrastructure.schemas.user_schema import CreateUserDTO, UpdateProfileUserDTO
+from domain.entities.user import User
+from infrastructure.schemas.user_schema import CreateUserDTO
 
 
 def map_create_user_dto_to_entity(user_dto: CreateUserDTO):
@@ -26,10 +26,4 @@ def map_user_model_to_entity(user_model: UserModel) -> User:
         email=user_model.email,
         password=user_model.password,
         is_verified=user_model.is_verified
-    )
-
-def map_update_profile_user_dto_to_entity(id: str, user_dto: UpdateProfileUserDTO):
-    return UpdateProfileUser(
-        id=id,
-        name=user_dto.name
     )
