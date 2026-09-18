@@ -20,3 +20,7 @@ class UserRepository(ABC):
     @abstractmethod
     def update(self, user: User) -> User:
         pass
+
+    @abstractmethod
+    def get_by_token(self, token: str) -> User | None:
+        pass

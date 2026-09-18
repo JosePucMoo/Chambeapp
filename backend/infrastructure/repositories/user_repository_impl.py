@@ -55,13 +55,14 @@ class UserRepositoryImpl(UserRepository):
         user_updated.email = user.email
         user_updated.hashed_password = user.password
         user_updated.is_verified = user.is_verified
-
-        # user_updated.name = user.name | user_updated.name
-        # user_updated.email = user.email | user_updated.email
-        # user_updated.hashed_password = user.hashed_password | user_updated.password
-        # user_updated.is_verified = user.is_verified | user_updated.is_verified
+        user_updated.token = user.token
 
         self.db.commit()
         self.db.refresh(user_updated)
 
         return map_user_model_to_entity(user_updated)
+
+    def get_by_token(self, token: str) -> User | None:
+        query = select(UserModel).where(UserModel.token == token)
+        user = self.db.scalar(query)
+        return map_user_model_to_entity(user) if user else None

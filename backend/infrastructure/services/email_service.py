@@ -1,0 +1,51 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from application.interfaces.email_sender import EmailSender
+
+class MailtrapEmailSender(EmailSender):
+    def __init__(self, host: str, port: int, username: str, password: str, from_email: str):
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
+        self.from_email = from_email
+
+    def send_verification_email(self, to_email: str, verification_token: str) -> None:
+        # En producción, esto vendría de tus variables de entorno (FRONTEND_URL)
+        verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+        
+        # Construir el mensaje
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Verifica tu cuenta en Chambeapp"
+        message["From"] = self.from_email
+        message["To"] = to_email
+
+        text = f"Hola,\n\nPara activar tu cuenta en Chambeapp, haz clic en el siguiente enlace:\n{verification_link}\n\nSi no creaste esta cuenta, ignora este correo."
+        html = f"""\
+        <html>
+          <body>
+            <h2>¡Bienvenido a Chambeapp!</h2>
+            <p>Para activar tu cuenta y empezar a gestionar tus tableros, haz clic en el siguiente botón:</p>
+            <a href="{verification_link}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Verificar mi cuenta</a>
+          </body>
+        </html>
+        """
+
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        message.attach(part1)
+        message.attach(part2)
+
+        # Conexión SMTP a Mailtrap
+        try:
+            with smtplib.SMTP(self.host, self.port) as server:
+                server.starttls()
+                server.login(self.username, self.password)
+                server.sendmail(
+                    self.from_email, 
+                    to_email, 
+                    message.as_string()
+                )
+        except Exception as e:
+            print(f"Error enviando correo a {to_email}: {str(e)}")

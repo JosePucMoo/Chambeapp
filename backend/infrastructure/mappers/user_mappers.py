@@ -16,6 +16,7 @@ def map_user_entity_to_model(user: User) -> UserModel:
         name=user.name,
         email=user.email,
         password=user.password,
+        token=user.token,
         is_verified=user.is_verified
     )
 
@@ -24,6 +25,7 @@ def map_user_model_to_entity(user_model: UserModel) -> User:
         id=user_model.id,
         name=user_model.name,
         email=user_model.email,
+        token=user_model.token,
         password=user_model.password,
         is_verified=user_model.is_verified
     )

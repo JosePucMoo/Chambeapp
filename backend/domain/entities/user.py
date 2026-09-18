@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 import uuid
 
 @dataclass
@@ -10,6 +9,7 @@ class User:
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     is_verified: bool = False
+    token: str = None
 
     def update_profile(self, new_name: str) -> None:
         if not new_name or len(new_name.strip()) < 2:
@@ -25,3 +25,7 @@ class User:
 
     def mark_as_verified(self) -> None:
         self.is_verified = True
+
+    def verify_account(self) -> None:
+        self.is_verified = True
+        self.token = None 
