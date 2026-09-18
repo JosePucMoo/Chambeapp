@@ -7,7 +7,7 @@ def map_create_user_dto_to_entity(user_dto: CreateUserDTO):
     return User(
         name=user_dto.name,
         email=user_dto.email,
-        password=user_dto.password
+        hashed_password=user_dto.password
     )
 
 def map_user_entity_to_model(user: User) -> UserModel:
@@ -26,6 +26,6 @@ def map_user_model_to_entity(user_model: UserModel) -> User:
         name=user_model.name,
         email=user_model.email,
         token=user_model.token,
-        password=user_model.password,
+        hashed_password=user_model.password,
         is_verified=user_model.is_verified
     )

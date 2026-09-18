@@ -34,3 +34,7 @@ class ResetPasswordDTO(BaseModel):
 class RegisterResponseDTO(BaseModel):
     message: str
     email: str
+
+class TokenResponseDTO(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

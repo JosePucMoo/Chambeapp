@@ -10,6 +10,10 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_email(self, email:str) -> User | None:
+        pass
+
+    @abstractmethod
     def get_all(self, page: int, page_size: int) -> List[User]:
         pass
 

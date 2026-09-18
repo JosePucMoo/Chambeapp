@@ -23,7 +23,9 @@ class UserRepositoryImpl(UserRepository):
 
     def get_by_email(self, email:str) -> User | None:
         query = select(UserModel).where(UserModel.email == email)
-        return self.db.scalars(query).one_or_none()
+        user = self.db.scalars(query).one_or_none()
+
+        return map_user_model_to_entity(user) if user else None
 
     def get_all(self, page: int, page_size: int) -> List[User]:
         count_query = select(func.count()).select_from(UserModel)

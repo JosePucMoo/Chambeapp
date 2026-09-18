@@ -5,7 +5,7 @@ import uuid
 class User:
     name: str
     email: str
-    password: str
+    hashed_password: str
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     is_verified: bool = False
