@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
+from application.interfaces.email_sender import EmailSender
 from infrastructure.security.jwt_token_generator import JwtTokenGenerator
 from infrastructure.security.password_hasher_impl import PasswordHasherImpl
 from infrastructure.services.email_service import MailtrapEmailSender
@@ -19,7 +20,7 @@ def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
 def get_password_hasher() -> PasswordHasher:
     return PasswordHasherImpl()
 
-def get_email_sender() -> MailtrapEmailSender:    
+def get_email_sender() -> EmailSender:    
     return MailtrapEmailSender(
         host=os.getenv("MAILTRAP_HOST"),
         port=int(os.getenv("MAILTRAP_PORT")),

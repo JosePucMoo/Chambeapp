@@ -29,3 +29,6 @@ class User:
     def verify_account(self) -> None:
         self.is_verified = True
         self.token = None 
+
+    def assign_password_reset_token(self, token: str) -> None:
+        self.token = token

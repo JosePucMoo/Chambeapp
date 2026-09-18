@@ -4,6 +4,7 @@ from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.email_sender import EmailSender
 from application.use_cases.auth.register_user import RegisterUserUseCase
 from application.use_cases.auth.verify_email import VerifyEmailUseCase
+from application.use_cases.auth.request_password_reset import RequestPasswordResetUseCase
 from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
@@ -20,7 +21,8 @@ from infrastructure.schemas.auth_schema import (
     RegisterDTO, 
     LoginDTO, 
     RegisterResponseDTO, 
-    TokenResponseDTO
+    TokenResponseDTO,
+    ForgotPasswordDTO
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -96,3 +98,17 @@ def login(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=UNEXPECTED_ERROR + str(e)
         )
+
+@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+def forgot_password(
+    forgot_password_dto: ForgotPasswordDTO, 
+    repository= Depends(get_user_repository),
+    email_sender = Depends(get_email_sender)
+):
+    use_case = RequestPasswordResetUseCase(repository=repository, email_sender=email_sender)
+    use_case.execute(email=forgot_password_dto.email)
+    
+    return {
+        "message": "Recibirás un enlace con instrucciones"
+    }
+
