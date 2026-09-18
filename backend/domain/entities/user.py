@@ -32,3 +32,6 @@ class User:
 
     def assign_password_reset_token(self, token: str) -> None:
         self.token = token
+        
+    def clear_password_reset_token(self) -> None:
+        self.token = None

@@ -21,7 +21,6 @@ class ForgotPasswordDTO(BaseModel):
     email: EmailStr
 
 class ResetPasswordDTO(BaseModel):
-    token: str = Field(..., description="Token recibido por correo")
     new_password: str = Field(..., min_length=8)
     confirm_password: str
 

@@ -5,6 +5,7 @@ from application.interfaces.email_sender import EmailSender
 from application.use_cases.auth.register_user import RegisterUserUseCase
 from application.use_cases.auth.verify_email import VerifyEmailUseCase
 from application.use_cases.auth.request_password_reset import RequestPasswordResetUseCase
+from application.use_cases.auth.reset_password import ResetPasswordUseCase
 from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
@@ -22,7 +23,8 @@ from infrastructure.schemas.auth_schema import (
     LoginDTO, 
     RegisterResponseDTO, 
     TokenResponseDTO,
-    ForgotPasswordDTO
+    ForgotPasswordDTO,
+    ResetPasswordDTO
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -111,4 +113,27 @@ def forgot_password(
     return {
         "message": "Recibirás un enlace con instrucciones"
     }
+
+@router.post("/reset-password/{token}", status_code=status.HTTP_204_NO_CONTENT)
+def reset_password(
+    token: str,
+    reset_password_dto: ResetPasswordDTO, 
+    repository: UserRepository = Depends(get_user_repository),
+    password_hasher: EmailSender = Depends(get_password_hasher)
+):
+    try:
+        use_case = ResetPasswordUseCase(repository=repository, password_hasher=password_hasher)
+        use_case.execute(token=token, new_password=reset_password_dto.new_password)
+        return 
+    except InvalidCredentialsException as e:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail=str(e),
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=UNEXPECTED_ERROR + str(e)
+        )
 

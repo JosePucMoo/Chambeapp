@@ -16,7 +16,7 @@ class RegisterUserUseCase:
 
     def execute(self, user_data: User) -> User:
         if self.repository.get_by_email(user_data.email):
-            raise ResourceAlreadyExistsException("Email ya registrado")
+            raise ResourceAlreadyExistsException("Email ya registrado.")
 
         password_hashed = self.password_hasher.hash(user_data.password)
         verification_token = secrets.token_urlsafe(32)
@@ -30,7 +30,7 @@ class RegisterUserUseCase:
         saved_user = self.repository.create(user) 
 
         if not saved_user:
-            raise CannotCreateException("No se pudo crear el usuario")
+            raise CannotCreateException("No se pudo crear el usuario.")
                 
         self.email_sender.send_verification_email(
             to_email=saved_user.email, 

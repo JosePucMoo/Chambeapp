@@ -18,7 +18,7 @@ class LoginUseCase:
     def execute(self, email: str, password: str) -> str:
         user = self.repository.get_by_email(email.lower())
 
-        error_msg = "Correo electrónico o contraseña incorrectos"
+        error_msg = "Correo electrónico o contraseña incorrectos."
         if not user:
             raise InvalidCredentialsException(error_msg)
 
