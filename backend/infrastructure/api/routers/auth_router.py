@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.email_sender import EmailSender
-from application.use_cases.users.auth.register_user import RegisterUserUseCase
-from application.use_cases.users.auth.verify_email import VerifyEmailUseCase
+from application.use_cases.auth.register_user import RegisterUserUseCase
+from application.use_cases.auth.verify_email import VerifyEmailUseCase
 from application.interfaces.token_generator import TokenGenerator
-from application.use_cases.users.auth.login import LoginUseCase
+from application.use_cases.auth.login import LoginUseCase
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.exceptions.cannot_create_exception import CannotCreateException
