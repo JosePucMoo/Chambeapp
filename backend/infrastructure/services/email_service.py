@@ -1,3 +1,4 @@
+import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -12,7 +13,8 @@ class MailtrapEmailSender(EmailSender):
         self.from_email = from_email
 
     def send_verification_email(self, to_email: str, verification_token: str) -> None:
-        verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+        FRONTEND_URL = os.getenv('FRONTEND_URL') 
+        verification_link = f"{FRONTEND_URL}/verify-account/{verification_token}"
         
         message = MIMEMultipart("alternative")
         message["Subject"] = "Verifica tu cuenta en Chambeapp"
