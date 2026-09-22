@@ -1,12 +1,14 @@
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+from pydantic import ConfigDict, EmailStr, Field, model_validator
 from typing_extensions import Self
 
-class UserBaseDTO(BaseModel):
+from infrastructure.schemas.base_schema import BaseSchema
+
+class UserBaseDTO(BaseSchema):
     name: str
     email: EmailStr
 
-class CreateUserDTO(BaseModel):
+class CreateUserDTO(BaseSchema):
     name: str = Field(
         ..., 
         min_length=2, 
@@ -24,7 +26,7 @@ class CreateUserDTO(BaseModel):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class UpdateProfileUserDTO(BaseModel):
+class UpdateProfileUserDTO(BaseSchema):
     name: str = Field(
         ..., 
         min_length=2, 
@@ -33,7 +35,7 @@ class UpdateProfileUserDTO(BaseModel):
         description="Nombre completo del usuario"
     )
 
-class ChangePasswordUserDTO(BaseModel):
+class ChangePasswordUserDTO(BaseSchema):
     old_password: str = Field(...)
     new_password: str = Field(..., min_length=8, description="Nueva contraseña")
 
@@ -43,7 +45,7 @@ class ChangePasswordUserDTO(BaseModel):
             raise ValueError("La nueva contraseña no puede ser igual a la anterior")
         return self
 
-class LoginUserDTO(BaseModel):
+class LoginUserDTO(BaseSchema):
     email: EmailStr
     password: str
 

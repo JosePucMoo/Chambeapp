@@ -1,10 +1,11 @@
 from typing import Generic, TypeVar, List
-from pydantic import BaseModel
 import math
+
+from infrastructure.schemas.base_schema import BaseSchema
 
 T = TypeVar('T')
 
-class PaginatedResponseDTO(BaseModel, Generic[T]):
+class PaginatedResponseDTO(BaseSchema, Generic[T]):
     data: List[T]
     total_count: int
     page: int

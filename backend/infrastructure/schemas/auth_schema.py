@@ -1,7 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import EmailStr, Field, model_validator
 from typing_extensions import Self
 
-class RegisterDTO(BaseModel):
+from infrastructure.schemas.base_schema import BaseSchema
+
+class RegisterDTO(BaseSchema):
     name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     password: str = Field(..., min_length=8, description="Mínimo 8 caracteres")
@@ -13,14 +15,14 @@ class RegisterDTO(BaseModel):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class LoginDTO(BaseModel):
+class LoginDTO(BaseSchema):
     email: EmailStr
     password: str
 
-class ForgotPasswordDTO(BaseModel):
+class ForgotPasswordDTO(BaseSchema):
     email: EmailStr
 
-class ResetPasswordDTO(BaseModel):
+class ResetPasswordDTO(BaseSchema):
     new_password: str = Field(..., min_length=8)
     confirm_password: str
 
@@ -30,10 +32,10 @@ class ResetPasswordDTO(BaseModel):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class RegisterResponseDTO(BaseModel):
+class RegisterResponseDTO(BaseSchema):
     message: str
     email: str
 
-class TokenResponseDTO(BaseModel):
+class TokenResponseDTO(BaseSchema):
     access_token: str
     token_type: str = "bearer"
