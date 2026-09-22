@@ -1,3 +1,4 @@
+from domain.utils.constants import Constants
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.repositories.user_repository import UserRepository
@@ -18,7 +19,7 @@ class LoginUseCase:
     def execute(self, email: str, password: str) -> str:
         user = self.repository.get_by_email(email.lower())
 
-        error_msg = "Correo electrónico o contraseña incorrectos."
+        error_msg = Constants.INVALID_CREDENTIALS
         if not user:
             raise InvalidCredentialsException(error_msg)
 
@@ -26,7 +27,7 @@ class LoginUseCase:
             raise InvalidCredentialsException(error_msg)
             
         if not user.is_verified:
-            raise UnverifiedAccountException("Por favor verifica tu correo electrónico antes de iniciar sesión.")
+            raise UnverifiedAccountException(Constants.UNVERIFIED_ACCOUNT)
 
         payload = {
             "sub": str(user.id),

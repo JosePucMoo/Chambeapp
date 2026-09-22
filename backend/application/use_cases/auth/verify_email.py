@@ -1,3 +1,4 @@
+from domain.utils.constants import Constants
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
 
@@ -8,7 +9,7 @@ class VerifyEmailUseCase:
     def execute(self, token: str) -> None:
         user = self.repository.get_by_token(token)
         if not user:
-            raise InvalidTokenException("El token de verificación es inválido o ya ha sido utilizado.")
+            raise InvalidTokenException(Constants.MISSING_TOKEN)
 
         user.verify_account()
 

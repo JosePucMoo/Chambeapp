@@ -2,6 +2,7 @@ import secrets
 
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.email_sender import EmailSender
+from domain.utils.constants import Constants
 from domain.entities.user import User
 from domain.repositories.user_repository import UserRepository
 from domain.exceptions.cannot_create_exception import CannotCreateException
@@ -16,7 +17,7 @@ class RegisterUserUseCase:
 
     def execute(self, user_data: User) -> User:
         if self.repository.get_by_email(user_data.email):
-            raise ResourceAlreadyExistsException("Email ya registrado.")
+            raise ResourceAlreadyExistsException(Constants.EMAIL_ALREADY_EXISTS)
 
         password_hashed = self.password_hasher.hash(user_data.hashed_password)
         verification_token = secrets.token_urlsafe(32)
@@ -30,7 +31,7 @@ class RegisterUserUseCase:
         saved_user = self.repository.create(user) 
 
         if not saved_user:
-            raise CannotCreateException("No se pudo crear el usuario.")
+            raise CannotCreateException(Constants.USER_NOT_CREATED)
                 
         self.email_sender.send_verification_email(
             to_email=saved_user.email, 

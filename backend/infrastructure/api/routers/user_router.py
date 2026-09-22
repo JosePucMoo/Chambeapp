@@ -8,7 +8,7 @@ from application.use_cases.users.change_password_user import ChangePasswordUseCa
 from domain.repositories.user_repository import UserRepository
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
-from domain.utils.constants import UNEXPECTED_ERROR
+from domain.utils.constants import Constants
 from infrastructure.api.dependencies import get_user_repository, get_password_hasher
 from infrastructure.schemas.user_schema import ChangePasswordUserDTO, UpdateProfileUserDTO, UserResponseDTO
 from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
@@ -34,7 +34,7 @@ async def get_users(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.get('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponseDTO)
@@ -51,7 +51,7 @@ def get_user(id: str, respository: UserRepository = Depends(get_user_repository)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.put('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponseDTO)
@@ -70,7 +70,7 @@ def update_profile_user(id: str, user_data: UpdateProfileUserDTO, repository: Us
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.put('/me/password', status_code=status.HTTP_204_NO_CONTENT)
@@ -96,6 +96,6 @@ def change_password_user(id: str, user_data: ChangePasswordUserDTO, repository: 
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 

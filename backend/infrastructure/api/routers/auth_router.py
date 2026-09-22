@@ -14,7 +14,7 @@ from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyExistsException
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
-from domain.utils.constants import UNEXPECTED_ERROR
+from domain.utils.constants import Constants
 from infrastructure.api.dependencies import get_email_sender, get_password_hasher, get_token_generator, get_user_repository
 from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
 from infrastructure.schemas.user_schema import UserResponseDTO
@@ -48,7 +48,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.post("/verify-email/{token}", status_code=status.HTTP_200_OK)
@@ -68,7 +68,7 @@ def verify_email(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponseDTO)
@@ -98,7 +98,7 @@ def login(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
 @router.post("/forgot-password", status_code=status.HTTP_200_OK)
@@ -134,6 +134,6 @@ def reset_password(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 

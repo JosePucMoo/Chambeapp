@@ -1,3 +1,4 @@
+from domain.utils.constants import Constants
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.repositories.user_repository import UserRepository
@@ -12,10 +13,10 @@ class ResetPasswordUseCase:
         user = self.repository.get_by_token(token)
         
         if not user:
-            raise InvalidTokenException("El enlace de recuperación es inválido o ha expirado.")
+            raise InvalidTokenException(Constants.MISSING_TOKEN)
 
         if not user.is_verified:
-            raise UnverifiedAccountException("Por favor verifica tu correo electrónico.")
+            raise UnverifiedAccountException(Constants.UNVERIFIED_ACCOUNT)
 
         new_hashed_password = self.password_hasher.hash(new_password)
         
