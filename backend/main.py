@@ -1,6 +1,8 @@
 import logging
 from contextlib import asynccontextmanager
+import os
 from venv import logger
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
@@ -48,6 +50,18 @@ def custom_openapi():
 
     app.openapi_schema = openapi_schema
     return app.openapi_schema
+
+origins = [
+    os.getenv('FRONTEND_URL')
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.openapi = custom_openapi
 
