@@ -18,13 +18,13 @@ class RegisterUserUseCase:
         if self.repository.get_by_email(user_data.email):
             raise ResourceAlreadyExistsException("Email ya registrado.")
 
-        password_hashed = self.password_hasher.hash(user_data.password)
+        password_hashed = self.password_hasher.hash(user_data.hashed_password)
         verification_token = secrets.token_urlsafe(32)
 
         user = User(
             name=user_data.name,
             email=user_data.email,
-            password=password_hashed,
+            hashed_password=password_hashed,
             token=verification_token
         )
         saved_user = self.repository.create(user) 

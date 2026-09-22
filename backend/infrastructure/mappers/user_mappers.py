@@ -15,7 +15,7 @@ def map_user_entity_to_model(user: User) -> UserModel:
         id= user.id,
         name=user.name,
         email=user.email,
-        password=user.password,
+        password=user.hashed_password,
         token=user.token,
         is_verified=user.is_verified
     )
