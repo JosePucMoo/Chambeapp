@@ -11,10 +11,10 @@ class MailtrapEmailSender(EmailSender):
         self.username = username
         self.password = password
         self.from_email = from_email
+        self.FRONTEND_URL = os.getenv('FRONTEND_URL')
 
-    def send_verification_email(self, to_email: str, verification_token: str) -> None:
-        FRONTEND_URL = os.getenv('FRONTEND_URL') 
-        verification_link = f"{FRONTEND_URL}/verify-account/{verification_token}"
+    def send_verification_email(self, to_email: str, verification_token: str) -> None: 
+        verification_link = f"{self.FRONTEND_URL}/verify-account/{verification_token}"
         
         message = MIMEMultipart("alternative")
         message["Subject"] = "Verifica tu cuenta en Chambeapp"
@@ -51,7 +51,7 @@ class MailtrapEmailSender(EmailSender):
 
 
     def send_password_reset_email(self, to_email: str, verification_token: str) -> None:
-            verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+            verification_link = f"{self.FRONTEND_URL}/reset-password/{verification_token}"
             
             message = MIMEMultipart("alternative")
             message["Subject"] = "Restablecer contraseña en Chambeapp"

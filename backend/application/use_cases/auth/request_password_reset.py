@@ -20,5 +20,5 @@ class RequestPasswordResetUseCase:
         
         self.email_sender.send_password_reset_email(
             to_email=user.email, 
-            token=reset_token
+            verification_token=reset_token
         )

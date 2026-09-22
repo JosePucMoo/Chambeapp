@@ -6,5 +6,5 @@ class EmailSender(ABC):
         pass
 
     @abstractmethod
-    def send_password_reset_email(self, to_email: str, token: str) -> None:
+    def send_password_reset_email(self, to_email: str, verification_token: str) -> None:
         pass

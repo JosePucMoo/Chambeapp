@@ -55,7 +55,7 @@ class UserRepositoryImpl(UserRepository):
 
         user_updated.name = user.name
         user_updated.email = user.email
-        user_updated.hashed_password = user.password
+        user_updated.hashed_password = user.hashed_password
         user_updated.is_verified = user.is_verified
         user_updated.token = user.token
 
