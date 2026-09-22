@@ -8,6 +8,8 @@ from application.use_cases.auth.request_password_reset import RequestPasswordRes
 from application.use_cases.auth.reset_password import ResetPasswordUseCase
 from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
+from infrastructure.mappers.auth_mappers import map_user_to_dto
+from infrastructure.schemas.api_schema import ApiResponse
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.exceptions.cannot_create_exception import CannotCreateException
@@ -21,7 +23,7 @@ from infrastructure.schemas.user_schema import UserResponseDTO
 from infrastructure.schemas.auth_schema import (
     RegisterDTO, 
     LoginDTO, 
-    RegisterResponseDTO, 
+    UserResponseDTO, 
     TokenResponseDTO,
     ForgotPasswordDTO,
     ResetPasswordDTO
@@ -29,16 +31,17 @@ from infrastructure.schemas.auth_schema import (
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=RegisterResponseDTO)
+@router.post('/register', status_code=status.HTTP_201_CREATED, response_model=ApiResponse[UserResponseDTO])
 async def register(user_data: RegisterDTO, repository: UserRepository = Depends(get_user_repository), password_hasher: PasswordHasher = Depends(get_password_hasher), email_sender: EmailSender = Depends(get_email_sender)) -> UserResponseDTO:
     try:
         use_case = RegisterUserUseCase(repository, password_hasher, email_sender)
         user = use_case.execute(
             map_create_user_dto_to_entity(user_data)
         )
-        return RegisterResponseDTO(
-            message="Registro exitoso. Por favor, revisa tu bandeja de entrada para verificar tu cuenta.",
-            email=user.email
+        return ApiResponse(
+            ok=True,
+            message="Registro exitoso. Revisa tu bandeja de entrada para verificar tu cuenta.",
+            data=map_user_to_dto(user)
         ) 
     except CannotCreateException and ResourceAlreadyExistsException as e:
         raise HTTPException(
@@ -51,7 +54,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
-@router.post("/verify-email/{token}", status_code=status.HTTP_200_OK)
+@router.post("/verify-email/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def verify_email(
     token: str,
     repository: UserRepository = Depends(get_user_repository)
@@ -59,7 +62,10 @@ def verify_email(
     try:
         use_case = VerifyEmailUseCase(repository)
         use_case.execute(token)
-        return {"message": "Cuenta verificada exitosamente. Ya puedes iniciar sesión."}
+        return ApiResponse(
+            ok=True,
+            message="Cuenta verificada exitosamente. Ya puedes iniciar sesión."
+        )
     except InvalidTokenException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -71,7 +77,7 @@ def verify_email(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
-@router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponseDTO)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=ApiResponse[TokenResponseDTO])
 def login(
     login_dto: LoginDTO, 
     repository: UserRepository = Depends(get_user_repository),
@@ -82,7 +88,11 @@ def login(
         use_case = LoginUseCase(repository=repository, password_hasher=password_hasher, token_generator=token_generator)
         token = use_case.execute(email=login_dto.email, password=login_dto.password)
         
-        return TokenResponseDTO(access_token=token)
+        return ApiResponse(
+            ok=True,
+            message='Inicio de sesión exitoso',
+            data= TokenResponseDTO(access_token=token)
+        )
     except UnverifiedAccountException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
@@ -101,7 +111,7 @@ def login(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
-@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+@router.post("/forgot-password", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def forgot_password(
     forgot_password_dto: ForgotPasswordDTO, 
     repository= Depends(get_user_repository),
@@ -110,11 +120,12 @@ def forgot_password(
     use_case = RequestPasswordResetUseCase(repository=repository, email_sender=email_sender)
     use_case.execute(email=forgot_password_dto.email)
     
-    return {
-        "message": "Recibirás un enlace con instrucciones"
-    }
+    return ApiResponse(
+        ok= True, 
+        message= "Recibirás instrucciones para restablecer tu contraseña."
+    )
 
-@router.post("/reset-password/{token}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/reset-password/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def reset_password(
     token: str,
     reset_password_dto: ResetPasswordDTO, 
@@ -124,7 +135,10 @@ def reset_password(
     try:
         use_case = ResetPasswordUseCase(repository=repository, password_hasher=password_hasher)
         use_case.execute(token=token, new_password=reset_password_dto.new_password)
-        return 
+        return ApiResponse(
+            ok= True, 
+            message= "Contraseña restablecida exitosamente."
+        )
     except InvalidCredentialsException as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 

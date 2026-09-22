@@ -2,7 +2,6 @@ from infrastructure.db.models.user_model import UserModel
 from domain.entities.user import User
 from infrastructure.schemas.user_schema import CreateUserDTO
 
-
 def map_create_user_dto_to_entity(user_dto: CreateUserDTO):
     return User(
         name=user_dto.name,

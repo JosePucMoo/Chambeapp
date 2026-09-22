@@ -32,9 +32,10 @@ class ResetPasswordDTO(BaseSchema):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class RegisterResponseDTO(BaseSchema):
-    message: str
-    email: str
+class UserResponseDTO(BaseSchema):
+    id: str
+    name: str
+    email: EmailStr
 
 class TokenResponseDTO(BaseSchema):
     access_token: str
