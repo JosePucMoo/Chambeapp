@@ -8,6 +8,7 @@ from application.use_cases.auth.request_password_reset import RequestPasswordRes
 from application.use_cases.auth.reset_password import ResetPasswordUseCase
 from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
+from application.use_cases.auth.verify_token import VerifyTokenUseCase
 from infrastructure.mappers.auth_mappers import map_user_to_dto
 from infrastructure.schemas.api_schema import ApiResponse
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
@@ -151,3 +152,26 @@ def reset_password(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
+@router.get("/reset-password/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
+def reset_password(
+    token: str,
+    repository: UserRepository = Depends(get_user_repository),
+):
+    try:
+        use_case = VerifyTokenUseCase(repository=repository)
+        use_case.execute(token=token)
+        return ApiResponse(
+            ok= True, 
+            message= "Token válido."
+        )
+    except InvalidTokenException and UnverifiedAccountException as e:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail=str(e),
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
