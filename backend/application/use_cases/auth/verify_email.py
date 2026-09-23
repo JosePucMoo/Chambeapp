@@ -9,7 +9,7 @@ class VerifyEmailUseCase:
     def execute(self, token: str) -> None:
         user = self.repository.get_by_token(token)
         if not user:
-            raise InvalidTokenException(Constants.MISSING_TOKEN)
+            raise InvalidTokenException(Constants.LINK_EXPIRED)
 
         user.verify_account()
 

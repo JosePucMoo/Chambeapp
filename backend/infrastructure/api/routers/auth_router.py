@@ -44,7 +44,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
             message="Registro exitoso. Revisa tu bandeja de entrada para verificar tu cuenta.",
             data=map_user_to_dto(user)
         ) 
-    except CannotCreateException and ResourceAlreadyExistsException as e:
+    except CannotCreateException or ResourceAlreadyExistsException as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
@@ -55,7 +55,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
-@router.post("/verify-email/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
+@router.get("/verify-email/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def verify_email(
     token: str,
     repository: UserRepository = Depends(get_user_repository)
@@ -65,7 +65,7 @@ def verify_email(
         use_case.execute(token)
         return ApiResponse(
             ok=True,
-            message="Cuenta verificada exitosamente. Ya puedes iniciar sesión."
+            message="¡Correo verificado con éxito!"
         )
     except InvalidTokenException as e:
         raise HTTPException(
@@ -140,12 +140,18 @@ def reset_password(
             ok= True, 
             message= "Contraseña restablecida exitosamente."
         )
-    except InvalidCredentialsException as e:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, 
-                detail=str(e),
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    except UnverifiedAccountException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except InvalidTokenException  as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
