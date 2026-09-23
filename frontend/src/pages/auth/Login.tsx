@@ -1,61 +1,122 @@
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { useForm } from "react-hook-form";
+import { authService } from "@/services/auth";
+import type { LoginRequest } from "@/interfaces/AuthResponse";
+import { toast } from "@/components/ui/toast";
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginRequest) => {
+    try {
+      const response = await authService.login(data);
+      toast.add({
+        type: "success",
+        title: "¡Bienvenido a Chambeapp!",
+        description: response.message,
+      });
+    } catch (error: any) {
+      toast.add({
+        type: "error",
+        title: "Error al iniciar sesión",
+        description: error.message,
+      });
+    }
+  };
+
   return (
-    <div className="flex sm:shadow-2xl overflow-hidden w-full sm:w-6/12 xl:w-4/12 items-center justify-center px-10 md:px-15 relative">
-      <img
-        src="/src/assets/Logo.svg"
-        className="inset-0  object-cover w-1/4 absolute left-4 top-4"
-      />
-      <div className="flex-col w-full py-12">
-        <h1 className="block text-center text-gray-700 text-5xl font-semibold mt-5">
+    <Card className="w-full max-w-md border-none rounded-none ring-0 sm:shadow-2xl px-6">
+      <CardHeader className="mb-4 mt-6 justify-center">
+        <CardTitle className="block text-center text-gray-700 text-4xl font-semibold">
           Inicio de <span className="text-blue-500">sesión</span>
-        </h1>
-        <form className="mt-5">
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-800">
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-0 space-y-4">
+          <Field data-invalid={!!errors.email}>
+            <FieldLabel
+              htmlFor="email"
+              className={`text-md font-medium ${!!errors.email ? "" : "text-gray-800"}`}
+            >
               Correo Electrónico
-            </label>
-            <input
+            </FieldLabel>
+            <Input
+              id="email"
               type="email"
               placeholder="correo@correo.com"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
+              className="bg-gray-50 rounded-xl h-11"
+              {...register("email", {
+                required: "El correo es obligatorio",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Ingresa un correo electrónico válido",
+                },
+              })}
+              aria-invalid={!!errors.email}
             />
-          </div>
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-800">
+          </Field>
+
+          <Field data-invalid={!!errors.password}>
+            <FieldLabel
+              htmlFor="password"
+              className={`text-md font-medium ${!!errors.password ? "" : "text-gray-800"}`}
+            >
               Contraseña
-            </label>
-            <input
+            </FieldLabel>
+            <Input
+              id="password"
               type="password"
               placeholder="••••••••••••••••"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
+              className="bg-gray-50 rounded-xl h-11"
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+              })}
+              aria-invalid={!!errors.password}
             />
-          </div>
+          </Field>
 
-          <nav className="w-full flex flex-col gap-1 2xl:flex-row 2xl:justify-between">
+          <nav className="w-full flex flex-col gap-2 2xl:flex-row 2xl:justify-between pt-2">
             <Link
-              className="text-gray-500 block text-start text-sm"
+              className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
               to={"/register"}
             >
               ¿No tienes una cuenta?
             </Link>
             <Link
-              className="text-gray-500 block text-start text-sm"
+              className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
               to={"/forgot-password"}
             >
               ¿Olvidaste tu contraseña?
             </Link>
           </nav>
 
-          <input
-            className="mt-10 uppercase bg-blue-500 rounded-xs hover:bg-blue-700 text-white w-full text-base font-bold py-3"
-            value="Iniciar Sesión"
+          <Button
             type="submit"
-          />
+            disabled={isSubmitting}
+            className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
+          >
+            {isSubmitting ? "Iniciando..." : "Iniciar Sesión"}
+          </Button>
         </form>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -3,6 +3,11 @@ export interface LoginResponse {
   tokenType: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface RegisterPayload {
   name: string;
   email: string;

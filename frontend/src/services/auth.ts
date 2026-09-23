@@ -1,3 +1,4 @@
+import type { LoginRequest } from "./../interfaces/AuthResponse";
 import apiClient from "./api";
 import type {
   LoginResponse,
@@ -12,11 +13,12 @@ export const authService = {
     return response.data;
   },
 
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    const response = await apiClient.post<LoginResponse>("/auth/login", {
-      email,
-      password,
-    });
+  login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
+    data.email;
+    const response = await apiClient.post<ApiResponse<LoginResponse>>(
+      "/auth/login",
+      data,
+    );
     return response.data;
   },
 
