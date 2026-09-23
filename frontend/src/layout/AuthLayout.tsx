@@ -7,7 +7,7 @@ const AuthLayout = () => {
         <img
           src="/src/assets/Logo.svg"
           alt="App logo"
-          className="inset-0 object-cover w-1/5 h-auto absolute left-4 top-4"
+          className="inset-0 object-cover max-w-full h-auto absolute left-4 top-4"
         />
         <Outlet />
       </main>
