@@ -1,78 +1,202 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { authService } from "../../services/auth";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Register = () => {
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const password = watch("password");
+
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await authService.register({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      });
+
+      toast.add({
+        type: "success",
+        title: "¡Registro exitoso!",
+        description: response.message,
+      });
+
+      navigate("/");
+    } catch (err: any) {
+      toast.add({
+        type: "error",
+        title: "Error al registrarse",
+        description: err.message,
+      });
+    }
+  };
+
   return (
-    <div className="flex sm:shadow-2xl overflow-hidden w-full sm:w-6/12 xl:w-4/12 items-center justify-center px-10 md:px-15 relative">
+    <Card className="w-full max-w-md sm:shadow-2xl ring-0 rounded-none relative px-6">
       <img
         src="/src/assets/Logo.svg"
-        className="inset-0  object-cover w-1/4 absolute left-4 top-4"
+        alt="Logotipo de la aplicación"
+        className="inset-0 object-cover w-1/4 absolute left-4 top-4"
       />
-      <div className="flex-col w-full py-10">
-        <h1 className="block text-center text-gray-700 text-5xl font-semibold mt-5">
+      <CardHeader className="pb-4 pt-16">
+        <CardTitle className="text-center text-4xl font-semibold text-gray-700 sm:text-5xl">
           Crea tu <span className="text-blue-500">cuenta</span>
-        </h1>
-        <form className="mt-5">
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-700">
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <form className="mt-0 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <Field data-invalid={!!errors.name}>
+            <FieldLabel
+              htmlFor="name"
+              className={`text-md font-medium"  ${!!errors.name ? "" : "text-gray-700"}`}
+            >
               Nombre
-            </label>
-            <input
+            </FieldLabel>
+            <Input
+              id="name"
               type="text"
               placeholder="Tu nombre"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
+              aria-invalid={!!errors.name}
+              className="py-4"
+              {...register("name", {
+                required: "El nombre es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe tener al menos 2 caracteres",
+                },
+              })}
             />
-          </div>
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-700">
+            {errors.name && (
+              <FieldDescription>{errors.name?.message}</FieldDescription>
+            )}
+          </Field>
+
+          <Field data-invalid={!!errors.email}>
+            <FieldLabel
+              htmlFor="email"
+              className={`text-md font-medium"  ${!!errors.email ? "" : "text-gray-700"}`}
+            >
               Correo Electrónico
-            </label>
-            <input
+            </FieldLabel>
+
+            <Input
+              id="email"
               type="email"
               placeholder="correo@correo.com"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
+              aria-invalid={!!errors.email}
+              className="py-4"
+              {...register("email", {
+                required: "El correo es obligatorio",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Ingresa un correo electrónico válido",
+                },
+              })}
             />
-          </div>
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-700">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••••••••••"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
-            />
-          </div>
-          <div className="my-5">
-            <label className="block text-md font-medium text-gray-700">
-              Repetir contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••••••••••"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
-            />
-          </div>
+            {errors.email && (
+              <FieldDescription>{errors.email?.message}</FieldDescription>
+            )}
+          </Field>
 
-          <nav className="w-full flex flex-col gap-1 2xl:flex-row 2xl:justify-between">
-            <Link className="text-gray-500 block text-start text-sm" to={"/"}>
+          <Field data-invalid={!!errors.password}>
+            <FieldLabel
+              htmlFor="password"
+              className={`text-md font-medium"  ${!!errors ? "" : "text-gray-700"}`}
+            >
+              Contraseña
+            </FieldLabel>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••••••••••"
+              aria-invalid={!!errors.password}
+              className="py-4"
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+              })}
+            />
+            {errors.password && (
+              <FieldDescription>{errors.password?.message}</FieldDescription>
+            )}
+          </Field>
+
+          <Field data-invalid={!!errors.confirmPassword}>
+            <FieldLabel
+              htmlFor="confirmPassword"
+              className={`text-md font-medium"  ${!!errors.confirmPassword ? "" : "text-gray-700"}`}
+            >
+              Repetir contraseña
+            </FieldLabel>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••••••••••"
+              aria-invalid={!!errors.confirmPassword}
+              className="py-4"
+              {...register("confirmPassword", {
+                required: "Debes confirmar tu contraseña",
+                validate: (value) =>
+                  value === password || "Las contraseñas no coinciden",
+              })}
+            />
+            {errors.confirmPassword && (
+              <FieldDescription>
+                {errors.confirmPassword?.message}
+              </FieldDescription>
+            )}
+          </Field>
+
+          <nav className="w-full flex flex-col gap-2 2xl:flex-row 2xl:justify-between pt-2">
+            <Link
+              className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
+              to={"/"}
+            >
               ¿Ya tienes una cuenta?
             </Link>
             <Link
-              className="text-gray-500 block text-start text-sm"
+              className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
               to={"/forgot-password"}
             >
               ¿Olvidaste tu contraseña?
             </Link>
           </nav>
 
-          <input
-            className="mt-10 uppercase bg-blue-500 rounded-xs hover:bg-blue-700 text-white w-full text-base font-bold py-3"
-            value="Crear Cuenta"
+          <Button
             type="submit"
-          />
+            disabled={isSubmitting}
+            className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
+          >
+            {isSubmitting ? "Registrando..." : "Crear Cuenta"}
+          </Button>
         </form>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
