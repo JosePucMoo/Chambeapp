@@ -5,6 +5,7 @@ import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyAccount from "./pages/auth/VerifyAccount";
 import ResetPassword from "./pages/auth/ResetPassword";
+import { Toaster } from "./components/ui/toast";
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ function App() {
           <Route path="verify-account/:token" element={<VerifyAccount />} />
         </Route>
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }
