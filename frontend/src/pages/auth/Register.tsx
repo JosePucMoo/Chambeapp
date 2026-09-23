@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { RegisterRequest } from "@/interfaces/AuthResponse";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -27,14 +28,9 @@ const Register = () => {
 
   const password = watch("password");
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterRequest) => {
     try {
-      const response = await authService.register({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      });
+      const response = await authService.register(data);
 
       toast.add({
         type: "success",
@@ -53,14 +49,9 @@ const Register = () => {
   };
 
   return (
-    <Card className="w-full max-w-md sm:shadow-2xl ring-0 rounded-none relative px-6">
-      <img
-        src="/src/assets/Logo.svg"
-        alt="Logotipo de la aplicación"
-        className="inset-0 object-cover w-1/4 absolute left-4 top-4"
-      />
-      <CardHeader className="pb-4 pt-16">
-        <CardTitle className="text-center text-4xl font-semibold text-gray-700 sm:text-5xl">
+    <Card className="w-full max-w-md sm:shadow-2xl ring-0 rounded-none px-6">
+      <CardHeader className="pb-4 pt-6">
+        <CardTitle className="text-center text-4xl font-semibold text-gray-700">
           Crea tu <span className="text-blue-500">cuenta</span>
         </CardTitle>
       </CardHeader>

@@ -1,14 +1,19 @@
-import type { LoginRequest } from "./../interfaces/AuthResponse";
+import type {
+  LoginRequest,
+  RegisterResponse,
+} from "./../interfaces/AuthResponse";
 import apiClient from "./api";
 import type {
   LoginResponse,
-  RegisterPayload,
+  RegisterRequest,
   ResetPasswordPayload,
 } from "../interfaces/AuthResponse";
 import type { ApiResponse } from "../interfaces/ApiResponse";
 
 export const authService = {
-  register: async (data: RegisterPayload) => {
+  register: async (
+    data: RegisterRequest,
+  ): Promise<ApiResponse<RegisterResponse>> => {
     const response = await apiClient.post("/auth/register", data);
     return response.data;
   },
