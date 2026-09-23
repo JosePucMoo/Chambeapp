@@ -1,12 +1,12 @@
 import type {
   LoginRequest,
   RegisterResponse,
+  ResetPasswordRequest,
 } from "./../interfaces/AuthResponse";
 import apiClient from "./api";
 import type {
   LoginResponse,
   RegisterRequest,
-  ResetPasswordPayload,
 } from "../interfaces/AuthResponse";
 import type { ApiResponse } from "../interfaces/ApiResponse";
 
@@ -39,8 +39,14 @@ export const authService = {
     return response.data;
   },
 
-  resetPassword: async (data: ResetPasswordPayload) => {
-    const response = await apiClient.post("/auth/reset-password", data);
+  resetPassword: async (
+    token: string,
+    data: ResetPasswordRequest,
+  ): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post(
+      `/auth/reset-password/${token}`,
+      data,
+    );
     return response.data;
   },
 };

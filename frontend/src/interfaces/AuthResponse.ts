@@ -21,8 +21,7 @@ export interface RegisterResponse {
   email: string;
 }
 
-export interface ResetPasswordPayload {
-  token: string;
+export interface ResetPasswordRequest {
   newPassword: string;
   confirmPassword: string;
 }
