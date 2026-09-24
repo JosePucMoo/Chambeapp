@@ -18,7 +18,7 @@ from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyEx
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
 from domain.utils.constants import Constants
-from infrastructure.api.dependencies import get_email_sender, get_password_hasher, get_token_generator, get_user_repository
+from infrastructure.api.dependencies import get_current_user, get_email_sender, get_password_hasher, get_token_generator, get_user_repository
 from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
 from infrastructure.schemas.user_schema import UserResponseDTO
 from infrastructure.schemas.auth_schema import (
@@ -98,7 +98,6 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
         )
     except InvalidCredentialsException as e:
         raise HTTPException(
@@ -144,7 +143,6 @@ def reset_password(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
             detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
         )
     except InvalidTokenException  as e:
         raise HTTPException(
@@ -170,12 +168,32 @@ def reset_password(
             ok= True, 
             message= "Token válido."
         )
-    except InvalidTokenException and UnverifiedAccountException as e:
+    except (InvalidTokenException, UnverifiedAccountException) as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
                 detail=str(e),
                 headers={"WWW-Authenticate": "Bearer"},
             )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.get("/me", response_model=ApiResponse[UserResponseDTO])
+def read_users_me(current_user: UserResponseDTO = Depends(get_current_user)):
+    try:
+        return ApiResponse(
+            ok=True,
+            message="Token válido",
+            data=current_user
+        )
+    except InvalidTokenException as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
