@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { useForm } from "react-hook-form";
 import { authService } from "@/services/auth";
 import type { LoginRequest } from "@/interfaces/AuthResponse";
@@ -22,11 +22,10 @@ const Login = () => {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
-      const response = await authService.login(data);
+      await authService.login(data);
       toast.add({
         type: "success",
         title: "¡Bienvenido a Chambeapp!",
-        description: response.message,
       });
     } catch (error: any) {
       toast.add({
@@ -67,6 +66,9 @@ const Login = () => {
               })}
               aria-invalid={!!errors.email}
             />
+            {errors.email && (
+              <FieldDescription>{errors.email?.message}</FieldDescription>
+            )}
           </Field>
 
           <Field data-invalid={!!errors.password}>
@@ -90,6 +92,9 @@ const Login = () => {
               })}
               aria-invalid={!!errors.password}
             />
+            {errors.password && (
+              <FieldDescription>{errors.password?.message}</FieldDescription>
+            )}
           </Field>
 
           <nav className="w-full flex flex-col gap-2 2xl:flex-row 2xl:justify-between pt-2">
