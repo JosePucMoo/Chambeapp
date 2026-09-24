@@ -38,5 +38,4 @@ class UserResponseDTO(BaseSchema):
     email: EmailStr
 
 class TokenResponseDTO(BaseSchema):
-    access_token: str
-    token_type: str = "bearer"
+    token: str    

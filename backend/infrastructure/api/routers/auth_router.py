@@ -92,7 +92,7 @@ def login(
         return ApiResponse(
             ok=True,
             message='Inicio de sesión exitoso',
-            data= TokenResponseDTO(access_token=token)
+            data= TokenResponseDTO(token=token)
         )
     except UnverifiedAccountException as e:
         raise HTTPException(

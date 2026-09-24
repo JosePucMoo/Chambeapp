@@ -30,8 +30,7 @@ class LoginUseCase:
             raise UnverifiedAccountException(Constants.UNVERIFIED_ACCOUNT)
 
         payload = {
-            "sub": str(user.id),
-            "email": user.email
+            "id": str(user.id),
         }
 
         return self.token_generator.generate_token(payload)
