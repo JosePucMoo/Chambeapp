@@ -9,6 +9,7 @@ class Constants:
     UNVERIFIED_ACCOUNT = "Por favor verifica tu correo electrónico antes de iniciar sesión."
     
     TOKEN_EXPIRED = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+    LINK_EXPIRED = "El enlace ha expirado o no es válido."
     TOKEN_INVALID = "Las credenciales de autenticación son inválidas."
     UNAUTHORIZED_ACCESS = "No tienes los permisos necesarios para realizar esta acción."
     MISSING_TOKEN = "No se proporcionó un token de autenticación."

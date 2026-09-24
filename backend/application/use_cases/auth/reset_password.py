@@ -24,4 +24,4 @@ class ResetPasswordUseCase:
         
         user.clear_password_reset_token()
         
-        self.user_repo.update(user)
+        self.repository.update(user)
