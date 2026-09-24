@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
-import type { ResetPasswordRequest } from "@/interfaces/AuthResponse";
+import type { ResetPasswordRequest } from "@/interfaces/Auth";
 import { authService } from "@/services/auth";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";

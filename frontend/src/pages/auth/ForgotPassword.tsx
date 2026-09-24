@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
-import type { ForgotPasswordRequest } from "@/interfaces/AuthResponse";
+import type { ForgotPasswordRequest } from "@/interfaces/Auth";
 import { authService } from "@/services/auth";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";

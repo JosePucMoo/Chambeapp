@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { RegisterRequest } from "@/interfaces/AuthResponse";
+import type { RegisterRequest } from "@/interfaces/Auth";
 
 const Register = () => {
   const navigate = useNavigate();

@@ -3,12 +3,9 @@ import type {
   LoginRequest,
   RegisterResponse,
   ResetPasswordRequest,
-} from "./../interfaces/AuthResponse";
+} from "../interfaces/Auth";
 import apiClient from "./api";
-import type {
-  LoginResponse,
-  RegisterRequest,
-} from "../interfaces/AuthResponse";
+import type { LoginResponse, RegisterRequest } from "../interfaces/Auth";
 import type { ApiResponse } from "../interfaces/ApiResponse";
 
 export const authService = {

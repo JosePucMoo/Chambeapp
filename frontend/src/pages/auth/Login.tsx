@@ -5,7 +5,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { useForm } from "react-hook-form";
 import { authService } from "@/services/auth";
-import type { LoginRequest } from "@/interfaces/AuthResponse";
+import type { LoginRequest } from "@/interfaces/Auth";
 import { toast } from "@/components/ui/toast";
 
 const Login = () => {
