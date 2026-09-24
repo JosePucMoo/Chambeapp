@@ -41,10 +41,10 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
         )
         return ApiResponse(
             ok=True,
-            message="Registro exitoso. Revisa tu bandeja de entrada para verificar tu cuenta.",
+            message="Revisa tu bandeja de entrada para verificar tu cuenta.",
             data=map_user_to_dto(user)
         ) 
-    except CannotCreateException or ResourceAlreadyExistsException as e:
+    except (CannotCreateException, ResourceAlreadyExistsException) as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e)
