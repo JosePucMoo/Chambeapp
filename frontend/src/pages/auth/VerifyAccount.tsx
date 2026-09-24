@@ -93,7 +93,7 @@ const VerifyAccount = () => {
         {confirmedAccount ? (
           <Link
             to="/"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-blue-500 hover:bg-blue-700 focus:outline-none transition-colors"
+            className="w-full flex justify-center uppercase py-3 px-4 border border-transparent shadow-sm text-sm font-bold text-white bg-blue-500 hover:bg-blue-700 focus:outline-none transition-colors"
           >
             Ir a Iniciar Sesión
           </Link>

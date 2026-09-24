@@ -1,25 +1,17 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardAction,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import type { ResetPasswordRequest } from "@/interfaces/AuthResponse";
 import { authService } from "@/services/auth";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ResetPassword = () => {
-  const [isChangeSuccessfully, setIsChangeSuccessfully] = useState(false);
-
   const params = useParams();
   const token = params.token || "";
+  const navigate = useNavigate();
 
   const {
     register,
@@ -43,15 +35,13 @@ const ResetPassword = () => {
         title: "Cambios guardados",
         description: response.message,
       });
-      setIsChangeSuccessfully(true);
+      navigate("/");
     } catch (error: any) {
       toast.add({
         type: "error",
         title: "Cambios no guardados",
         description: error.message,
       });
-    } finally {
-      setIsChangeSuccessfully(false);
     }
   };
 
@@ -115,22 +105,15 @@ const ResetPassword = () => {
               </FieldDescription>
             )}
           </Field>
-          {!isChangeSuccessfully && (
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
-            >
-              {isSubmitting ? "Guardando..." : "Guardar Contraseña"}
-            </Button>
-          )}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
+          >
+            {isSubmitting ? "Guardando..." : "Guardar Contraseña"}
+          </Button>
         </form>
       </CardContent>
-      <CardAction className="w-full">
-        <Link className="text-gray-500 block text-sm text-center" to={"/"}>
-          Iniciar Sesión
-        </Link>
-      </CardAction>
     </Card>
   );
 };
