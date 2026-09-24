@@ -1,4 +1,5 @@
 import type {
+  ForgotPasswordRequest,
   LoginRequest,
   RegisterResponse,
   ResetPasswordRequest,
@@ -34,8 +35,10 @@ export const authService = {
     return response.data;
   },
 
-  forgotPassword: async (email: string) => {
-    const response = await apiClient.post("/auth/forgot-password", { email });
+  forgotPassword: async (
+    data: ForgotPasswordRequest,
+  ): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post("/auth/forgot-password", data);
     return response.data;
   },
 
