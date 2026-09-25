@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from pydantic.alias_generators import to_camel
-from infrastructure.schemas.api_schema import ApiResponse
+from infrastructure.schemas.api_schema import ErrorDetail, ErrorResponse
 from infrastructure.api.routers.router import router
 from infrastructure.db.database import engine
 from infrastructure.db.models.base_model import Base
@@ -33,20 +33,21 @@ app = FastAPI(lifespan=lifespan)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    mensajes_error = []
+    error_details = []
     
     for err in exc.errors():
         loc = err.get("loc", ())
         field = to_camel(str(loc[-1])) if len(loc) > 1 else "Formulario"
         raw_msg = err.get("msg", "Dato inválido").replace("Value error, ", "")
-        mensajes_error.append(f"{field}: {raw_msg}")
         
-    mensaje_final = " | ".join(mensajes_error)
+        error_details.append(
+            ErrorDetail(
+                type="VALIDATION_ERROR",
+                message=f"{field}: {raw_msg}"
+            )
+        )
     
-    response_body = ApiResponse(
-        ok=False,
-        message=f"{mensaje_final}"
-    )
+    response_body = ErrorResponse(detail=error_details)
     
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -55,14 +56,19 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    response_body = ApiResponse(
-        ok=False,
+    error_detail = ErrorDetail(
+        type=f"HTTP_{exc.status_code}_ERROR", 
         message=str(exc.detail)
     )
+
+    error_response = ErrorResponse(detail=[error_detail])
+    
+    headers = getattr(exc, "headers", None)
     
     return JSONResponse(
         status_code=exc.status_code,
-        content=response_body.model_dump(exclude_none=True)
+        content=error_response.model_dump(exclude_none=True),
+        headers=headers
     )
 
 def custom_openapi():
