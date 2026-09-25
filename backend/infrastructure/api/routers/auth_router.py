@@ -23,9 +23,9 @@ from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
 from infrastructure.schemas.user_schema import UserResponseDTO
 from infrastructure.schemas.auth_schema import (
     RegisterDTO, 
-    LoginDTO, 
     UserResponseDTO, 
-    TokenResponseDTO,
+    LoginResponseDTO,
+    LoginRequestDTO,
     ForgotPasswordDTO,
     ResetPasswordDTO
 )
@@ -78,21 +78,21 @@ def verify_email(
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
 
-@router.post("/login", status_code=status.HTTP_200_OK, response_model=ApiResponse[TokenResponseDTO])
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=ApiResponse[LoginResponseDTO])
 def login(
-    login_dto: LoginDTO, 
+    login_dto: LoginRequestDTO, 
     repository: UserRepository = Depends(get_user_repository),
     token_generator: TokenGenerator = Depends(get_token_generator),
     password_hasher: PasswordHasher = Depends(get_password_hasher)
 ):
     try:
         use_case = LoginUseCase(repository=repository, password_hasher=password_hasher, token_generator=token_generator)
-        token = use_case.execute(email=login_dto.email, password=login_dto.password)
+        [token, user] = use_case.execute(email=login_dto.email, password=login_dto.password)
         
         return ApiResponse(
             ok=True,
             message='Inicio de sesión exitoso',
-            data= TokenResponseDTO(token=token)
+            data= LoginResponseDTO(token= token, user=user)
         )
     except UnverifiedAccountException as e:
         raise HTTPException(

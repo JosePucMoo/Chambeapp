@@ -15,9 +15,9 @@ class RegisterDTO(BaseSchema):
             raise ValueError("Las contraseñas no coinciden")
         return self
 
-class LoginDTO(BaseSchema):
+class LoginRequestDTO(BaseSchema):
     email: EmailStr
-    password: str
+    password: str 
 
 class ForgotPasswordDTO(BaseSchema):
     email: EmailStr
@@ -37,5 +37,6 @@ class UserResponseDTO(BaseSchema):
     name: str
     email: EmailStr
 
-class TokenResponseDTO(BaseSchema):
-    token: str    
+class LoginResponseDTO(BaseSchema):
+    token: str  
+    user: UserResponseDTO 

@@ -1,3 +1,5 @@
+from infrastructure.mappers.auth_mappers import map_user_to_dto
+from domain.entities.user import User
 from domain.utils.constants import Constants
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
@@ -16,7 +18,7 @@ class LoginUseCase:
         self.password_hasher = password_hasher
         self.token_generator = token_generator
 
-    def execute(self, email: str, password: str) -> str:
+    def execute(self, email: str, password: str) -> tuple[str, User]:
         user = self.repository.get_by_email(email.lower())
 
         error_msg = Constants.INVALID_CREDENTIALS
@@ -33,4 +35,9 @@ class LoginUseCase:
             "id": str(user.id),
         }
 
-        return self.token_generator.generate_token(payload)
+        token = self.token_generator.generate_token(payload)
+
+        return [
+            token, 
+            map_user_to_dto(user)
+        ]
