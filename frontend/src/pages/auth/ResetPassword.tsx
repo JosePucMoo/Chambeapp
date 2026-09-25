@@ -35,7 +35,7 @@ const ResetPassword = () => {
         title: "Cambios guardados",
         description: response.message,
       });
-      navigate("/");
+      navigate("/auth/login");
     } catch (error: any) {
       toast.add({
         type: "error",

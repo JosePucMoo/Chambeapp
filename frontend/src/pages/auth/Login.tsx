@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,8 @@ const Login = () => {
     },
   });
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data: LoginRequest) => {
     try {
       const response = await authService.login(data);
@@ -33,6 +35,7 @@ const Login = () => {
         type: "success",
         title: "¡Bienvenido a Chambeapp!",
       });
+      navigate("/admin");
     } catch (error: any) {
       toast.add({
         type: "error",
@@ -106,13 +109,13 @@ const Login = () => {
           <nav className="w-full flex flex-col gap-2 2xl:flex-row 2xl:justify-between pt-2">
             <Link
               className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
-              to={"/register"}
+              to={"/auth/register"}
             >
               ¿No tienes una cuenta?
             </Link>
             <Link
               className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
-              to={"/forgot-password"}
+              to={"/auth/forgot-password"}
             >
               ¿Olvidaste tu contraseña?
             </Link>

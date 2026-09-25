@@ -38,7 +38,7 @@ const Register = () => {
         description: response.message,
       });
 
-      navigate("/");
+      navigate("/auth/login");
     } catch (err: any) {
       toast.add({
         type: "error",
@@ -167,13 +167,13 @@ const Register = () => {
           <nav className="w-full flex flex-col gap-2 2xl:flex-row 2xl:justify-between pt-2">
             <Link
               className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
-              to={"/"}
+              to={"/auth/login"}
             >
               ¿Ya tienes una cuenta?
             </Link>
             <Link
               className="text-gray-500 hover:text-gray-800 transition-colors block text-start text-sm"
-              to={"/forgot-password"}
+              to={"/auth/forgot-password"}
             >
               ¿Olvidaste tu contraseña?
             </Link>

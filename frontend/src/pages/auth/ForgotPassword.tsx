@@ -28,7 +28,7 @@ const ForgotPassword = () => {
         title: "Cambios guardados",
         description: response.message,
       });
-      navigate("/");
+      navigate("/auth/login");
     } catch (error: any) {
       toast.add({
         type: "error",
@@ -74,12 +74,15 @@ const ForgotPassword = () => {
             )}
           </Field>
           <nav className="w-full flex flex-col gap-1 2xl:flex-row 2xl:justify-between">
-            <Link className="text-gray-500 block text-start text-sm" to={"/"}>
+            <Link
+              className="text-gray-500 block text-start text-sm"
+              to={"/auth/login"}
+            >
               ¿Ya tienes una cuenta?
             </Link>
             <Link
               className="text-gray-500 block text-start text-sm"
-              to={"/forgot-password"}
+              to={"/auth/forgot-password"}
             >
               ¿No tienes una cuenta?
             </Link>

@@ -92,7 +92,7 @@ const VerifyAccount = () => {
       <CardAction className="w-full">
         {confirmedAccount ? (
           <Link
-            to="/"
+            to="/auth/login"
             className="w-full flex justify-center uppercase py-3 px-4 border border-transparent shadow-sm text-sm font-bold text-white bg-blue-500 hover:bg-blue-700 focus:outline-none transition-colors"
           >
             Ir a Iniciar Sesión
@@ -100,7 +100,7 @@ const VerifyAccount = () => {
         ) : (
           <>
             <Link
-              to="/"
+              to="/auth/login"
               className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl text-sm font-bold text-white bg-blue-500 hover:bg-blue-700 focus:outline-none transition-colors"
             >
               Volver al inicio de sesión

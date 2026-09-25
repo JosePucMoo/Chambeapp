@@ -22,7 +22,7 @@ apiClient.interceptors.response.use(
 
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/";
+      window.location.href = "/auth/login";
     }
 
     return Promise.reject(
