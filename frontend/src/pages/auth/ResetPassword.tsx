@@ -79,25 +79,25 @@ const ResetPassword = () => {
           </Field>
           <Field data-invalid={!!errors.confirmPassword}>
             <FieldLabel
-              className={`block text-md font-medium ${!!errors.confirmPassword ? "" : "text-gray-700"}`}
+              htmlFor="confirmPassword"
+              className={`text-md font-medium"  ${!!errors.confirmPassword ? "" : "text-gray-700"}`}
             >
-              Confirmar contraseña
+              Repetir contraseña
             </FieldLabel>
             <Input
+              id="confirmPassword"
               type="password"
               placeholder="••••••••••••••••"
-              className="border border-gray-300 w-full p-2 mt-2 bg-gray-50 rounded-xl"
+              aria-invalid={!!errors.confirmPassword}
+              className="py-4"
               {...register("confirmPassword", {
-                required: "La contraseña es obligatoria",
-                minLength: {
-                  value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres",
-                },
+                required: "Debes confirmar tu contraseña",
                 validate: (value) => {
-                  value === newPassword || "Las contraseñas no coinciden";
+                  return (
+                    value === newPassword || "Las contraseñas no coinciden"
+                  );
                 },
               })}
-              aria-invalid={!!errors.confirmPassword}
             />
             {errors.confirmPassword && (
               <FieldDescription>

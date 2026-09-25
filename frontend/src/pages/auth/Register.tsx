@@ -152,8 +152,9 @@ const Register = () => {
               className="py-4"
               {...register("confirmPassword", {
                 required: "Debes confirmar tu contraseña",
-                validate: (value) =>
-                  value === password || "Las contraseñas no coinciden",
+                validate: (value) => {
+                  return value === password || "Las contraseñas no coinciden";
+                },
               })}
             />
             {errors.confirmPassword && (
