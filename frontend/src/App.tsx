@@ -6,19 +6,22 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyAccount from "./pages/auth/VerifyAccount";
 import ResetPassword from "./pages/auth/ResetPassword";
 import { Toaster } from "./components/ui/toast";
+import { AuthProvider } from "./context/AuthProvider";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AuthLayout />}>
-          <Route index element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
-          <Route path="reset-password/:token" element={<ResetPassword />} />
-          <Route path="verify-account/:token" element={<VerifyAccount />} />
-        </Route>
-      </Routes>
-      <Toaster />
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<AuthLayout />}>
+            <Route index element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password/:token" element={<ResetPassword />} />
+            <Route path="verify-account/:token" element={<VerifyAccount />} />
+          </Route>
+        </Routes>
+        <Toaster />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

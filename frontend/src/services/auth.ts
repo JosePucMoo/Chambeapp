@@ -6,7 +6,8 @@ import type {
 } from "../interfaces/Auth";
 import apiClient from "./api";
 import type { LoginResponse, RegisterRequest } from "../interfaces/Auth";
-import type { ApiResponse } from "../interfaces/ApiResponse";
+import type { ApiResponse } from "../interfaces/Api";
+import type { User } from "@/interfaces/User";
 
 export const authService = {
   register: async (
@@ -47,6 +48,11 @@ export const authService = {
       `/auth/reset-password/${token}`,
       data,
     );
+    return response.data;
+  },
+
+  getCurrentUser: async (): Promise<ApiResponse<User>> => {
+    const response = await apiClient.get(`/auth/me`);
     return response.data;
   },
 };

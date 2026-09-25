@@ -7,8 +7,10 @@ import { useForm } from "react-hook-form";
 import { authService } from "@/services/auth";
 import type { LoginRequest } from "@/interfaces/Auth";
 import { toast } from "@/components/ui/toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -22,7 +24,11 @@ const Login = () => {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
-      await authService.login(data);
+      const response = await authService.login(data);
+      const token = response.data?.token || "";
+      const user = response.data?.user;
+
+      login(token, user);
       toast.add({
         type: "success",
         title: "¡Bienvenido a Chambeapp!",
