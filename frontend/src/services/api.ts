@@ -1,5 +1,6 @@
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import type { ApiResponse } from "../interfaces/ApiResponse";
+import type { ApiResponse } from "../interfaces/Api";
+import type { ErrorResponse } from "../interfaces/Api";
 
 const BASE_URL = import.meta.env.VITE_CHAMBEAPP_API_ORIGIN;
 
@@ -12,20 +13,21 @@ apiClient.interceptors.response.use(
     return response;
   },
 
-  (error: AxiosError<ApiResponse>) => {
-    if (error.response?.data) {
-      return Promise.reject(error.response.data);
+  (error: AxiosError<ErrorResponse>) => {
+    if (error.response?.data.detail && error.response.data.detail.length > 0) {
+      const serverMessage = error.response.data.detail[0].message;
+
+      return Promise.reject(new Error(serverMessage));
     }
 
-    const fallbackResponse: ApiResponse = {
-      ok: false,
-      message:
-        error.message === "Network Error"
-          ? "No hay conexión con el servidor."
-          : "Ocurrió un error inesperado.",
-    };
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    }
 
-    return Promise.reject(fallbackResponse);
+    return Promise.reject(
+      new Error(error.message || "Error de conexión con el servidor"),
+    );
   },
 );
 
