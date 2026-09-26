@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { LayoutGrid, ListPlus, PlusCircle, LogOut, Disc } from "lucide-react";
 
 import {
@@ -26,6 +26,7 @@ import {
 const projects = ["InterActive", "MyHotel", "MyAccounting", "InAct"];
 
 export function AppSidebar() {
+  const location = useLocation();
   return (
     <Sidebar className="border-r border-gray-100">
       <SidebarHeader className="p-6">
@@ -38,9 +39,12 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 isActive={location.pathname === "/"}
-                className="text-white hover:bg-blue-700 hover:text-white h-11"
+                className=" hover:bg-blue-700 hover:text-white h-11 p-0"
               >
-                <Link to="/tablero" className="flex items-center gap-2 ml-2">
+                <Link
+                  to="/"
+                  className="flex items-center gap-2 pl-3 w-full h-full"
+                >
                   <LayoutGrid className="w-5 h-5" />
                   <span className="text-base font-medium">Tablero</span>
                 </Link>
@@ -52,10 +56,13 @@ export function AppSidebar() {
 
             <SidebarMenuItem>
               <SidebarMenuButton
-                isActive={location.pathname === "/tasks"}
-                className="hover:text-gray-700 hover:bg-gray-50 h-11"
+                isActive={location.pathname === "/my-tasks"}
+                className="hover:bg-blue-700 hover:text-white h-11 p-0"
               >
-                <Link to="/tareas" className="flex items-center gap-2 ml-2">
+                <Link
+                  to="/my-tasks"
+                  className="flex items-center gap-2 pl-3 w-full h-full"
+                >
                   <ListPlus className="w-5 h-5" />
                   <span className="text-base font-medium">Mis tareas</span>
                 </Link>
@@ -87,10 +94,10 @@ export function AppSidebar() {
                 <SidebarMenu className="space-y-1 mt-1">
                   {projects.map((project) => (
                     <SidebarMenuItem key={project}>
-                      <SidebarMenuButton className=" hover:text-gray-700 hover:bg-gray-50 h-10">
+                      <SidebarMenuButton className=" hover:text-gray-700 hover:bg-gray-50 h-10 p-0">
                         <Link
                           to={`/proyectos/${project.toLowerCase()}`}
-                          className="flex items-center gap-2 ml-2"
+                          className="flex items-center gap-2 pl-3 w-full h-full"
                         >
                           <Disc className="h-3 w-3 fill-gray-100 stroke-gray-400" />
                           <span className="text-[15px]">{project}</span>
