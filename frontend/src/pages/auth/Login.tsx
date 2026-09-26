@@ -35,7 +35,7 @@ const Login = () => {
         type: "success",
         title: "¡Bienvenido a Chambeapp!",
       });
-      navigate("/admin");
+      navigate("/");
     } catch (error: any) {
       toast.add({
         type: "error",
