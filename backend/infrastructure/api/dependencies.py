@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 from application.interfaces.email_sender import EmailSender
+from infrastructure.schemas.auth_schema import UserResponseDTO
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.utils.constants import Constants
-from infrastructure.schemas.user_schema import UserResponseDTO
 from infrastructure.security.jwt_token_generator import JwtTokenGenerator
 from infrastructure.security.password_hasher_impl import PasswordHasherImpl
 from infrastructure.services.email_service import MailtrapEmailSender

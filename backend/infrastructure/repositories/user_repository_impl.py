@@ -3,8 +3,8 @@ from typing import List
 
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
-from infrastructure.db.models.user_model import UserModel
 from infrastructure.mappers.user_mappers import map_user_entity_to_model, map_user_model_to_entity
+from infrastructure.db.models.user_model import UserModel
 from domain.repositories.user_repository import UserRepository
 from domain.entities.user import User 
 
@@ -55,7 +55,7 @@ class UserRepositoryImpl(UserRepository):
 
         user_updated.name = user.name
         user_updated.email = user.email
-        user_updated.password = user.hashed_password
+        user_updated.password = user.password
         user_updated.is_verified = user.is_verified
         user_updated.token = user.token
 

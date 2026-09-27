@@ -5,7 +5,7 @@ import uuid
 class User:
     name: str
     email: str
-    hashed_password: str
+    password: str
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     is_verified: bool = False
@@ -17,11 +17,11 @@ class User:
         
         self.name = new_name.strip()
 
-    def change_password(self, new_hashed_password: str) -> None:
-        if not new_hashed_password:
+    def change_password(self, new_password: str) -> None:
+        if not new_password:
             raise ValueError("El hash de la contraseña no puede estar vacío")
         
-        self.hashed_password = new_hashed_password
+        self.password = new_password
 
     def mark_as_verified(self) -> None:
         self.is_verified = True

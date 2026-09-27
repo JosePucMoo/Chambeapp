@@ -25,7 +25,7 @@ class LoginUseCase:
         if not user:
             raise InvalidCredentialsException(error_msg)
 
-        if not self.password_hasher.verify(password, user.hashed_password):
+        if not self.password_hasher.verify(password, user.password):
             raise InvalidCredentialsException(error_msg)
             
         if not user.is_verified:

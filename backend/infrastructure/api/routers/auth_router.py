@@ -9,7 +9,7 @@ from application.use_cases.auth.reset_password import ResetPasswordUseCase
 from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
 from application.use_cases.auth.verify_token import VerifyTokenUseCase
-from infrastructure.mappers.auth_mappers import map_user_to_dto
+from infrastructure.mappers.auth_mappers import map_register_user_dto_to_entity, map_user_to_dto
 from infrastructure.schemas.api_schema import ApiResponse
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
@@ -19,8 +19,6 @@ from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
 from domain.utils.constants import Constants
 from infrastructure.api.dependencies import get_current_user, get_email_sender, get_password_hasher, get_token_generator, get_user_repository
-from infrastructure.mappers.user_mappers import map_create_user_dto_to_entity
-from infrastructure.schemas.user_schema import UserResponseDTO
 from infrastructure.schemas.auth_schema import (
     RegisterDTO, 
     UserResponseDTO, 
@@ -37,7 +35,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
     try:
         use_case = RegisterUserUseCase(repository, password_hasher, email_sender)
         user = use_case.execute(
-            map_create_user_dto_to_entity(user_data)
+            map_register_user_dto_to_entity(user_data)
         )
         return ApiResponse(
             ok=True,
