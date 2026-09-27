@@ -6,3 +6,7 @@ export interface AuthContextType {
   login: (token: string, userData: User) => void;
   logout: () => void;
 }
+
+export interface LayoutContextType {
+  setPageTitle: (title: string) => void;
+}
