@@ -13,7 +13,6 @@ class UserProjectLinkModel(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(String, unique=True, primary_key=True, index=True)
     role: Mapped[RoleEnum] = mapped_column(String, nullable=False)
-    joined_at: Mapped[datetime] = mapped_column(Date, nullable=False, default=datetime.utcnow)
 
     user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"), nullable=False) 
     project_id: Mapped[str] = mapped_column(String, ForeignKey("projects.id"), nullable=False)
