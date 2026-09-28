@@ -18,7 +18,7 @@ from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyEx
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
 from domain.utils.constants import Constants
-from infrastructure.api.dependencies import get_current_user, get_email_sender, get_password_hasher, get_token_generator, get_user_repository
+from infrastructure.api.dependencies import CurrentUser, EmailSenderDep, PasswordHasherDep, TokenGeneratorDep, UserRepositoryDep, get_current_user, get_email_sender, get_password_hasher, get_token_generator, get_user_repository
 from infrastructure.schemas.auth_schema import (
     RegisterDTO, 
     UserResponseDTO, 
@@ -31,7 +31,7 @@ from infrastructure.schemas.auth_schema import (
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=ApiResponse[UserResponseDTO])
-async def register(user_data: RegisterDTO, repository: UserRepository = Depends(get_user_repository), password_hasher: PasswordHasher = Depends(get_password_hasher), email_sender: EmailSender = Depends(get_email_sender)) -> UserResponseDTO:
+async def register(user_data: RegisterDTO, repository: UserRepositoryDep, password_hasher: PasswordHasherDep, email_sender: EmailSenderDep) -> UserResponseDTO:
     try:
         use_case = RegisterUserUseCase(repository, password_hasher, email_sender)
         user = use_case.execute(
@@ -56,7 +56,7 @@ async def register(user_data: RegisterDTO, repository: UserRepository = Depends(
 @router.get("/verify-email/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def verify_email(
     token: str,
-    repository: UserRepository = Depends(get_user_repository)
+    repository: UserRepositoryDep
 ):
     try:
         use_case = VerifyEmailUseCase(repository)
@@ -79,9 +79,9 @@ def verify_email(
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=ApiResponse[LoginResponseDTO])
 def login(
     login_dto: LoginRequestDTO, 
-    repository: UserRepository = Depends(get_user_repository),
-    token_generator: TokenGenerator = Depends(get_token_generator),
-    password_hasher: PasswordHasher = Depends(get_password_hasher)
+    repository: UserRepositoryDep,
+    token_generator: TokenGeneratorDep,
+    password_hasher: PasswordHasherDep
 ):
     try:
         use_case = LoginUseCase(repository=repository, password_hasher=password_hasher, token_generator=token_generator)
@@ -112,8 +112,8 @@ def login(
 @router.post("/forgot-password", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def forgot_password(
     forgot_password_dto: ForgotPasswordDTO, 
-    repository= Depends(get_user_repository),
-    email_sender = Depends(get_email_sender)
+    repository: UserRepositoryDep,
+    email_sender: EmailSenderDep
 ):
     use_case = RequestPasswordResetUseCase(repository=repository, email_sender=email_sender)
     use_case.execute(email=forgot_password_dto.email)
@@ -127,8 +127,8 @@ def forgot_password(
 def reset_password(
     token: str,
     reset_password_dto: ResetPasswordDTO, 
-    repository: UserRepository = Depends(get_user_repository),
-    password_hasher: EmailSender = Depends(get_password_hasher)
+    repository: UserRepositoryDep,
+    password_hasher: PasswordHasherDep
 ):
     try:
         use_case = ResetPasswordUseCase(repository=repository, password_hasher=password_hasher)
@@ -157,7 +157,7 @@ def reset_password(
 @router.get("/reset-password/{token}", status_code=status.HTTP_200_OK, response_model=ApiResponse[None])
 def reset_password(
     token: str,
-    repository: UserRepository = Depends(get_user_repository),
+    repository: UserRepositoryDep,
 ):
     try:
         use_case = VerifyTokenUseCase(repository=repository)
@@ -179,7 +179,7 @@ def reset_password(
         )
 
 @router.get("/me", response_model=ApiResponse[UserResponseDTO])
-def read_users_me(current_user: UserResponseDTO = Depends(get_current_user)):
+def read_users_me(current_user: CurrentUser):
     try:
         return ApiResponse(
             ok=True,
