@@ -2,7 +2,7 @@ from datetime import datetime
 import uuid
 
 from infrastructure.db.models.base_model import Base
-from domain.entities.enums import PriorityLevelEnum
+from domain.entities.enums import TaskPriorityEnum
 from sqlalchemy import Date, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,7 +12,7 @@ class TaskModel(Base):
     id: Mapped[uuid.UUID] = mapped_column(String, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String, nullable=False, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    priority: Mapped[PriorityLevelEnum] = mapped_column(String, nullable=False, default=PriorityLevelEnum.low)
+    priority: Mapped[TaskPriorityEnum] = mapped_column(String, nullable=False)
     due_date: Mapped[datetime] = mapped_column(Date, nullable=False)
 
     column_id: Mapped[str] = mapped_column(String, ForeignKey("columns.id"), nullable=False)

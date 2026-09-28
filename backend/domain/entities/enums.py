@@ -1,6 +1,6 @@
 from enum import Enum
 
-class PriorityLevelEnum(str, Enum):
+class TaskPriorityEnum(str, Enum):
     low = 'Baja'
     medium = 'Normal'
     high = 'Alta'
@@ -13,4 +13,10 @@ class RoleEnum(str, Enum):
 class ColumnDefaultEnum(str, Enum):
     to_do = "Por hacer"
     in_progress = "En progreso"
+    completed = "Completado"
+
+class ProjectStatusEnum(str, Enum):
+    uninitiated = 'No iniciado'
+    active = "Activo"
+    risk = "En riesgo"
     completed = "Completado"

@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 from application.interfaces.email_sender import EmailSender
+from domain.repositories.task_repository import TaskRepository
+from infrastructure.repositories.task_repository_impl import TaskRepositoryImpl
 from domain.entities.user import User
 from infrastructure.repositories.user_project_link_repository_impl import UserProjectLinkRepositoryImpl
 from domain.repositories.column_repository import ColumnRepository
@@ -38,6 +40,9 @@ def get_column_repository(db: Session = Depends(get_db)) -> ColumnRepository:
 
 def get_user_project_link_repository(db: Session = Depends(get_db)) -> UserProjectLinkRepository:
     return UserProjectLinkRepositoryImpl(db)
+
+def get_task_repository(db: Session = Depends(get_db)) -> TaskRepository:
+    return TaskRepositoryImpl(db)
 
 def get_password_hasher() -> PasswordHasher:
     return PasswordHasherImpl()
@@ -85,5 +90,6 @@ UserRepositoryDep = Annotated[UserRepository, Depends(get_user_repository)]
 ProjectRepositoryDep = Annotated[ProjectRepository, Depends(get_project_repository)]
 ColumnRepositoryDep = Annotated[ColumnRepository, Depends(get_column_repository)]
 UserProjectLinkRepositoryDep = Annotated[UserProjectLinkRepository, Depends(get_user_project_link_repository)]
+TaskRepositoryDep = Annotated[TaskRepository, Depends(get_task_repository)]
 
     

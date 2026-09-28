@@ -18,3 +18,5 @@ class Constants:
 
     PROJECT_NOT_CREATED = "Ops! No se pudo crear tu proyecto."
 
+    TASK_NOT_CREATED = "Ops! No se pudo crear tu tarea."
+
