@@ -1,4 +1,3 @@
-from infrastructure.mappers.auth_mappers import map_user_to_dto
 from domain.entities.user import User
 from domain.utils.constants import Constants
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
@@ -39,5 +38,5 @@ class LoginUseCase:
 
         return [
             token, 
-            map_user_to_dto(user)
+            user
         ]
