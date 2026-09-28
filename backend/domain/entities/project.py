@@ -1,11 +1,13 @@
-from dataclasses import dataclasses
+from dataclasses import dataclass, field
 from datetime import datetime
+import uuid
 
-@dataclasses
+@dataclass
 class Project:
-    id: str
     title: str
     description: str
     client: str
     delivery_date: datetime
     created_at: datetime
+
+    id: uuid.UUID = field(default_factory=uuid.uuid4)

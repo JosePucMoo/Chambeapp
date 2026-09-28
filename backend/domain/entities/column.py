@@ -1,8 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import uuid
 
 @dataclass
 class Column:
-    id: str
     title: str
     position: int
     project_id: str
+
+    id: uuid.UUID = field(default_factory=uuid.uuid4)

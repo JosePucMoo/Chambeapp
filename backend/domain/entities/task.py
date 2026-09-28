@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+import uuid
 
 @dataclass
 class Taks:
@@ -10,3 +11,5 @@ class Taks:
     column_id: str
     assignee_id: str
     created_at: datetime
+
+    id: uuid.UUID = field(default_factory=uuid.uuid4)
