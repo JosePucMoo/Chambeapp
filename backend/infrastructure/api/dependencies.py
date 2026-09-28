@@ -1,15 +1,14 @@
 import os
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 from application.interfaces.email_sender import EmailSender
 from infrastructure.schemas.auth_schema import UserResponseDTO
-from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.utils.constants import Constants
 from infrastructure.security.jwt_token_generator import JwtTokenGenerator
 from infrastructure.security.password_hasher_impl import PasswordHasherImpl
@@ -18,9 +17,9 @@ from domain.repositories.user_repository import UserRepository
 from infrastructure.repositories.user_repository_impl import UserRepositoryImpl
 from infrastructure.db.database import get_db
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+security_scheme = HTTPBearer(auto_error=False)
 
-Token = Annotated[str, Depends(oauth2_scheme)]
+Token = Annotated[Optional[HTTPAuthorizationCredentials], Depends(security_scheme)]
 
 def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     return UserRepositoryImpl(db)
@@ -47,7 +46,7 @@ def get_current_user(token: Token, token_generator: TokenGenerator = Depends(get
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = token_generator.decode_token(token)
+        payload = token_generator.decode_token(token.credentials)
         user_id: str = payload.get("id")
     except:
         raise credentials_exception
