@@ -9,3 +9,8 @@ class PriorityLevelEnum(str, Enum):
 class RoleEnum(str, Enum):
     owner = "Propietario"
     guest = "Invitado"
+
+class ColumnDefaultEnum(str, Enum):
+    to_do = "Por hacer"
+    in_progress = "En progreso"
+    completed = "Completado"

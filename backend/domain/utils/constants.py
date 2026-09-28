@@ -16,3 +16,5 @@ class Constants:
 
     UNEXPECTED_ERROR = "An unexpected error occurred: "
 
+    PROJECT_NOT_CREATED = "Ops! No se pudo crear tu proyecto."
+
