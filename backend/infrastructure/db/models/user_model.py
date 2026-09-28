@@ -16,5 +16,5 @@ class UserModel(Base):
     token: Mapped[str] = mapped_column(String(100), nullable=True)
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    user_board_links: Mapped[List['UserBoardLinkModel']] = relationship(back_populates='user')
+    user_project_links: Mapped[List['UserProjectLinkModel']] = relationship(back_populates='user')
     tasks: Mapped[List["TaskModel"]] = relationship(back_populates="assignee")

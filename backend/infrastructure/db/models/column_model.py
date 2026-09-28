@@ -13,8 +13,8 @@ class ColumnModel(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     position: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    board_id: Mapped[str] = mapped_column(String, ForeignKey("boards.id"), nullable=False)
+    project_id: Mapped[str] = mapped_column(String, ForeignKey("projects.id"), nullable=False)
 
-    board: Mapped["BoardModel"] = relationship(back_populates="columns")
+    project: Mapped["ProjectModel"] = relationship(back_populates="columns")
     tasks: Mapped["TaskModel"] = relationship(back_populates="column")
     

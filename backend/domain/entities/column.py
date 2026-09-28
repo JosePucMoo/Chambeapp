@@ -5,4 +5,4 @@ class Column:
     id: str
     title: str
     position: int
-    board_id: str
+    project_id: str

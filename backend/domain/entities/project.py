@@ -1,7 +1,8 @@
 from dataclasses import dataclasses
 from datetime import datetime
 
-class Board:
+@dataclasses
+class Project:
     id: str
     title: str
     description: str
