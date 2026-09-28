@@ -2,12 +2,18 @@ import os
 from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 from application.interfaces.email_sender import EmailSender
+from infrastructure.repositories.user_project_link_repository_impl import UserProjectLinkRepositoryImpl
+from domain.repositories.column_repository import ColumnRepository
+from domain.repositories.user_project_link_repository import UserProjectLinkRepository
+from infrastructure.repositories.column_repository_impl import ColumnRepositoryImpl
+from domain.repositories.project_repository import ProjectRepository
+from infrastructure.repositories.project_repository_impl import ProjectRepositoryImpl
 from infrastructure.schemas.auth_schema import UserResponseDTO
 from domain.utils.constants import Constants
 from infrastructure.security.jwt_token_generator import JwtTokenGenerator
@@ -23,6 +29,15 @@ Token = Annotated[Optional[HTTPAuthorizationCredentials], Depends(security_schem
 
 def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     return UserRepositoryImpl(db)
+
+def get_project_repository(db: Session = Depends(get_db)) -> ProjectRepository:
+    return ProjectRepositoryImpl(db)
+
+def get_column_repository(db: Session = Depends(get_db)) -> ColumnRepository:
+    return ColumnRepositoryImpl(db)
+
+def get_user_project_link_repository(db: Session = Depends(get_db)) -> UserProjectLinkRepository:
+    return UserProjectLinkRepositoryImpl(db)
 
 def get_password_hasher() -> PasswordHasher:
     return PasswordHasherImpl()
