@@ -1,0 +1,20 @@
+import type { ApiResponse } from "@/interfaces/Api";
+import apiClient from "./api";
+import type { PaginatedResponse } from "@/interfaces/Paginated";
+import type { ProjectDashboardSummary } from "@/interfaces/Project";
+
+export const projectService = {
+  get_dashboard_projects: async (
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<ApiResponse<PaginatedResponse<ProjectDashboardSummary>>> => {
+    const response = await apiClient.get("/projects/", {
+      params: {
+        page: page,
+        page_size: pageSize,
+      },
+    });
+
+    return response.data;
+  },
+};
