@@ -59,7 +59,7 @@ def get_paginated_summary_projects(
         ge=1
     )] = 1,
     page_size: Annotated[int, Query(
-        ge=10,
+        ge=5,
         le=50
     )] = 10,
 ):

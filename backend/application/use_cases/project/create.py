@@ -22,19 +22,19 @@ class CreateProjectUseCase:
             raise CannotCreateException(Constants.PROJECT_NOT_CREATED)
 
         column_to_do = Column(
-            title=ColumnDefaultEnum.to_do,
+            title=ColumnDefaultEnum.TO_DO,
             position=1,
             project_id=project.id
         )
 
         column_in_progress = Column(
-            title=ColumnDefaultEnum.in_progress,
+            title=ColumnDefaultEnum.IN_PROGRESS,
             position=2,
             project_id=project.id
         )
 
         column_completed = Column(
-            title=ColumnDefaultEnum.completed,
+            title=ColumnDefaultEnum.COMPLETED,
             position=3,
             project_id=project.id
         )
@@ -48,7 +48,7 @@ class CreateProjectUseCase:
         self.column_repository.create_default_columns(default_columns)
 
         user_project_link = UserProjectLink(
-            role=RoleEnum.owner,
+            role=RoleEnum.OWNER,
             user_id=user_id,
             project_id=project.id,
         )
