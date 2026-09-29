@@ -2,18 +2,32 @@
 
 from datetime import datetime
 
+from pydantic import ConfigDict
+
 from infrastructure.schemas.base_schema import BaseSchema
 
-class CreateProjectDTO(BaseSchema):
+class BaseProjectDTO(BaseSchema):
     title: str
     description: str
     client: str
     delivery_date: datetime
 
-class ProjectResponseDTO(BaseSchema):
+class CreateProjectDTO(BaseProjectDTO):
+
+    model_config = ConfigDict(from_attributes=True)
+
+class ProjectResponseDTO(BaseProjectDTO):
+    id: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class ProjectDashboardSummaryDTO(BaseSchema):
     id: str
     title: str
-    description: str
     client: str
+    role: str
     delivery_date: datetime
+    status: str
+    progress_percentage: float
+
  
