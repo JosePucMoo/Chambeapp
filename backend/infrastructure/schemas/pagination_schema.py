@@ -9,10 +9,16 @@ class PaginatedResponseDTO(BaseSchema, Generic[T]):
     data: List[T]
     total_count: int
     page: int
-    size: int
+    page_size: int
     pages: int
 
     @classmethod
-    def create(cls, data: List[T], total_count: int, page: int, size: int):
-        pages = math.ceil(total_count / size) if total_count > 0 else 0
-        return cls(data=data, total_count=total_count, page=page, size=size, pages=pages)
+    def create(cls, data: List[T], total_count: int, page: int, page_size: int):
+        pages = math.ceil(total_count / page_size) if total_count > 0 else 0
+        return cls(
+            data=data, 
+            total_count=total_count, 
+            page=page, 
+            page_size=page_size, 
+            pages=pages
+        )
