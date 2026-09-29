@@ -1,22 +1,22 @@
 from enum import Enum
 
 class TaskPriorityEnum(str, Enum):
-    low = 'Baja'
-    medium = 'Normal'
-    high = 'Alta'
-    urgent = 'Urgente'
+    LOW = 'Baja'
+    MEDIUM = 'Normal'
+    HIGH = 'Alta'
+    URGENT = 'Urgente'
 
 class RoleEnum(str, Enum):
-    owner = "Propietario"
-    guest = "Invitado"
+    OWNER = "Propietario"
+    GUEST = "Invitado"
 
 class ColumnDefaultEnum(str, Enum):
-    to_do = "Por hacer"
-    in_progress = "En progreso"
-    completed = "Completado"
+    TO_DO = "Por hacer"
+    IN_PROGRESS = "En progreso"
+    COMPLETED = "Completado"
 
 class ProjectStatusEnum(str, Enum):
-    uninitiated = 'No iniciado'
-    active = "Activo"
-    risk = "En riesgo"
-    completed = "Completado"
+    NOT_STARTED = 'No iniciado'
+    ACTIVE = "Activo"
+    DELAYED = "Retrasado"
+    COMPLETED = "Completado"
