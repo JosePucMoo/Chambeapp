@@ -38,10 +38,8 @@ function ProjectsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  const { projects, isLoading, totalCount, totalPages } = useProjects(
-    currentPage,
-    itemsPerPage,
-  );
+  const { projects, isLoading, totalCount, totalPages, loadProjects } =
+    useProjects(currentPage, itemsPerPage);
 
   useEffect(() => {
     setPageTitle("Proyectos");
@@ -103,7 +101,7 @@ function ProjectsList() {
             <Filter className="w-4 h-4 mr-2 text-gray-500" />
             Filtrar
           </Button>
-          <CreateProjectDialog />
+          <CreateProjectDialog loadProyects={loadProjects} />
         </div>
       </div>
 

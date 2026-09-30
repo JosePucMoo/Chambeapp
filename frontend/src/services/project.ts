@@ -1,7 +1,11 @@
 import type { ApiResponse } from "@/interfaces/Api";
 import apiClient from "./api";
 import type { PaginatedResponse } from "@/interfaces/Paginated";
-import type { ProjectDashboardSummary } from "@/interfaces/Project";
+import type {
+  CreateProject,
+  Project,
+  ProjectDashboardSummary,
+} from "@/interfaces/Project";
 
 export const projectService = {
   get_dashboard_projects: async (
@@ -15,6 +19,11 @@ export const projectService = {
       },
     });
 
+    return response.data;
+  },
+
+  create: async (project: CreateProject): Promise<ApiResponse<Project>> => {
+    const response = await apiClient.post("/projects/", project);
     return response.data;
   },
 };
