@@ -14,7 +14,7 @@ const MainLayout = () => {
       <div className="flex flex-1 flex-col min-w-0 min-h-screen bg-gray-50/50">
         <AppNavbar title={pageTitle} />
 
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-white">
           <Outlet context={{ setPageTitle } satisfies LayoutContextType} />
         </main>
       </div>

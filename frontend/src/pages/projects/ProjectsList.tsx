@@ -79,7 +79,7 @@ function ProjectsList() {
   const startIndex = (currentPage - 1) * itemsPerPage;
 
   return (
-    <div className="flex flex-col space-y-6 w-full mx-auto">
+    <div className="flex flex-col space-y-6 w-full mx-auto p-6 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
