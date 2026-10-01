@@ -1,3 +1,4 @@
+from typing import List
 import uuid
 
 from sqlalchemy import ForeignKey, Integer, String
@@ -16,5 +17,5 @@ class ColumnModel(Base):
     project_id: Mapped[str] = mapped_column(String, ForeignKey("projects.id"), nullable=False)
 
     project: Mapped["ProjectModel"] = relationship(back_populates="columns")
-    tasks: Mapped["TaskModel"] = relationship(back_populates="column")
+    tasks: Mapped[List["TaskModel"]] = relationship(back_populates="column")
     

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.entities.project import Project, ProjectDashboardSummary, ProjectMember
+from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
 
 
 class ProjectRepository(ABC):
@@ -20,4 +20,8 @@ class ProjectRepository(ABC):
 
     @abstractmethod
     def get_by_id(self, project_id: str) -> Project:
+        pass
+
+    @abstractmethod
+    def get_project_board(self, project_id: str) -> ProjectBoard:
         pass

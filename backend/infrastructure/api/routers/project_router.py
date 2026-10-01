@@ -10,7 +10,7 @@ from domain.utils.constants import Constants
 from application.use_cases.project.create import CreateProjectUseCase
 from infrastructure.api.dependencies import ColumnRepositoryDep, CurrentUser, ProjectRepositoryDep, UserProjectLinkRepositoryDep, get_current_user
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.project_schema import CreateProjectDTO, ProjectMemberResponseDTO, ProjectResponseDTO, ProjectDashboardSummaryDTO
+from infrastructure.schemas.project_schema import CreateProjectDTO, ProjectBoardDTO, ProjectMemberResponseDTO, ProjectResponseDTO, ProjectDashboardSummaryDTO
 from infrastructure.mappers.project_mappers import map_create_project_dto_to_entity
 
 
@@ -99,6 +99,31 @@ def get_project_members(
         return ApiResponse(
             ok=True,
             message="Lista de miembros del proyecto",
+            data=data
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.get("/{project_id}/board", status_code=status.HTTP_200_OK, response_model=ApiResponse[ProjectBoardDTO])
+def get_project_members(
+    project_id: str,
+    repositoy: ProjectRepositoryDep
+):
+    try:
+        use_case = GetProjectUseCase(repository=repositoy)
+        project_board = use_case.execute_get_project_board(project_id)
+        data = ProjectBoardDTO.from_entity(project_board)
+        return ApiResponse(
+            ok=True,
+            message="Tablero del proyecto con columnas y tareas",
             data=data
         )
     except NotFoundException as e:

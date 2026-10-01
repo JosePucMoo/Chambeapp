@@ -19,4 +19,4 @@ class ProjectModel(Base):
     created_at: Mapped[datetime] = mapped_column(Date, default=datetime.utcnow)
 
     user_project_links: Mapped[List["UserProjectLinkModel"]] = relationship(back_populates="project")
-    columns: Mapped["ColumnModel"] = relationship(back_populates="project")
+    columns: Mapped[List["ColumnModel"]] = relationship(back_populates="project")

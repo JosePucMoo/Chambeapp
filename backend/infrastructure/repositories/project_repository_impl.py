@@ -2,15 +2,18 @@
 from typing import List
 
 from sqlalchemy import and_, case, func, select
+from sqlalchemy.orm import joinedload
 
+from domain.entities.column import ColumnBoard
+from domain.entities.task import TaskBoard
 from infrastructure.db.models.user_model import UserModel
-from domain.entities.enums import RoleEnum
+from domain.entities.enums import RoleEnum, TaskPriorityEnum
 from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
 from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.project_mappers import map_project_entity_to_model, map_project_model_to_entity
-from domain.entities.project import Project, ProjectDashboardSummary, ProjectMember
+from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
 from domain.repositories.project_repository import ProjectRepository
 from sqlalchemy.orm import Session
 
@@ -143,3 +146,46 @@ class ProjectRepositoryImpl(ProjectRepository):
             )
             for row in results
         ]
+
+    def get_project_board(self, project_id: str) -> ProjectBoard:
+        project_db = (
+            self.db.query(ProjectModel)
+            .filter(ProjectModel.id == project_id)
+            .options(
+                joinedload(ProjectModel.columns)
+                .joinedload(ColumnModel.tasks)
+                .joinedload(TaskModel.assignee)
+            )
+            .first()
+        )
+
+        sorted_columns = sorted(project_db.columns, key=lambda c: c.position)
+
+        board_columns = []
+        for col in sorted_columns:
+            column_tasks = [
+                TaskBoard(
+                    id=str(task.id),
+                    title=task.title,
+                    description=task.description,
+                    priority=TaskPriorityEnum(task.priority),
+                    due_date=task.due_date,
+                    assignee_id=str(task.assignee_id),
+                    assignee_name=task.assignee.name if task.assignee else None
+                ) for task in col.tasks
+            ]
+            
+            board_columns.append(
+                ColumnBoard(
+                    id=str(col.id),
+                    title=col.title,
+                    position=col.position,
+                    tasks=column_tasks
+                )
+            )
+
+        return ProjectBoard(
+            project_id=str(project_db.id),
+            project_title=project_db.title,
+            columns=board_columns
+        )

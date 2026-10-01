@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import ConfigDict
 
@@ -22,3 +22,12 @@ class TaskResponseDTO(BaseTaskDTO):
 class CreateTaskDTO(BaseTaskDTO):
 
     model_config= ConfigDict(from_attributes=True)
+
+class TaskBoardDTO(BaseSchema):
+    id: str
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    due_date: date
+    assignee_id: str
+    assignee_name: str

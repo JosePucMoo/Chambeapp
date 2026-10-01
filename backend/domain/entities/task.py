@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional
+from datetime import date, datetime
 import uuid
+
+from domain.entities.enums import TaskPriorityEnum
 
 @dataclass
 class Task:
@@ -13,3 +14,13 @@ class Task:
     assignee_id: str
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
+
+@dataclass
+class TaskBoard:
+    id: str
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    due_date: date
+    assignee_id: str
+    assignee_name: str | None = None

@@ -1,10 +1,13 @@
 
 
 from datetime import datetime
+from typing import List
 
 from pydantic import ConfigDict
 
-from domain.entities.enums import RoleEnum
+from infrastructure.schemas.column_schema import ColumnBoardDTO
+from infrastructure.schemas.task_schema import TaskBoardDTO
+from domain.entities.project import ProjectBoard
 from infrastructure.schemas.base_schema import BaseSchema
 
 class BaseProjectDTO(BaseSchema):
@@ -35,3 +38,32 @@ class ProjectMemberResponseDTO(BaseSchema):
     id: str
     name: str
     email: str
+
+class ProjectBoardDTO(BaseSchema):
+    project_id: str
+    columns: List[ColumnBoardDTO]
+
+    @classmethod
+    def from_entity(cls, entity: "ProjectBoard") -> "ProjectBoardDTO":
+        return cls(
+            project_id=entity.project_id,
+            project_title=entity.project_title,
+            columns=[
+                ColumnBoardDTO(
+                    id=col.id,
+                    title=col.title,
+                    position=col.position,
+                    tasks=[
+                        TaskBoardDTO(
+                            id=task.id,
+                            title=task.title,
+                            description=task.description,
+                            priority=task.priority,
+                            due_date=task.due_date,
+                            assignee_id=task.assignee_id,
+                            assignee_name=task.assignee_name
+                        ) for task in col.tasks
+                    ]
+                ) for col in entity.columns
+            ]
+        )

@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime
 import math
+from typing import List
 import uuid
+
+from sqlalchemy import Column
 
 from domain.entities.enums import ProjectStatusEnum, RoleEnum
 
@@ -59,3 +62,9 @@ class ProjectMember:
     id: str
     name: str
     email: str
+
+@dataclass
+class ProjectBoard:
+    project_id: str
+    project_title: str
+    columns: List[Column]
