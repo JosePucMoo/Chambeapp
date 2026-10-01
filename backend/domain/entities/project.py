@@ -53,3 +53,9 @@ class ProjectDashboardSummary:
             
         else:
             self.status = ProjectStatusEnum.ACTIVE
+
+@dataclass
+class ProjectMember:
+    id: str
+    name: str
+    email: str

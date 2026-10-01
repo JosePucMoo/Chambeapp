@@ -4,6 +4,7 @@ from datetime import datetime
 
 from pydantic import ConfigDict
 
+from domain.entities.enums import RoleEnum
 from infrastructure.schemas.base_schema import BaseSchema
 
 class BaseProjectDTO(BaseSchema):
@@ -30,4 +31,7 @@ class ProjectDashboardSummaryDTO(BaseSchema):
     status: str
     progress_percentage: float
 
- 
+class ProjectMemberResponseDTO(BaseSchema):
+    id: str
+    name: str
+    email: str

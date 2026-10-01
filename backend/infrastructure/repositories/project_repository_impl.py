@@ -1,15 +1,16 @@
 
 from typing import List
 
-from sqlalchemy import and_, case, func
+from sqlalchemy import and_, case, func, select
 
+from infrastructure.db.models.user_model import UserModel
 from domain.entities.enums import RoleEnum
 from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
 from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.project_mappers import map_project_entity_to_model, map_project_model_to_entity
-from domain.entities.project import Project, ProjectDashboardSummary
+from domain.entities.project import Project, ProjectDashboardSummary, ProjectMember
 from domain.repositories.project_repository import ProjectRepository
 from sqlalchemy.orm import Session
 
@@ -114,3 +115,31 @@ class ProjectRepositoryImpl(ProjectRepository):
             ]
     
             return total_items, projects
+
+    def get_by_id(self, project_id: str) -> Project:
+        query = select(ProjectModel).where(ProjectModel.id == project_id)
+
+        project = self.db.scalar(query)
+
+        return map_project_model_to_entity(project) if project else None
+
+    def get_project_members(self, project_id: str) -> List[ProjectMember]:
+        results = (
+            self.db.query(
+                UserModel.id,
+                UserModel.name,
+                UserModel.email,
+            )
+            .join(UserProjectLinkModel, UserModel.id == UserProjectLinkModel.user_id)
+            .filter(UserProjectLinkModel.project_id == project_id)
+            .all()
+        )
+
+        return [
+            ProjectMember(
+                 id=row.id,
+                 name=row.name,
+                 email=row.email
+            )
+            for row in results
+        ]

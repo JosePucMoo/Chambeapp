@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.entities.project import Project, ProjectDashboardSummary
+from domain.entities.project import Project, ProjectDashboardSummary, ProjectMember
 
 
 class ProjectRepository(ABC):
@@ -12,4 +12,12 @@ class ProjectRepository(ABC):
 
     @abstractmethod
     def get_paginated_dashboard_projects(self, user_id: str, page: int, page_size: int) -> tuple[int, List[ProjectDashboardSummary]]:
+        pass
+
+    @abstractmethod
+    def get_project_members(self, project_id: str) -> List[ProjectMember]:
+        pass
+
+    @abstractmethod
+    def get_by_id(self, project_id: str) -> Project:
         pass
