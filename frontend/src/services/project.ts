@@ -5,6 +5,7 @@ import type {
   CreateProject,
   Project,
   ProjectDashboardSummary,
+  ProjectMember,
 } from "@/interfaces/Project";
 
 export const projectService = {
@@ -24,6 +25,13 @@ export const projectService = {
 
   create: async (project: CreateProject): Promise<ApiResponse<Project>> => {
     const response = await apiClient.post("/projects/", project);
+    return response.data;
+  },
+
+  get_project_members: async (
+    projectId: string,
+  ): Promise<ApiResponse<ProjectMember[]>> => {
+    const response = await apiClient.get(`/projects/${projectId}/members`);
     return response.data;
   },
 };
