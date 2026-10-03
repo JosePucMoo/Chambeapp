@@ -3,20 +3,33 @@ import { Filter, UserPlus } from "lucide-react";
 import { Board } from "./components/Board";
 import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { projectService } from "@/services/project";
+import type { Project } from "@/interfaces/Project";
 
 const ProjectBoard = () => {
+  const [project, setProject] = useState<Project>();
   const params = useParams();
   const projectId = params.projectId || "";
+
+  useEffect(() => {
+    const loadProyect = async () => {
+      const response = await projectService.get_project_by_id(projectId);
+      setProject(response.data);
+    };
+
+    loadProyect();
+  }, []);
 
   return (
     <div className="flex flex-col h-full shadow-sm overflow-hidden gap-10 w-full mx-auto p-10">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-0">
         <div className="flex items-center gap-3">
           <div>
-            <h1 className="text-4xl font-bold text-gray-700">InterActive</h1>
-            <p className="text-sm text-gray-500">
-              La descripcion de mi proyecto
-            </p>
+            <h1 className="text-4xl font-bold text-gray-700">
+              {project?.title}
+            </h1>
+            <p className="text-sm text-gray-500">{project?.description}</p>
           </div>
         </div>
 

@@ -34,4 +34,11 @@ export const projectService = {
     const response = await apiClient.get(`/projects/${projectId}/members`);
     return response.data;
   },
+
+  get_project_by_id: async (
+    projectId: string,
+  ): Promise<ApiResponse<Project>> => {
+    const response = await apiClient.get(`/projects/${projectId}`);
+    return response.data;
+  },
 };
