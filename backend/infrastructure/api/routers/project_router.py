@@ -136,3 +136,28 @@ def get_project_board(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=Constants.UNEXPECTED_ERROR + str(e)
         )
+
+@router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=ApiResponse[ProjectResponseDTO])
+def get_project(
+    project_id: str,
+    repositoy: ProjectRepositoryDep
+):
+    try:
+        use_case = GetProjectUseCase(repository=repositoy)
+        project = use_case.execute(project_id)
+        data = ProjectResponseDTO.model_validate(project)
+        return ApiResponse(
+            ok=True,
+            message=f'Proyecto: {data.title}',
+            data=data
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )

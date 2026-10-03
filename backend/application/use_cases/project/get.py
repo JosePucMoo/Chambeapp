@@ -2,7 +2,7 @@ from typing import List
 
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.utils.constants import Constants
-from domain.entities.project import ProjectBoard, ProjectDashboardSummary, ProjectMember
+from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
 from domain.repositories.project_repository import ProjectRepository
 
 
@@ -32,3 +32,11 @@ class GetProjectUseCase:
             raise NotFoundException(Constants.PROJECT_NOT_FOUND)
 
         return self.repository.get_project_board(project_id)
+
+    def execute(self, project_id: str) -> Project:
+        project = self.repository.get_by_id(project_id)
+        
+        if not project:
+            raise NotFoundException(Constants.PROJECT_NOT_FOUND)
+
+        return project
