@@ -2,8 +2,10 @@
 from typing import List
 
 from psycopg import Column
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from infrastructure.db.models.column_model import ColumnModel
 from domain.repositories.column_repository import ColumnRepository
 from infrastructure.mappers.column_mappers import map_column_entity_to_model, map_column_model_to_entity
 
@@ -22,3 +24,16 @@ class ColumnRepositoryImpl(ColumnRepository):
             self.db.refresh(model)
 
         return [map_column_model_to_entity(model) for model in columns_model]
+
+    def get_the_first_column_by_project(self, project_id: str) -> Column:
+        query = select(
+                ColumnModel
+            ).filter(
+                ColumnModel.project_id == project_id
+            ).order_by(
+                ColumnModel.position.asc()
+            )
+
+        column_model = self.db.scalar(query)
+
+        return map_column_model_to_entity(column_model) if column_model else None

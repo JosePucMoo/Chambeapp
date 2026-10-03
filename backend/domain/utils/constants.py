@@ -21,3 +21,6 @@ class Constants:
 
     TASK_NOT_CREATED = "Ops! No se pudo crear tu tarea."
 
+    ANY_COLUMN_FOUND = "No hemos podido encontrar alguna columna."
+
+

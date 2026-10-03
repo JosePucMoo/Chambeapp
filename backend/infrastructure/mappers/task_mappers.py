@@ -31,6 +31,5 @@ def map_task_dto_to_entity(task: CreateTaskDTO) -> Task:
         description=task.description,
         priority=task.priority,
         due_date=task.due_date,
-        column_id=task.column_id,
         assignee_id=task.assignee_id
     )

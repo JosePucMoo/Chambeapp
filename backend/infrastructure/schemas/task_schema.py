@@ -19,7 +19,12 @@ class TaskResponseDTO(BaseTaskDTO):
     
     model_config= ConfigDict(from_attributes=True)
 
-class CreateTaskDTO(BaseTaskDTO):
+class CreateTaskDTO(BaseSchema):
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    due_date: datetime
+    assignee_id: str
 
     model_config= ConfigDict(from_attributes=True)
 

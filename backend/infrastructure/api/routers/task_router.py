@@ -1,32 +1,42 @@
 
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from application.use_cases.task.create import CreateTaskUseCase
+from domain.exceptions.not_found_exception import NotFoundException
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.utils.constants import Constants
 from infrastructure.mappers.task_mappers import map_task_dto_to_entity
-from infrastructure.api.dependencies import TaskRepositoryDep
+from infrastructure.api.dependencies import ColumnRepositoryDep, ProjectRepositoryDep, TaskRepositoryDep, get_current_user
 from infrastructure.schemas.api_schema import ApiResponse
 from infrastructure.schemas.task_schema import TaskResponseDTO, CreateTaskDTO
 
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"])
+router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(get_current_user)])
 
-@router.post(path="/", status_code=status.HTTP_201_CREATED, response_model=ApiResponse[TaskResponseDTO])
+@router.post(path="/{project_id}", status_code=status.HTTP_201_CREATED, response_model=ApiResponse[TaskResponseDTO])
 def create_task(
+    project_id: str,
     task_data: CreateTaskDTO,
-    repository: TaskRepositoryDep
+    repository: TaskRepositoryDep,
+    project_repository: ProjectRepositoryDep,
+    column_repository: ColumnRepositoryDep
 ):
     try:
-        use_case = CreateTaskUseCase(repository=repository)
+        use_case = CreateTaskUseCase(repository=repository, project_repository=project_repository, column_repository=column_repository)
         task = use_case.execute(
+            project_id,
             map_task_dto_to_entity(task_data)
         )
         return ApiResponse(
             ok=True, 
             message="Tarea creado con éxito",
             data=TaskResponseDTO.model_validate(task)
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+           status_code=status.HTTP_404_NOT_FOUND,
+           detail=str(e)
         )
     except CannotCreateException as e:
         raise HTTPException(

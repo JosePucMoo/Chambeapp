@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from sqlalchemy import Column
+
 from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
 
 
