@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Filter, UserPlus } from "lucide-react";
 import { Board } from "./components/Board";
+import { CreateTaskDialog } from "./components/CreateTaskDialog";
+import { useParams } from "react-router-dom";
 
 const ProjectBoard = () => {
+  const params = useParams();
+  const projectId = params.projectId || "";
+
   return (
     <div className="flex flex-col h-full shadow-sm overflow-hidden gap-10 w-full mx-auto p-10">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-0">
@@ -30,7 +35,7 @@ const ProjectBoard = () => {
             <Filter className="w-4 h-4 text-gray-500" />
             Filtrar
           </Button>
-          {/* <CreateProjectDialog loadProyects={loadProjects} /> */}
+          <CreateTaskDialog loadTasks={() => {}} projectId={projectId} />
         </div>
       </div>
 
