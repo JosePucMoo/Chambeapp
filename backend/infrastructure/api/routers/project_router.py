@@ -113,7 +113,7 @@ def get_project_members(
         )
 
 @router.get("/{project_id}/board", status_code=status.HTTP_200_OK, response_model=ApiResponse[ProjectBoardDTO])
-def get_project_members(
+def get_project_board(
     project_id: str,
     repositoy: ProjectRepositoryDep
 ):
