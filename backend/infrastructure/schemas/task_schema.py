@@ -36,3 +36,6 @@ class TaskBoardDTO(BaseSchema):
     due_date: date
     assignee_id: str
     assignee_name: str
+
+class TaskMoveDTO(BaseSchema):
+    column_id: str

@@ -14,3 +14,7 @@ class ColumnRepository(ABC):
     @abstractmethod
     def get_the_first_column_by_project(self, project_id: str) -> Column:
         pass
+
+    @abstractmethod
+    def get_by_id(self, column_id: str) -> Column:
+        pass

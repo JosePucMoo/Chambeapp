@@ -20,7 +20,9 @@ class Constants:
     PROJECT_NOT_FOUND = "No hemos podido encontrar tu proyecto."
 
     TASK_NOT_CREATED = "Ops! No se pudo crear tu tarea."
+    TASK_NOT_FOUND = "No hemos podido encontrar tu tarea."
 
+    COLUMN_NOT_FOUND = "No hemos podido encontrar la columna."
     ANY_COLUMN_FOUND = "No hemos podido encontrar alguna columna."
 
 

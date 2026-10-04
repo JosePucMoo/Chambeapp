@@ -37,3 +37,10 @@ class ColumnRepositoryImpl(ColumnRepository):
         column_model = self.db.scalar(query)
 
         return map_column_model_to_entity(column_model) if column_model else None
+
+    def get_by_id(self, column_id: str) -> Column:
+        column_model = self.db.scalar(
+            select(ColumnModel).where(ColumnModel.id == column_id )
+        )
+
+        return map_column_model_to_entity(column_model) if column_model else None
