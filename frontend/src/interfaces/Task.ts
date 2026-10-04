@@ -17,3 +17,13 @@ export interface CreateTask {
   dueDate: Date;
   assigneeId: string;
 }
+
+export interface TaskCardSummary {
+  id: string;
+  title: string;
+  description: string;
+  priority: TaskPriority;
+  dueDate: string;
+  assigneeId: string;
+  assigneeName: string | null;
+}

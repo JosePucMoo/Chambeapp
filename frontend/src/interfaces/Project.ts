@@ -1,3 +1,4 @@
+import type { ColumnBoard } from "./Column";
 import type { ProjectStatusEnum, RoleEnum } from "./constants/enums";
 
 export interface ProjectDashboardSummary {
@@ -29,4 +30,10 @@ export interface ProjectMember {
   id: string;
   name: string;
   email: string;
+}
+
+export interface ProjectBoard {
+  project_id: string;
+  project_title: string;
+  columns: ColumnBoard[];
 }
