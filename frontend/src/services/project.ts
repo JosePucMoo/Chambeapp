@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "@/interfaces/Paginated";
 import type {
   CreateProject,
   Project,
+  ProjectBoard,
   ProjectDashboardSummary,
   ProjectMember,
 } from "@/interfaces/Project";
@@ -39,6 +40,13 @@ export const projectService = {
     projectId: string,
   ): Promise<ApiResponse<Project>> => {
     const response = await apiClient.get(`/projects/${projectId}`);
+    return response.data;
+  },
+
+  get_project_board: async (
+    projectId: string,
+  ): Promise<ApiResponse<ProjectBoard>> => {
+    const response = await apiClient.get(`/projects/${projectId}/board`);
     return response.data;
   },
 };

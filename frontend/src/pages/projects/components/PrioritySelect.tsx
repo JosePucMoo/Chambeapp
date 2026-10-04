@@ -9,28 +9,7 @@ import {
 } from "@/components/ui/select";
 import { TaskPriorityEnum } from "@/interfaces/constants/enums";
 import type { CreateTask } from "@/interfaces/Task";
-
-const PRIORITY_CONFIG: Record<
-  TaskPriorityEnum,
-  { label: string; colorClass: string }
-> = {
-  [TaskPriorityEnum.LOW]: {
-    label: TaskPriorityEnum.LOW,
-    colorClass: "text-blue-600 bg-blue-100",
-  },
-  [TaskPriorityEnum.MEDIUM]: {
-    label: TaskPriorityEnum.MEDIUM,
-    colorClass: "text-amber-600 bg-amber-100",
-  },
-  [TaskPriorityEnum.HIGH]: {
-    label: TaskPriorityEnum.HIGH,
-    colorClass: "text-orange-600 bg-orange-100",
-  },
-  [TaskPriorityEnum.URGENT]: {
-    label: TaskPriorityEnum.URGENT,
-    colorClass: "text-red-600 bg-red-100",
-  },
-};
+import { PRIORITY_CONFIG } from "@/interfaces/constants/taskMappings";
 
 interface PrioritySelectProps {
   control: Control<CreateTask>;
