@@ -7,7 +7,7 @@ def map_task_entity_to_model(task: Task) -> TaskModel:
     return TaskModel(
         id=task.id,
         title= task.title, 
-    description=task.description,
+        description=task.description,
         priority=task.priority,
         due_date= task.due_date,
         column_id= task.column_id,
@@ -27,7 +27,7 @@ def map_task_model_to_entity(task: TaskModel) -> TaskModel:
 
 def map_task_dto_to_entity(task: CreateTaskDTO) -> Task:
     return Task(
-        title=task.description,
+        title=task.title,
         description=task.description,
         priority=task.priority,
         due_date=task.due_date,
