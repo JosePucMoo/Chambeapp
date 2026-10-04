@@ -7,9 +7,17 @@ export const taskService = {
     task: CreateTask,
     projectId: string,
   ): Promise<ApiResponse<Task>> => {
-    console.log(task);
-
     const response = await apiClient.post(`/tasks/${projectId}`, task);
+    return response.data;
+  },
+
+  updateTaskPosition: async (
+    taskId: string,
+    columnId: string,
+  ): Promise<ApiResponse<Task>> => {
+    const response = await apiClient.patch(`/tasks/${taskId}/move`, {
+      columnId,
+    });
     return response.data;
   },
 };

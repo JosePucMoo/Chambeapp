@@ -33,7 +33,7 @@ export function ProjectTableRow({
       <TableCell>
         <Link
           to={`/projects/${project.id}`}
-          className="flex items-center gap-3 w-fit group/link"
+          className="flex items-center gap-3 w-full group/link"
         >
           <div className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover/link:ring-2 ring-offset-1 ring-blue-500 transition-all">
             {project.title.charAt(0).toUpperCase()}
