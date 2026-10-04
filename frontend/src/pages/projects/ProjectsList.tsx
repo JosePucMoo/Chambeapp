@@ -86,8 +86,8 @@ function ProjectsList() {
             <FolderGit2 className="w-12 h-12" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-700">Proyectos</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-2xl font-bold text-slate-700">Proyectos</h1>
+            <p className="text-sm text-slate-500">
               Gestiona todos los portafolios activos
             </p>
           </div>
@@ -96,19 +96,19 @@ function ProjectsList() {
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
-            className="text-gray-700 font-medium h-10 border-gray-300"
+            className="text-slate-700 font-medium h-10 border-slate-300"
           >
-            <Filter className="w-4 h-4 mr-2 text-gray-500" />
+            <Filter className="w-4 h-4 mr-2 text-slate-500" />
             Filtrar
           </Button>
           <CreateProjectDialog loadProyects={loadProjects} />
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors">
+            <TableRow className="hover:bg-slate-100 border-b-slate-100 last:border-0 group transition-colors">
               <TableHead className="w-12.5 pl-6">
                 <Checkbox
                   checked={
@@ -116,20 +116,22 @@ function ProjectsList() {
                     projects.length > 0
                   }
                   onCheckedChange={toggleSelectAll}
-                  className="border-gray-300 rounded-lg"
+                  className="border-slate-300 rounded-lg"
                 />
               </TableHead>
-              <TableHead className="font-semibold text-gray-700">
+              <TableHead className="font-semibold text-slate-700">
                 Nombre del Proyecto
               </TableHead>
-              <TableHead className="font-semibold text-gray-700">Rol</TableHead>
-              <TableHead className="font-semibold text-gray-700">
+              <TableHead className="font-semibold text-slate-700">
+                Rol
+              </TableHead>
+              <TableHead className="font-semibold text-slate-700">
                 Fecha de Entrega
               </TableHead>
-              <TableHead className="font-semibold text-gray-700">
+              <TableHead className="font-semibold text-slate-700">
                 Estado
               </TableHead>
-              <TableHead className="font-semibold text-gray-700 w-50">
+              <TableHead className="font-semibold text-slate-700 w-50">
                 Progreso General
               </TableHead>
               <TableHead className="w-12.5"></TableHead>
@@ -162,9 +164,9 @@ function ProjectsList() {
           </TableBody>
         </Table>
 
-        <div className="border-t border-gray-200 py-4 px-6 bg-gray-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-slate-200 py-4 px-6 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <p className="text-sm text-gray-500 font-medium">Mostrar</p>
+            <p className="text-sm text-slate-500 font-medium">Mostrar</p>
             <Select
               value={itemsPerPage.toString()}
               onValueChange={handleItemsPerPageChange}
@@ -180,13 +182,13 @@ function ProjectsList() {
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-sm text-gray-500 font-medium">
+            <p className="text-sm text-slate-500 font-medium">
               registros por página
             </p>
           </div>
 
           <div className="flex items-center gap-6">
-            <p className="text-sm text-gray-500 font-medium hidden md:block">
+            <p className="text-sm text-slate-500 font-medium hidden md:block">
               {startIndex + 1} -{" "}
               {Math.min(startIndex + itemsPerPage, totalCount)} de {totalCount}
             </p>

@@ -16,7 +16,7 @@ export function Column({ id, title, tasks }: ColumnProps) {
   return (
     <div className="w-80 shrink-0 flex flex-col max-h-full bg-slate-100 rounded-xl overflow-hidden shadow-sm">
       <div className="p-4 shrink-0 border-b border-slate-200/70 flex justify-between">
-        <h3 className="font-semibold text-slate-500">{title}</h3>
+        <h3 className="font-semibold text-slate-600">{title}</h3>
         <span className="bg-slate-200 text-slate-600 text-xs px-2 py-1 rounded-full">
           {tasks.length}
         </span>

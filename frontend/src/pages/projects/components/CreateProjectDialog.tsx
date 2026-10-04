@@ -80,7 +80,9 @@ export function CreateProjectDialog({
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Crear Nuevo Proyecto</DialogTitle>
+            <DialogTitle className="text-slate-700 text-xl">
+              Crear Nuevo Proyecto
+            </DialogTitle>
             <DialogDescription>
               Configura los detalles iniciales. Podrás invitar a tu equipo más
               adelante.
@@ -92,7 +94,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.title}>
                 <FieldLabel
                   htmlFor="title"
-                  className={`text-md font-medium" ${!!errors.title ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.title ? "" : "text-slate-700"}`}
                 >
                   Nombre del Proyecto
                 </FieldLabel>
@@ -114,7 +116,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.description}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.description ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.description ? "" : "text-slate-700"}`}
                 >
                   Descripción
                 </FieldLabel>
@@ -138,7 +140,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.client}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.client ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.client ? "" : "text-slate-700"}`}
                 >
                   Cliente / Área
                 </FieldLabel>
@@ -160,7 +162,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.deliveryDate}>
                 <FieldLabel
                   htmlFor="deliveryDate"
-                  className={`text-md font-medium" ${!!errors.deliveryDate ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.deliveryDate ? "" : "text-slate-700"}`}
                 >
                   Fecha de entrega
                 </FieldLabel>

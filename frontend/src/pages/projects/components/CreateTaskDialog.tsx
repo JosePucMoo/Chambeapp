@@ -82,7 +82,9 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Crear Nueva Tarea</DialogTitle>
+            <DialogTitle className="text-slate-700 text-xl">
+              Crear Nueva Tarea
+            </DialogTitle>
             <DialogDescription>
               Define bien tu tarea y comienza a chambear
             </DialogDescription>
@@ -93,7 +95,7 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
               <Field data-invalid={!!errors.title}>
                 <FieldLabel
                   htmlFor="title"
-                  className={`text-md font-medium" ${!!errors.title ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.title ? "" : "text-slate-700"}`}
                 >
                   Titulo de la tarea
                 </FieldLabel>
@@ -115,7 +117,7 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
               <Field data-invalid={!!errors.description}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.description ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.description ? "" : "text-slate-700"}`}
                 >
                   Descripción
                 </FieldLabel>
@@ -145,7 +147,7 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
               <Field data-invalid={!!errors.dueDate}>
                 <FieldLabel
                   htmlFor="dueDate"
-                  className={`text-md font-medium" ${!!errors.dueDate ? "" : "text-gray-700"}`}
+                  className={`text-md font-medium" ${!!errors.dueDate ? "" : "text-slate-700"}`}
                 >
                   Fecha de vencimiento
                 </FieldLabel>
