@@ -17,138 +17,42 @@ import {
   Filter,
   LayoutList,
   MoreHorizontal,
-  Plus,
 } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import type { LayoutContextType } from "@/interfaces/Context";
-
-const tasks = [
-  {
-    id: "1",
-    name: "Project Kick Off",
-    project: "InterActive",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "Backlog",
-    progress: 70,
-  },
-  {
-    id: "2",
-    name: "Whiteboarding",
-    project: "InterActive",
-    projectColor: "bg-red-500",
-    date: "06 September 2024",
-    status: "Backlog",
-    progress: 70,
-  },
-  {
-    id: "3",
-    name: "Brainstorming",
-    project: "MyHotel",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "To-Do",
-    progress: 70,
-  },
-  {
-    id: "4",
-    name: "Wireframe",
-    project: "MyHotel",
-    projectColor: "bg-red-500",
-    date: "06 September 2024",
-    status: "To-Do",
-    progress: 70,
-  },
-  {
-    id: "5",
-    name: "Prototyping",
-    project: "InterActive",
-    projectColor: "bg-red-700",
-    date: "06 September 2024",
-    status: "In Progress",
-    progress: 70,
-  },
-  {
-    id: "6",
-    name: "Landing Page",
-    project: "InterActive",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "In Progress",
-    progress: 70,
-  },
-  {
-    id: "7",
-    name: "Product Page",
-    project: "InAct",
-    projectColor: "bg-black",
-    date: "06 September 2024",
-    status: "Backlog",
-    progress: 70,
-  },
-  {
-    id: "8",
-    name: "Contact Page",
-    project: "MyAccounting",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "To-Do",
-    progress: 70,
-  },
-  {
-    id: "9",
-    name: "API Test",
-    project: "MyAccounting",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "Done",
-    progress: 70,
-  },
-  {
-    id: "10",
-    name: "Automation",
-    project: "InAct",
-    projectColor: "bg-red-600",
-    date: "06 September 2024",
-    status: "Done",
-    progress: 70,
-  },
-];
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "Backlog":
-      return (
-        <Badge className="bg-gray-800 hover:bg-gray-700 text-white font-normal rounded-full px-3">
-          {status}
-        </Badge>
-      );
-    case "To-Do":
-      return (
-        <Badge className="bg-blue-400 hover:bg-blue-500 text-white font-normal rounded-full px-3">
-          {status}
-        </Badge>
-      );
-    case "In Progress":
-      return (
-        <Badge className="bg-orange-400 hover:bg-orange-500 text-white font-normal rounded-full px-3">
-          {status}
-        </Badge>
-      );
-    case "Done":
-      return (
-        <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white font-normal rounded-full px-3">
-          {status}
-        </Badge>
-      );
-    default:
-      return <Badge>{status}</Badge>;
-  }
-};
+import {
+  COLUMN_STATE_CONFIG,
+  PRIORITY_CONFIG,
+} from "@/interfaces/constants/taskMappings";
+import {
+  ColumnDefaultEnum,
+  TaskPriorityEnum,
+} from "@/interfaces/constants/enums";
+import { useTasks } from "@/hooks/useTasks";
+import { formatDate } from "@/utils/dateFormatter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 function MyTasks() {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const { setPageTitle } = useOutletContext<LayoutContextType>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const { tasks, totalCount, totalPages } = useTasks(currentPage, itemsPerPage);
 
   useEffect(() => {
     setPageTitle("Mis tareas");
@@ -170,11 +74,26 @@ function MyTasks() {
     }
   };
 
+  const handlePageChange = (page: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleItemsPerPageChange = (value: string | null) => {
+    if (!value) return;
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
   return (
-    <div className="flex flex-col space-y-6 w-full mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
-        <Tabs defaultValue="list" className="w-100">
-          <TabsList className="bg-transparent h-12 p-0">
+    <div className="flex flex-col space-y-6 w-full mx-auto px-10 py-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <Tabs defaultValue="list" className="w-100 ">
+          <TabsList className="bg-transparent p-0 border-b border-gray-200 rounded-none">
             <TabsTrigger
               value="list"
               className="data-active:text-blue-600 data-active:border-b-blue-600 text-gray-500 rounded-none font-medium text-base gap-2 px-3"
@@ -196,10 +115,6 @@ function MyTasks() {
           <Button variant="outline" className="text-gray-700 font-medium h-10">
             <Filter className="w-4 h-4 mr-2 text-gray-500" />
             Filtro
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium h-10">
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar nuevo
           </Button>
         </div>
       </div>
@@ -227,6 +142,9 @@ function MyTasks() {
                 Fecha de Vencimiento
               </TableHead>
               <TableHead className="font-semibold text-gray-500">
+                Prioridad
+              </TableHead>
+              <TableHead className="font-semibold text-gray-500">
                 Estado
               </TableHead>
               <TableHead className="w-12.5"></TableHead>
@@ -248,28 +166,55 @@ function MyTasks() {
                 </TableCell>
 
                 <TableCell className="font-medium text-gray-900">
-                  {task.name}
+                  {task.title}
                 </TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-6 h-6 rounded ${task.projectColor} flex items-center justify-center text-white text-[10px] font-bold`}
+                      className={`w-6 h-6 rounded bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold`}
                     >
-                      {task.project.charAt(0)}
+                      {task.projectTitle.charAt(0)}
                     </div>
-                    <span className="text-gray-600">{task.project}</span>
+                    <span className="text-gray-600">{task.projectTitle}</span>
                   </div>
                 </TableCell>
 
                 <TableCell>
                   <div className="flex items-center text-gray-600 font-medium gap-2 text-sm">
                     <CalendarDays className="w-4 h-4 text-gray-400" />
-                    {task.date}
+                    {formatDate(task.dueDate)}
                   </div>
+                  <span className="text-xs text-gray-400 pl-6">
+                    {formatDate(task.dueDate, "relative")}
+                  </span>
                 </TableCell>
 
-                <TableCell>{getStatusBadge(task.status)}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant="secondary"
+                    className={
+                      PRIORITY_CONFIG[task.priority as TaskPriorityEnum]
+                        .colorClass
+                    }
+                  >
+                    {PRIORITY_CONFIG[task.priority as TaskPriorityEnum].label}
+                  </Badge>
+                </TableCell>
+
+                <TableCell>
+                  <Badge
+                    className={
+                      COLUMN_STATE_CONFIG[task.columnTitle as ColumnDefaultEnum]
+                        .colorClass
+                    }
+                  >
+                    {
+                      COLUMN_STATE_CONFIG[task.columnTitle as ColumnDefaultEnum]
+                        .label
+                    }
+                  </Badge>
+                </TableCell>
 
                 <TableCell className="pr-6">
                   <Button
@@ -284,6 +229,76 @@ function MyTasks() {
             ))}
           </TableBody>
         </Table>
+        <div className="border-t border-slate-200 py-4 px-6 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-slate-500 font-medium">Mostrar</p>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={handleItemsPerPageChange}
+            >
+              <SelectTrigger className="h-8 w-17.5 bg-white">
+                <SelectValue placeholder={itemsPerPage} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[5, 10, 20, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-slate-500 font-medium">
+              registros por página
+            </p>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <p className="text-sm text-slate-500 font-medium hidden md:block">
+              {startIndex + 1} -{" "}
+              {Math.min(startIndex + itemsPerPage, totalCount)} de {totalCount}
+            </p>
+
+            <Pagination className="justify-end w-auto mx-0">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => handlePageChange(currentPage - 1, e)}
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <PaginationItem key={i} className="hidden sm:inline-block">
+                    <PaginationLink
+                      href="#"
+                      isActive={currentPage === i + 1}
+                      onClick={(e) => handlePageChange(i + 1, e)}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => handlePageChange(currentPage + 1, e)}
+                    className={
+                      currentPage === totalPages || totalPages === 0
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
       </div>
     </div>
   );

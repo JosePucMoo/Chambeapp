@@ -33,7 +33,7 @@ export interface ProjectMember {
 }
 
 export interface ProjectBoard {
-  project_id: string;
-  project_title: string;
+  projectId: string;
+  projectTitle: string;
   columns: ColumnBoard[];
 }

@@ -4,16 +4,14 @@ import { Board } from "./components/Board";
 import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { useParams } from "react-router-dom";
 import { ResourceNotFound } from "../NotFound";
-import { useProject } from "@/hooks/useProject";
 import { useProjectBoard } from "@/hooks/useProjectBoard";
 
 const ProjectBoard = () => {
   const params = useParams();
   const projectId = params.projectId || "";
 
-  const { project, isLoading, errorStatus } = useProject(projectId);
-
-  const { board, moveTask, addTask } = useProjectBoard(projectId);
+  const { board, moveTask, addTask, isLoading, error } =
+    useProjectBoard(projectId);
 
   if (isLoading) {
     return (
@@ -23,15 +21,11 @@ const ProjectBoard = () => {
     );
   }
 
-  if (errorStatus || !project || !board) {
+  if (error || !board) {
     return (
       <ResourceNotFound
         title="Proyecto no encontrado"
-        description={
-          errorStatus === "403"
-            ? "No tienes permisos para ver este tablero."
-            : "El tablero que intentas buscar no existe."
-        }
+        description="El tablero que intentas buscar no existe."
         icon={FolderX}
         backUrl="/projects"
         backText="Volver a mis proyectos"
@@ -44,7 +38,7 @@ const ProjectBoard = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-0">
         <div className="flex flex-col items-start gap-4">
           <h1 className="text-3xl font-semibold text-slate-700">
-            {project?.title}
+            {board.projectTitle}
           </h1>
         </div>
 
