@@ -104,6 +104,14 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
                   placeholder="Ej. Diseñar arquitectura"
                   {...register("title", {
                     required: "El titulo es obligatorio",
+                    minLength: {
+                      value: 3,
+                      message: "El titulo debe tener al menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "El titulo no puede exceder los 50 caracteres",
+                    },
                   })}
                   aria-invalid={!!errors.title}
                 />
