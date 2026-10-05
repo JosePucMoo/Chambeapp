@@ -26,4 +26,14 @@ export interface TaskCardSummary {
   dueDate: string;
   assigneeId: string;
   assigneeName: string | null;
+  columnId: string;
+}
+
+export interface TaskDashboardSummary {
+  id: string;
+  title: string;
+  priority: TaskPriority;
+  dueDate: string;
+  columnTitle: string;
+  projectTitle: string;
 }

@@ -9,6 +9,37 @@ export const useProjectBoard = (projectId: string | undefined) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const addTask = (newTask: TaskCardSummary) => {
+    setBoard((prevBoard) => {
+      if (!prevBoard) return prevBoard;
+
+      const newBoard = { ...prevBoard, columns: [...prevBoard.columns] };
+
+      const targetColumnIndex = newBoard.columns.findIndex(
+        (c) => c.id === newTask.columnId,
+      );
+
+      if (targetColumnIndex !== -1) {
+        newBoard.columns[targetColumnIndex] = {
+          ...newBoard.columns[targetColumnIndex],
+          tasks: [...newBoard.columns[targetColumnIndex].tasks, newTask],
+        };
+      } else {
+        if (newBoard.columns.length > 0) {
+          newBoard.columns[0] = {
+            ...newBoard.columns[0],
+            tasks: [
+              ...newBoard.columns[0].tasks,
+              { ...newTask, columnId: newBoard.columns[0].id },
+            ],
+          };
+        }
+      }
+
+      return newBoard;
+    });
+  };
+
   useEffect(() => {
     if (!projectId) return;
 
@@ -36,6 +67,7 @@ export const useProjectBoard = (projectId: string | undefined) => {
       let taskToMove: TaskCardSummary | null = null;
 
       newBoard.columns.forEach((col, index) => {
+        if (col.id == targetColumnId) return newBoard;
         const taskIndex = col.tasks.findIndex((t) => t.id === taskId);
         if (taskIndex !== -1) {
           taskToMove = col.tasks[taskIndex];
@@ -69,5 +101,5 @@ export const useProjectBoard = (projectId: string | undefined) => {
     }
   };
 
-  return { board, isLoading, error, setBoard, moveTask };
+  return { board, isLoading, error, setBoard, moveTask, addTask };
 };

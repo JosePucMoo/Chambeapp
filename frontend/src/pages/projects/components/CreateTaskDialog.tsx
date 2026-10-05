@@ -16,7 +16,7 @@ import { toast } from "@/components/ui/toast";
 import { FieldLabel, Field, FieldError } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePickerSimple } from "@/components/ui/datepicker";
-import type { CreateTask } from "@/interfaces/Task";
+import type { CreateTask, TaskCardSummary } from "@/interfaces/Task";
 import { useProjectMembers } from "@/hooks/useProjectMembers";
 import { AssigneeSelect } from "./AssigneSelect";
 import { taskService } from "@/services/task";
@@ -24,10 +24,13 @@ import { PrioritySelect } from "./PrioritySelect";
 
 interface CreateTaskDialogProps {
   projectId: string;
-  loadTasks: () => void;
+  addTask: (task: TaskCardSummary) => void;
 }
 
-export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
+export function CreateTaskDialog({
+  projectId,
+  addTask,
+}: CreateTaskDialogProps) {
   const [open, setOpen] = useState(false);
   const { members } = useProjectMembers(projectId);
 
@@ -50,6 +53,8 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
   const onSubmit = async (task: CreateTask) => {
     try {
       const response = await taskService.create(task, projectId);
+
+      addTask(response.data);
 
       toast.add({
         type: "success",

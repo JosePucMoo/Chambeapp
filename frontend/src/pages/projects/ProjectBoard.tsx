@@ -5,12 +5,15 @@ import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { useParams } from "react-router-dom";
 import { ResourceNotFound } from "../NotFound";
 import { useProject } from "@/hooks/useProject";
+import { useProjectBoard } from "@/hooks/useProjectBoard";
 
 const ProjectBoard = () => {
   const params = useParams();
   const projectId = params.projectId || "";
 
   const { project, isLoading, errorStatus } = useProject(projectId);
+
+  const { board, moveTask, addTask } = useProjectBoard(projectId);
 
   if (isLoading) {
     return (
@@ -20,7 +23,7 @@ const ProjectBoard = () => {
     );
   }
 
-  if (errorStatus || !project) {
+  if (errorStatus || !project || !board) {
     return (
       <ResourceNotFound
         title="Proyecto no encontrado"
@@ -60,11 +63,11 @@ const ProjectBoard = () => {
             <Filter className="w-4 h-4 text-slate-500" />
             Filtrar
           </Button>
-          <CreateTaskDialog loadTasks={() => {}} projectId={projectId} />
+          <CreateTaskDialog addTask={addTask} projectId={projectId} />
         </div>
       </div>
 
-      <Board />
+      <Board board={board} moveTask={moveTask} />
     </div>
   );
 };

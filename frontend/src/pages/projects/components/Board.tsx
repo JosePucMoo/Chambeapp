@@ -1,29 +1,15 @@
-import { useParams } from "react-router-dom";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
-import { useProjectBoard } from "@/hooks/useProjectBoard";
 import { Column } from "./Column";
+import type { ProjectBoard } from "@/interfaces/Project";
 
-export function Board() {
-  const { projectId } = useParams<{ projectId: string }>();
+interface BoardProps {
+  board: ProjectBoard;
+  moveTask: (taskId: string, columnId: string) => void;
+}
 
-  const { board, isLoading, error, moveTask } = useProjectBoard(projectId);
-
-  if (isLoading) {
-    return (
-      <div className="p-8 text-center text-slate-500">Cargando tablero...</div>
-    );
-  }
-
-  if (error || !board) {
-    return (
-      <div className="p-8 text-center text-red-500">
-        {error || "Tablero no encontrado"}
-      </div>
-    );
-  }
-
+export function Board({ board, moveTask }: BoardProps) {
   const handleDragEnd = (event: DragEndEvent) => {
-    if (event.canceled) return;
+    if (event.canceled || !event.operation?.target) return;
 
     const taskId = event.operation?.source?.id as string;
     const columnId = event.operation?.target?.id as string;

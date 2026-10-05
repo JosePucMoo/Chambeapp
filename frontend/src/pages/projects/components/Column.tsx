@@ -22,22 +22,23 @@ export function Column({ id, title, tasks }: ColumnProps) {
         </span>
       </div>
 
-      {tasks.length == 0 ? (
-        <div className="text-sm m-6 text-slate-400 text-center py-4 border-2 border-dashed border-slate-200 rounded-lg">
-          Sin tareas
-        </div>
-      ) : (
-        <div
-          ref={ref}
-          className={`flex-1 overflow-y-auto p-6 flex flex-col gap-3 min-h-37.5 transition-colors ${
-            isDropTarget ? "bg-blue-50/60" : "bg-transparent"
-          }`}
-        >
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-      )}
+      <div ref={ref} className="h-full">
+        {tasks.length == 0 ? (
+          <div className="text-sm m-6 text-slate-400 text-center py-4 border-2 border-dashed border-slate-200 rounded-lg">
+            Sin tareas
+          </div>
+        ) : (
+          <div
+            className={`flex-1 overflow-y-auto p-6 flex flex-col gap-3 min-h-37.5 transition-colors ${
+              isDropTarget ? "bg-blue-50/60" : "bg-transparent"
+            }`}
+          >
+            {tasks.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
