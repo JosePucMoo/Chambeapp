@@ -41,10 +41,11 @@ class ProjectMemberResponseDTO(BaseSchema):
 
 class ProjectBoardDTO(BaseSchema):
     project_id: str
+    project_title: str
     columns: List[ColumnBoardDTO]
 
     @classmethod
-    def from_entity(cls, entity: "ProjectBoard") -> "ProjectBoardDTO":
+    def from_entity(cls, entity: ProjectBoard) -> "ProjectBoardDTO":
         return cls(
             project_id=entity.project_id,
             project_title=entity.project_title,
