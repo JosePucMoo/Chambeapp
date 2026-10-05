@@ -1,6 +1,6 @@
-from infrastructure.schemas.task_schema import CreateTaskDTO
+from infrastructure.schemas.task_schema import CreateTaskDTO, TaskBoardDTO, TaskDashboardSummaryDTO
 from infrastructure.db.models.task_model import TaskModel
-from domain.entities.task import Task
+from domain.entities.task import Task, TaskBoard, TaskDashboardSummary
 
 
 def map_task_entity_to_model(task: Task) -> TaskModel:

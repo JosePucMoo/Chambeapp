@@ -25,3 +25,12 @@ class TaskBoard:
     due_date: date
     assignee_id: str
     assignee_name: str | None = None
+
+@dataclass
+class TaskDashboardSummary:
+    id: str
+    title: str
+    project_title: str
+    priority: TaskPriorityEnum
+    due_date: date
+    column_title: str
