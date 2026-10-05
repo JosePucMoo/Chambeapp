@@ -1,7 +1,7 @@
 
 from datetime import date, datetime
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 from domain.entities.enums import TaskPriorityEnum
 from infrastructure.schemas.base_schema import BaseSchema
@@ -20,7 +20,7 @@ class TaskResponseDTO(BaseTaskDTO):
     model_config= ConfigDict(from_attributes=True)
 
 class CreateTaskDTO(BaseSchema):
-    title: str
+    title: str = Field(min_length=3, max_length=50)
     description: str
     priority: TaskPriorityEnum
     due_date: datetime
@@ -39,3 +39,11 @@ class TaskBoardDTO(BaseSchema):
 
 class TaskMoveDTO(BaseSchema):
     column_id: str
+
+class TaskDashboardSummaryDTO(BaseSchema):
+    id: str
+    title: str
+    project_title: str
+    due_date: datetime
+    priority: TaskPriorityEnum
+    column_title: str

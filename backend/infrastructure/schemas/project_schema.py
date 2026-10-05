@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 from infrastructure.schemas.column_schema import ColumnBoardDTO
 from infrastructure.schemas.task_schema import TaskBoardDTO
@@ -11,7 +11,7 @@ from domain.entities.project import ProjectBoard
 from infrastructure.schemas.base_schema import BaseSchema
 
 class BaseProjectDTO(BaseSchema):
-    title: str
+    title: str = Field(min_length=3, max_length=50)
     description: str
     client: str
     delivery_date: datetime

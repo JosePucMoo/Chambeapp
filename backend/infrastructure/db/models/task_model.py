@@ -10,7 +10,7 @@ class TaskModel(Base):
     __tablename__ = "tasks"
 
     id: Mapped[uuid.UUID] = mapped_column(String, primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     priority: Mapped[TaskPriorityEnum] = mapped_column(String, nullable=False)
     due_date: Mapped[datetime] = mapped_column(Date, nullable=False)
