@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import and_, case, func, select
 from sqlalchemy.orm import joinedload
 
 from domain.entities.column import ColumnBoard
-from domain.entities.task import TaskBoard
+from domain.entities.task import TaskBoard, TaskFilters
 from infrastructure.db.models.user_model import UserModel
 from domain.entities.enums import RoleEnum, TaskPriorityEnum
 from infrastructure.db.models.column_model import ColumnModel
@@ -18,6 +18,8 @@ from infrastructure.mappers.project_mappers import (
 from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
 from domain.repositories.project_repository import ProjectRepository
 from sqlalchemy.orm import Session
+
+from infrastructure.repositories.filters import apply_task_filters
 
 
 class ProjectRepositoryImpl(ProjectRepository):
@@ -143,22 +145,39 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         return [ProjectMember(id=row.id, name=row.name, email=row.email) for row in results]
 
-    def get_project_board(self, project_id: str) -> ProjectBoard:
-        project_db = (
-            self.db.query(ProjectModel)
-            .filter(ProjectModel.id == project_id)
-            .options(
-                joinedload(ProjectModel.columns)
-                .joinedload(ColumnModel.tasks)
-                .joinedload(TaskModel.assignee)
-            )
-            .first()
+    def get_project_board(
+        self, project_id: str, filters: Optional[TaskFilters] = None
+    ) -> Optional[ProjectBoard]:
+        project_db = self.db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+
+        if not project_db:
+            return None
+
+        column_rows = (
+            self.db.query(ColumnModel)
+            .filter(ColumnModel.project_id == project_id)
+            .order_by(ColumnModel.position.asc())
+            .all()
         )
 
-        sorted_columns = sorted(project_db.columns, key=lambda c: c.position)
+        conditions: list = []
+        apply_task_filters(conditions=conditions, filters=filters)
+        conditions.append(TaskModel.column_id.in_([col.id for col in column_rows]))
+
+        task_rows = (
+            self.db.query(TaskModel)
+            .options(joinedload(TaskModel.assignee))
+            .filter(and_(*conditions))
+            .order_by(TaskModel.created_at.asc())
+            .all()
+        )
+
+        tasks_by_column: dict[str, List[TaskModel]] = {}
+        for task in task_rows:
+            tasks_by_column.setdefault(str(task.column_id), []).append(task)
 
         board_columns = []
-        for col in sorted_columns:
+        for col in column_rows:
             column_tasks = [
                 TaskBoard(
                     id=str(task.id),
@@ -169,7 +188,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                     assignee_id=str(task.assignee_id),
                     assignee_name=task.assignee.name if task.assignee else None,
                 )
-                for task in col.tasks
+                for task in tasks_by_column.get(str(col.id), [])
             ]
 
             board_columns.append(

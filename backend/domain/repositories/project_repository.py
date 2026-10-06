@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List
-
+from typing import List, Optional
 
 from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
+from domain.entities.task import TaskFilters
 
 
 class ProjectRepository(ABC):
@@ -29,5 +29,7 @@ class ProjectRepository(ABC):
         pass
 
     @abstractmethod
-    def get_project_board(self, project_id: str) -> ProjectBoard:
+    def get_project_board(
+        self, project_id: str, filters: Optional[TaskFilters] = None
+    ) -> Optional[ProjectBoard]:
         pass

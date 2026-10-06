@@ -20,6 +20,7 @@ from domain.entities.task import (
 )
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.task_mappers import map_task_entity_to_model, map_task_model_to_entity
+from infrastructure.repositories.filters import apply_task_filters
 from domain.repositories.task_repository import TaskRepository
 
 
@@ -182,32 +183,10 @@ class TaskRepositoryImpl(TaskRepository):
 
         return column_model.position == max_position
 
-    def _apply_task_filters(self, conditions: list, filters: TaskFilters) -> None:
-        if not filters:
-            return
-
-        if filters.priority:
-            conditions.append(TaskModel.priority == filters.priority)
-
-        if filters.column_title:
-            conditions.append(ColumnModel.title == filters.column_title)
-
-        if filters.project_id:
-            conditions.append(ProjectModel.id == filters.project_id)
-
-        if filters.search:
-            conditions.append(TaskModel.title.ilike(f"%{filters.search.strip()}%"))
-
-        if filters.start_date:
-            conditions.append(TaskModel.due_date >= filters.start_date)
-
-        if filters.end_date:
-            conditions.append(TaskModel.due_date <= filters.end_date)
-
     def _matching_dashboard_task_ids_query(self, user_id: str, filters: TaskFilters):
         conditions = [TaskModel.assignee_id == user_id]
 
-        self._apply_task_filters(conditions=conditions, filters=filters)
+        apply_task_filters(conditions=conditions, filters=filters)
 
         return (
             select(TaskModel.id)
@@ -269,7 +248,7 @@ class TaskRepositoryImpl(TaskRepository):
             TaskModel.due_date <= end_date,
         ]
 
-        self._apply_task_filters(conditions=conditions, filters=filters)
+        apply_task_filters(conditions=conditions, filters=filters)
 
         query = (
             select(

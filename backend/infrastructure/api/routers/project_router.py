@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -8,6 +8,8 @@ from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.utils.constants import Constants
 from application.use_cases.project.create import CreateProjectUseCase
+from domain.entities.enums import TaskPriorityEnum
+from domain.entities.task import TaskFilters
 from infrastructure.api.dependencies import (
     ColumnRepositoryDep,
     CurrentUser,
@@ -114,10 +116,23 @@ def get_project_members(project_id: str, repositoy: ProjectRepositoryDep):
     status_code=status.HTTP_200_OK,
     response_model=ApiResponse[ProjectBoardDTO],
 )
-def get_project_board(project_id: str, repositoy: ProjectRepositoryDep):
+def get_project_board(
+    project_id: str,
+    repositoy: ProjectRepositoryDep,
+    priority: Annotated[Optional[TaskPriorityEnum], Query()] = None,
+    column_title: Annotated[Optional[str], Query(max_length=100)] = None,
+    project_id_filter: Annotated[Optional[str], Query(alias="project_id")] = None,
+    search: Annotated[Optional[str], Query(max_length=50)] = None,
+):
     try:
         use_case = GetProjectUseCase(repository=repositoy)
-        project_board = use_case.execute_get_project_board(project_id)
+        filters = TaskFilters(
+            priority=priority,
+            column_title=column_title,
+            project_id=project_id_filter,
+            search=search,
+        )
+        project_board = use_case.execute_get_project_board(project_id, filters=filters)
         data = ProjectBoardDTO.from_entity(project_board)
         return ApiResponse(ok=True, message="Tablero del proyecto con columnas y tareas", data=data)
     except NotFoundException as e:
