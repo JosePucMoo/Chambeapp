@@ -1,3 +1,5 @@
+from typing import List
+
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.repositories.task_repository import TaskRepository
 from domain.utils.constants import Constants
@@ -12,3 +14,6 @@ class DeleteTaskUseCase:
 
         if not deleted:
             raise NotFoundException(Constants.TASK_NOT_FOUND)
+
+    def execute_many(self, user_id: str, task_ids: List[str]) -> List[str]:
+        return self.repository.delete_many(user_id=user_id, task_ids=task_ids)

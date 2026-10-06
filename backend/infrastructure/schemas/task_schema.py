@@ -37,6 +37,11 @@ class UpdateTaskDTO(BaseSchema):
 
     model_config= ConfigDict(from_attributes=True)
 
+class BulkDeleteTasksDTO(BaseSchema):
+    task_ids: list[str] = Field(min_length=1)
+
+    model_config= ConfigDict(from_attributes=True)
+
 class TaskDetailDTO(BaseSchema):
     id: str
     title: str

@@ -52,6 +52,13 @@ class TaskDetail:
     assignee_name: str | None = None
 
 @dataclass
+class TaskFilters:
+    priority: Optional[TaskPriorityEnum] = None
+    column_title: Optional[str] = None
+    project_id: Optional[str] = None
+    search: Optional[str] = None
+
+@dataclass
 class TaskMetricsAggregate:
     total_tasks: int = 0
     completed_tasks: int = 0

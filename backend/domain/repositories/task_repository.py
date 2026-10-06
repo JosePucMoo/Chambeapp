@@ -8,6 +8,7 @@ from domain.entities.task import (
     TaskDashboardSummary,
     TaskDetail,
     TaskDueSoon,
+    TaskFilters,
     TaskMetricsAggregate,
 )
 
@@ -39,7 +40,11 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int) -> tuple[int, List[TaskDashboardSummary]]:
+    def delete_many(self, user_id: str, task_ids: List[str]) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int, filters: TaskFilters = None) -> tuple[int, List[TaskDashboardSummary]]:
         pass
 
     @abstractmethod

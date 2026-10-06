@@ -8,7 +8,7 @@ from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
 from infrastructure.db.models.user_model import UserModel
 from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
-from domain.entities.task import DailyTaskActivity, Task, TaskDashboardSummary, TaskDetail, TaskDueSoon, TaskMetricsAggregate
+from domain.entities.task import DailyTaskActivity, Task, TaskDashboardSummary, TaskDetail, TaskDueSoon, TaskFilters, TaskMetricsAggregate
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.task_mappers import map_task_entity_to_model, map_task_model_to_entity
 from domain.repositories.task_repository import TaskRepository
@@ -119,6 +119,31 @@ class TaskRepositoryImpl(TaskRepository):
 
         return True
 
+    def delete_many(self, user_id: str, task_ids: List[str]) -> List[str]:
+        if not task_ids:
+            return []
+
+        query = (
+            select(TaskModel)
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(UserProjectLinkModel, ColumnModel.project_id == UserProjectLinkModel.project_id)
+            .where(
+                TaskModel.id.in_(task_ids),
+                UserProjectLinkModel.user_id == user_id,
+            )
+        )
+
+        task_models = self.db.execute(query).unique().scalars().all()
+
+        deleted_ids = [str(task_model.id) for task_model in task_models]
+
+        for task_model in task_models:
+            self.db.delete(task_model)
+
+        self.db.commit()
+
+        return deleted_ids
+
     def change_column(self, task_id: str, column_id: str) -> Task:
         task_model = self.db.scalar(
             select(TaskModel).where(TaskModel.id == task_id)
@@ -154,29 +179,56 @@ class TaskRepositoryImpl(TaskRepository):
 
         return column_model.position == max_position
 
-    def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int) -> tuple[int, List[TaskDashboardSummary]]:
-        query_total_items = select(func.count(TaskModel.id)).where(TaskModel.assignee_id == user_id)
-        
-        total_items = self.db.execute(query_total_items).scalar()
-        
+    def _matching_dashboard_task_ids_query(self, user_id: str, filters: TaskFilters):
+        conditions = [TaskModel.assignee_id == user_id]
+
+        if filters:
+            if filters.priority:
+                conditions.append(TaskModel.priority == filters.priority)
+
+            if filters.column_title:
+                conditions.append(ColumnModel.title == filters.column_title)
+
+            if filters.project_id:
+                conditions.append(ProjectModel.id == filters.project_id)
+
+            if filters.search:
+                conditions.append(TaskModel.title.ilike(f"%{filters.search.strip()}%"))
+
+        return (
+            select(TaskModel.id)
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(ProjectModel, ColumnModel.project_id == ProjectModel.id)
+            .where(and_(*conditions))
+        )
+
+    def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int, filters: TaskFilters = None) -> tuple[int, List[TaskDashboardSummary]]:
+        matching_query = self._matching_dashboard_task_ids_query(user_id=user_id, filters=filters)
+
+        total_items = self.db.execute(
+            select(func.count()).select_from(matching_query.subquery())
+        ).scalar()
+
         offset = (page - 1) * page_size
 
-        query = select(
-            TaskModel.id,
-            TaskModel.title,
-            TaskModel.due_date,
-            TaskModel.priority,
-            ColumnModel.title.label("column_title"),
-            ProjectModel.title.label("project_title")
-            ).join(
-                ColumnModel, TaskModel.column_id == ColumnModel.id
-            ).join(
-                ProjectModel, ColumnModel.project_id == ProjectModel.id
-            ).filter(
-                TaskModel.assignee_id == user_id
-            ).offset(offset).limit(page_size)
+        query = (
+            select(
+                TaskModel.id,
+                TaskModel.title,
+                TaskModel.due_date,
+                TaskModel.priority,
+                ColumnModel.title.label("column_title"),
+                ProjectModel.title.label("project_title")
+            )
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(ProjectModel, ColumnModel.project_id == ProjectModel.id)
+            .where(TaskModel.id.in_(matching_query))
+            .order_by(TaskModel.due_date.asc(), TaskModel.title.asc())
+            .offset(offset)
+            .limit(page_size)
+        )
 
-        results = self.db.execute(query).all() 
+        results = self.db.execute(query).all()
 
         tasks = [
             TaskDashboardSummary(

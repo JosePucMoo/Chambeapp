@@ -1,6 +1,6 @@
 
 
-from typing import Annotated
+from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -10,6 +10,8 @@ from application.use_cases.task.delete import DeleteTaskUseCase
 from application.use_cases.task.get import GetTaskUseCase
 from application.use_cases.task.update import UpdateTaskUseCase
 from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
+from domain.entities.enums import TaskPriorityEnum
+from domain.entities.task import TaskFilters
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.exceptions.cannot_update_exception import CannotUpdateException
@@ -17,7 +19,7 @@ from domain.utils.constants import Constants
 from infrastructure.mappers.task_mappers import map_task_dto_to_entity, map_update_task_dto_to_entity
 from infrastructure.api.dependencies import ColumnRepositoryDep, CurrentUser, ProjectRepositoryDep, TaskRepositoryDep, get_current_user
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.task_schema import TaskDashboardSummaryDTO, TaskDetailDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO, UpdateTaskDTO
+from infrastructure.schemas.task_schema import BulkDeleteTasksDTO, TaskDashboardSummaryDTO, TaskDetailDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO, UpdateTaskDTO
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(get_current_user)])
@@ -192,12 +194,26 @@ def get_paginated_summary_projects(
         ge=5,
         le=50
     )] = 10,
+    priority: Annotated[Optional[TaskPriorityEnum], Query()] = None,
+    column_title: Annotated[Optional[str], Query(
+        max_length=100
+    )] = None,
+    project_id: Annotated[Optional[str], Query()] = None,
+    search: Annotated[Optional[str], Query(
+        max_length=50
+    )] = None,
 ):
     try:
         use_case = GetTaskUseCase(
             repository=repository,
         )
-        [total_count, tasks_summary] = use_case.execute_paginated_summary(user_id=current_user.id, page=page, page_size=page_size)
+        filters = TaskFilters(
+            priority=priority,
+            column_title=column_title,
+            project_id=project_id,
+            search=search
+        )
+        [total_count, tasks_summary] = use_case.execute_paginated_summary(user_id=current_user.id, page=page, page_size=page_size, filters=filters)
 
         data = PaginatedResponseDTO.create(
             total_count=total_count,
@@ -209,6 +225,30 @@ def get_paginated_summary_projects(
             ok=True,
             message="Lista de mis tareas",
             data=data
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.delete(path="/", status_code=status.HTTP_200_OK, response_model=ApiResponse[List[str]])
+def delete_tasks(
+    bulk_data: BulkDeleteTasksDTO,
+    current_user: CurrentUser,
+    repository: TaskRepositoryDep
+):
+    try:
+        use_case = DeleteTaskUseCase(repository=repository)
+        deleted_ids = use_case.execute_many(
+            user_id=current_user.id,
+            task_ids=bulk_data.task_ids
+        )
+
+        return ApiResponse(
+            ok=True,
+            message=f"{len(deleted_ids)} tarea(s) eliminada(s) con éxito",
+            data=deleted_ids
         )
     except Exception as e:
         raise HTTPException(
