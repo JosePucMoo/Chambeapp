@@ -1,21 +1,31 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Filter, FolderX, UserPlus } from "lucide-react";
+import { FolderX, UserPlus } from "lucide-react";
 import { Board } from "./components/Board";
 import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { useParams } from "react-router-dom";
 import { ResourceNotFound } from "../NotFound";
 import { useProjectBoard } from "@/hooks/useProjectBoard";
 import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
+import { TaskFilterPopover } from "@/components/task/TaskFilterPopover";
+import type { TaskFilters } from "@/interfaces/Task";
+
+const EMPTY_FILTERS: TaskFilters = {
+  priority: undefined,
+  columnTitle: undefined,
+  projectId: undefined,
+  search: "",
+};
 
 const ProjectBoard = () => {
   const params = useParams();
   const projectId = params.projectId || "";
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+  const [filters, setFilters] = useState<TaskFilters>(EMPTY_FILTERS);
 
   const { board, moveTask, addTask, isLoading, error, loadBoard } =
-    useProjectBoard(projectId);
+    useProjectBoard(projectId, filters);
 
   const openTaskSheet = (taskId: string) => {
     setSelectedTaskId(taskId);
@@ -58,12 +68,13 @@ const ProjectBoard = () => {
           >
             <UserPlus className="w-4 h-4 text-slate-500" /> Invitar
           </Button>
-          <Button
-            variant="outline"
-            className="text-slate-700 font-medium h-10 border-slate-300"
-          >
-            <Filter className="w-4 h-4 text-slate-500" /> Filtrar
-          </Button>
+          <TaskFilterPopover
+            label="Filtrar"
+            filters={filters}
+            onApply={setFilters}
+            showStateField={false}
+            showProjectField={false}
+          />
           <CreateTaskDialog addTask={addTask} projectId={projectId} />
         </div>
       </div>

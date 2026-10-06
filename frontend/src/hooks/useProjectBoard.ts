@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { projectService } from "@/services/project";
 import type { ProjectBoard } from "@/interfaces/Project";
-import type { TaskCardSummary } from "@/interfaces/Task";
+import type { TaskCardSummary, TaskFilters } from "@/interfaces/Task";
 import { taskService } from "@/services/task";
 
-export const useProjectBoard = (projectId: string | undefined) => {
+export const useProjectBoard = (
+  projectId: string | undefined,
+  filters?: TaskFilters,
+) => {
   const [board, setBoard] = useState<ProjectBoard | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,9 +43,10 @@ export const useProjectBoard = (projectId: string | undefined) => {
     });
   };
 
-  const [prevProjectId, setPrevProjectId] = useState(projectId);
-  if (prevProjectId !== projectId) {
-    setPrevProjectId(projectId);
+  const requestKey = JSON.stringify({ projectId, filters });
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+  if (prevRequestKey !== requestKey) {
+    setPrevRequestKey(requestKey);
     if (projectId) {
       setIsLoading(true);
       setError(null);
@@ -53,14 +57,17 @@ export const useProjectBoard = (projectId: string | undefined) => {
     if (!projectId) return;
 
     try {
-      const response = await projectService.get_project_board(projectId);
+      const response = await projectService.get_project_board(
+        projectId,
+        filters,
+      );
       setBoard(response.data);
     } catch {
       setError("No se pudo cargar el tablero del proyecto.");
     } finally {
       setIsLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, filters]);
 
   const loadBoard = useCallback(
     async (showLoader = true) => {

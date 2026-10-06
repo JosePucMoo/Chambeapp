@@ -38,11 +38,17 @@ const EMPTY_FILTERS: TaskFilters = {
 interface TaskFilterPopoverProps {
   filters: TaskFilters;
   onApply: (filters: TaskFilters) => void;
+  label?: string;
+  showStateField?: boolean;
+  showProjectField?: boolean;
 }
 
 export const TaskFilterPopover = ({
   filters,
   onApply,
+  label = "Filtro",
+  showStateField = true,
+  showProjectField = true,
 }: TaskFilterPopoverProps) => {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<TaskFilters>(EMPTY_FILTERS);
@@ -55,8 +61,8 @@ export const TaskFilterPopover = ({
 
   const activeCount = [
     filters.priority,
-    filters.columnTitle,
-    filters.projectId,
+    showStateField ? filters.columnTitle : undefined,
+    showProjectField ? filters.projectId : undefined,
     filters.search,
   ].filter(Boolean).length;
 
@@ -83,7 +89,7 @@ export const TaskFilterPopover = ({
         }
       >
         <Filter className="w-4 h-4 mr-2 text-gray-500" />
-        Filtro
+        {label}
         {activeCount > 0 && (
           <span className="ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1.5 text-xs font-semibold text-white">
             {activeCount}
@@ -148,63 +154,69 @@ export const TaskFilterPopover = ({
             </Field>
           </div>
 
-          <div className="space-y-2">
-            <Field>
-              <FieldLabel className="text-sm text-slate-600">Estado</FieldLabel>
-              <Select
-                value={draft.columnTitle ?? ALL_OPTION}
-                onValueChange={(value) =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    columnTitle:
-                      value === ALL_OPTION || !value ? undefined : value,
-                  }))
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Todos los estados" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_OPTION}>Todos</SelectItem>
-                  {Object.values(ColumnDefaultEnum).map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
+          {showStateField && (
+            <div className="space-y-2">
+              <Field>
+                <FieldLabel className="text-sm text-slate-600">
+                  Estado
+                </FieldLabel>
+                <Select
+                  value={draft.columnTitle ?? ALL_OPTION}
+                  onValueChange={(value) =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      columnTitle:
+                        value === ALL_OPTION || !value ? undefined : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Todos los estados" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                    {Object.values(ColumnDefaultEnum).map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
 
-          <div className="space-y-2">
-            <Field>
-              <FieldLabel className="text-sm text-slate-600">
-                Proyecto
-              </FieldLabel>
-              <Select
-                value={draft.projectId ?? ALL_OPTION}
-                onValueChange={(value) =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    projectId:
-                      value === ALL_OPTION || !value ? undefined : value,
-                  }))
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Todos los proyectos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_OPTION}>Todos</SelectItem>
-                  {projects.map((project) => (
-                    <SelectItem key={project.id} value={project.id}>
-                      {project.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
+          {showProjectField && (
+            <div className="space-y-2">
+              <Field>
+                <FieldLabel className="text-sm text-slate-600">
+                  Proyecto
+                </FieldLabel>
+                <Select
+                  value={draft.projectId ?? ALL_OPTION}
+                  onValueChange={(value) =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      projectId:
+                        value === ALL_OPTION || !value ? undefined : value,
+                    }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Todos los proyectos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                    {projects.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
         </div>
 
         <Separator />

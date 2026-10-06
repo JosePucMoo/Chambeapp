@@ -8,6 +8,7 @@ import type {
   ProjectDashboardSummary,
   ProjectMember,
 } from "@/interfaces/Project";
+import type { TaskFilters } from "@/interfaces/Task";
 
 export const projectService = {
   get_dashboard_projects: async (
@@ -45,8 +46,17 @@ export const projectService = {
 
   get_project_board: async (
     projectId: string,
+    filters?: TaskFilters,
   ): Promise<ApiResponse<ProjectBoard>> => {
-    const response = await apiClient.get(`/projects/${projectId}/board`);
+    const params: Record<string, string> = {};
+    if (filters?.priority) params.priority = filters.priority;
+    if (filters?.columnTitle) params.column_title = filters.columnTitle;
+    if (filters?.projectId) params.project_id = filters.projectId;
+    if (filters?.search) params.search = filters.search;
+
+    const response = await apiClient.get(`/projects/${projectId}/board`, {
+      params,
+    });
     return response.data;
   },
 };
