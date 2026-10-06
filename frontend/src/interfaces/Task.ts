@@ -22,7 +22,7 @@ export interface TaskCardSummary {
   id: string;
   title: string;
   description: string;
-  priority: TaskPriority;
+  priority: TaskPriorityEnum;
   dueDate: string;
   assigneeId: string;
   assigneeName: string | null;
@@ -32,7 +32,7 @@ export interface TaskCardSummary {
 export interface TaskDashboardSummary {
   id: string;
   title: string;
-  priority: TaskPriority;
+  priority: TaskPriorityEnum;
   dueDate: string;
   columnTitle: string;
   projectTitle: string;
