@@ -15,6 +15,8 @@ class Task:
     column_id: Optional[str] = None
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    completed_at: Optional[datetime] = None
 
 @dataclass
 class TaskBoard:
@@ -34,3 +36,25 @@ class TaskDashboardSummary:
     priority: TaskPriorityEnum
     due_date: date
     column_title: str
+
+@dataclass
+class TaskMetricsAggregate:
+    total_tasks: int = 0
+    completed_tasks: int = 0
+    tasks_due_soon: int = 0
+
+@dataclass
+class DailyTaskActivity:
+    day: date
+    completed: int = 0
+    created: int = 0
+
+@dataclass
+class TaskDueSoon:
+    id: str
+    title: str
+    project_title: str
+    priority: TaskPriorityEnum
+    due_date: date
+    column_title: str
+

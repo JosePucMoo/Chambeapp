@@ -11,7 +11,9 @@ def map_task_entity_to_model(task: Task) -> TaskModel:
         priority=task.priority,
         due_date= task.due_date,
         column_id= task.column_id,
-        assignee_id= task.assignee_id
+        assignee_id= task.assignee_id,
+        created_at= task.created_at,
+        completed_at= task.completed_at
     )
 
 def map_task_model_to_entity(task: TaskModel) -> TaskModel:
@@ -22,7 +24,9 @@ def map_task_model_to_entity(task: TaskModel) -> TaskModel:
         priority= task.priority,
         due_date= task.due_date,
         column_id= task.column_id,
-        assignee_id= task.assignee_id
+        assignee_id= task.assignee_id,
+        created_at= task.created_at,
+        completed_at= task.completed_at
     )
 
 def map_task_dto_to_entity(task: CreateTaskDTO) -> Task:

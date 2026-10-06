@@ -30,10 +30,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         
         return map_project_model_to_entity(project_model)
 
-    def get_paginated_dashboard_projects(
-            self, user_id: int, page: int = 1, page_size: int = 10
-        ) -> tuple[int, List[ProjectDashboardSummary]]:
-            
+    def _summaries_query(self, user_id: str):
             subquery_positions = (
                 self.db.query(
                     ColumnModel.project_id,
@@ -44,7 +41,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                 .subquery()
             )
     
-            query = (
+            return (
                 self.db.query(
                     ProjectModel.id,
                     ProjectModel.title,
@@ -90,18 +87,10 @@ class ProjectRepositoryImpl(ProjectRepository):
                 
                 .group_by(ProjectModel.id, UserProjectLinkModel.role)
             )
-    
-            total_items = (
-                self.db.query(func.count(ProjectModel.id))
-                .join(UserProjectLinkModel, ProjectModel.id == UserProjectLinkModel.project_id)
-                .filter(UserProjectLinkModel.user_id == user_id)
-                .scalar()
-            )
-    
-            offset = (page - 1) * page_size
-            results = query.offset(offset).limit(page_size).all()
-    
-            projects = [
+
+    @staticmethod
+    def _map_summaries(results) -> List[ProjectDashboardSummary]:
+            return [
                 ProjectDashboardSummary(
                     id=row.id,
                     title=row.title,
@@ -116,8 +105,27 @@ class ProjectRepositoryImpl(ProjectRepository):
                 )
                 for row in results
             ]
+
+    def get_user_project_summaries(self, user_id: str) -> List[ProjectDashboardSummary]:
+            return self._map_summaries(self._summaries_query(user_id).all())
+
+    def get_paginated_dashboard_projects(
+            self, user_id: int, page: int = 1, page_size: int = 10
+        ) -> tuple[int, List[ProjectDashboardSummary]]:
+            
+            query = self._summaries_query(user_id)
     
-            return total_items, projects
+            total_items = (
+                self.db.query(func.count(ProjectModel.id))
+                .join(UserProjectLinkModel, ProjectModel.id == UserProjectLinkModel.project_id)
+                .filter(UserProjectLinkModel.user_id == user_id)
+                .scalar()
+            )
+    
+            offset = (page - 1) * page_size
+            results = query.offset(offset).limit(page_size).all()
+    
+            return total_items, self._map_summaries(results)
 
     def get_by_id(self, project_id: str) -> Project:
         query = select(ProjectModel).where(ProjectModel.id == project_id)

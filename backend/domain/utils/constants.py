@@ -1,4 +1,8 @@
 class Constants:
+    WEEKDAY_SHORT_NAMES = ("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+    DASHBOARD_WEEKLY_DAYS = 7
+    DASHBOARD_DUE_SOON_DAYS = 7
+
     EMAIL_ALREADY_EXISTS = "El correo electrónico ya está registrado."
     PASSWORDS_DO_NOT_MATCH = "Las contraseñas no coinciden."
     PASSWORD_TOO_SHORT = "La contraseña debe tener al menos 8 caracteres."

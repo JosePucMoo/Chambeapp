@@ -17,6 +17,10 @@ class ProjectRepository(ABC):
         pass
 
     @abstractmethod
+    def get_user_project_summaries(self, user_id: str) -> List[ProjectDashboardSummary]:
+        pass
+
+    @abstractmethod
     def get_project_members(self, project_id: str) -> List[ProjectMember]:
         pass
 
