@@ -1,6 +1,7 @@
 
 
 from typing import Annotated, List, Optional
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -19,7 +20,7 @@ from domain.utils.constants import Constants
 from infrastructure.mappers.task_mappers import map_task_dto_to_entity, map_update_task_dto_to_entity
 from infrastructure.api.dependencies import ColumnRepositoryDep, CurrentUser, ProjectRepositoryDep, TaskRepositoryDep, get_current_user
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.task_schema import BulkDeleteTasksDTO, TaskDashboardSummaryDTO, TaskDetailDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO, UpdateTaskDTO
+from infrastructure.schemas.task_schema import BulkDeleteTasksDTO, CalendarTaskDTO, TaskDashboardSummaryDTO, TaskDetailDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO, UpdateTaskDTO
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(get_current_user)])
@@ -52,6 +53,49 @@ def create_task(
         raise HTTPException(
            status_code=status.HTTP_409_CONFLICT,
            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.get(path="/calendar", status_code=status.HTTP_200_OK, response_model=ApiResponse[List[CalendarTaskDTO]])
+def get_calendar_tasks(
+    current_user: CurrentUser,
+    repository: TaskRepositoryDep,
+    start_date: Annotated[date, Query(description="Fecha de inicio del rango (inclusive)")],
+    end_date: Annotated[date, Query(description="Fecha de fin del rango (inclusive)")],
+    priority: Annotated[Optional[TaskPriorityEnum], Query()] = None,
+    column_title: Annotated[Optional[str], Query(
+        max_length=100
+    )] = None,
+    project_id: Annotated[Optional[str], Query()] = None,
+    search: Annotated[Optional[str], Query(
+        max_length=50
+    )] = None,
+):
+    try:
+        use_case = GetTaskUseCase(repository=repository)
+
+        filters = TaskFilters(
+            priority=priority,
+            column_title=column_title,
+            project_id=project_id,
+            search=search
+        )
+
+        tasks = use_case.execute_calendar(
+            user_id=current_user.id,
+            start_date=start_date,
+            end_date=end_date,
+            filters=filters
+        )
+
+        return ApiResponse(
+            ok=True,
+            message="Tareas del periodo consultado",
+            data=[CalendarTaskDTO.model_validate(task) for task in tasks]
         )
     except Exception as e:
         raise HTTPException(
@@ -156,6 +200,7 @@ def delete_task(
 def move_task(
     task_id: str,
     update_data: TaskMoveDTO,
+    current_user: CurrentUser,
     repository: TaskRepositoryDep,
     column_repository: ColumnRepositoryDep
 ):
@@ -165,7 +210,11 @@ def move_task(
             column_repository=column_repository
             )
 
-        updated_task = use_case.execute(task_id, update_data.column_id)
+        updated_task = use_case.execute(
+            user_id=current_user.id,
+            task_id=task_id,
+            column_id=update_data.column_id
+        )
 
         return ApiResponse(
             ok=True,
@@ -176,6 +225,11 @@ def move_task(
         raise HTTPException(
            status_code=status.HTTP_404_NOT_FOUND,
            detail=str(e)
+        )
+    except CannotUpdateException as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
         )
     except Exception as e:
         raise HTTPException(

@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import List
 
 from domain.entities.task import (
+    CalendarTask,
     DailyTaskActivity,
     Task,
     TaskDashboardSummary,
@@ -45,6 +46,10 @@ class TaskRepository(ABC):
 
     @abstractmethod
     def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int, filters: TaskFilters = None) -> tuple[int, List[TaskDashboardSummary]]:
+        pass
+
+    @abstractmethod
+    def get_calendar_tasks(self, user_id: str, start_date: date, end_date: date, filters: TaskFilters = None) -> List[CalendarTask]:
         pass
 
     @abstractmethod

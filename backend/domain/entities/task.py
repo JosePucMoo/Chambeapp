@@ -57,6 +57,22 @@ class TaskFilters:
     column_title: Optional[str] = None
     project_id: Optional[str] = None
     search: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+
+@dataclass
+class CalendarTask:
+    id: str
+    title: str
+    description: str
+    project_id: str
+    project_title: str
+    column_id: str
+    column_title: str
+    priority: TaskPriorityEnum
+    due_date: date
+    assignee_id: str
+    is_completed: bool = False
 
 @dataclass
 class TaskMetricsAggregate:

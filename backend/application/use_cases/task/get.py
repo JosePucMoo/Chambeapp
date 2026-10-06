@@ -1,6 +1,7 @@
+from datetime import date
 from typing import List
 
-from domain.entities.task import TaskDashboardSummary, TaskDetail, TaskFilters
+from domain.entities.task import CalendarTask, TaskDashboardSummary, TaskDetail, TaskFilters
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.repositories.task_repository import TaskRepository
 from domain.utils.constants import Constants
@@ -15,6 +16,14 @@ class GetTaskUseCase:
             user_id=user_id,
             page=page,
             page_size=page_size,
+            filters=filters
+        )
+
+    def execute_calendar(self, user_id: str, start_date: date, end_date: date, filters: TaskFilters = None) -> List[CalendarTask]:
+        return self.repository.get_calendar_tasks(
+            user_id=user_id,
+            start_date=start_date,
+            end_date=end_date,
             filters=filters
         )
 

@@ -76,3 +76,16 @@ class TaskDashboardSummaryDTO(BaseSchema):
     due_date: datetime
     priority: TaskPriorityEnum
     column_title: str
+
+class CalendarTaskDTO(BaseSchema):
+    id: str
+    title: str
+    description: str
+    project_id: str
+    project_title: str
+    column_id: str
+    column_title: str
+    priority: TaskPriorityEnum
+    due_date: date
+    assignee_id: str
+    is_completed: bool = False

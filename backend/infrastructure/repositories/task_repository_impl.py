@@ -8,7 +8,7 @@ from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
 from infrastructure.db.models.user_model import UserModel
 from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
-from domain.entities.task import DailyTaskActivity, Task, TaskDashboardSummary, TaskDetail, TaskDueSoon, TaskFilters, TaskMetricsAggregate
+from domain.entities.task import CalendarTask, DailyTaskActivity, Task, TaskDashboardSummary, TaskDetail, TaskDueSoon, TaskFilters, TaskMetricsAggregate
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.task_mappers import map_task_entity_to_model, map_task_model_to_entity
 from domain.repositories.task_repository import TaskRepository
@@ -179,21 +179,32 @@ class TaskRepositoryImpl(TaskRepository):
 
         return column_model.position == max_position
 
+    def _apply_task_filters(self, conditions: list, filters: TaskFilters) -> None:
+        if not filters:
+            return
+
+        if filters.priority:
+            conditions.append(TaskModel.priority == filters.priority)
+
+        if filters.column_title:
+            conditions.append(ColumnModel.title == filters.column_title)
+
+        if filters.project_id:
+            conditions.append(ProjectModel.id == filters.project_id)
+
+        if filters.search:
+            conditions.append(TaskModel.title.ilike(f"%{filters.search.strip()}%"))
+
+        if filters.start_date:
+            conditions.append(TaskModel.due_date >= filters.start_date)
+
+        if filters.end_date:
+            conditions.append(TaskModel.due_date <= filters.end_date)
+
     def _matching_dashboard_task_ids_query(self, user_id: str, filters: TaskFilters):
         conditions = [TaskModel.assignee_id == user_id]
 
-        if filters:
-            if filters.priority:
-                conditions.append(TaskModel.priority == filters.priority)
-
-            if filters.column_title:
-                conditions.append(ColumnModel.title == filters.column_title)
-
-            if filters.project_id:
-                conditions.append(ProjectModel.id == filters.project_id)
-
-            if filters.search:
-                conditions.append(TaskModel.title.ilike(f"%{filters.search.strip()}%"))
+        self._apply_task_filters(conditions=conditions, filters=filters)
 
         return (
             select(TaskModel.id)
@@ -243,6 +254,62 @@ class TaskRepositoryImpl(TaskRepository):
         ]
 
         return (total_items, tasks)
+
+    def get_calendar_tasks(self, user_id: str, start_date: date, end_date: date, filters: TaskFilters = None) -> List[CalendarTask]:
+        conditions = [
+            TaskModel.assignee_id == user_id,
+            TaskModel.due_date >= start_date,
+            TaskModel.due_date <= end_date,
+        ]
+
+        self._apply_task_filters(conditions=conditions, filters=filters)
+
+        query = (
+            select(
+                TaskModel.id,
+                TaskModel.title,
+                TaskModel.description,
+                TaskModel.due_date,
+                TaskModel.priority,
+                TaskModel.assignee_id,
+                TaskModel.column_id,
+                ColumnModel.title.label("column_title"),
+                ProjectModel.id.label("project_id"),
+                ProjectModel.title.label("project_title"),
+                TaskModel.column_id.in_(self._completed_column_ids_query()).label("is_completed")
+            )
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(ProjectModel, ColumnModel.project_id == ProjectModel.id)
+            .join(
+                UserProjectLinkModel,
+                and_(
+                    ProjectModel.id == UserProjectLinkModel.project_id,
+                    UserProjectLinkModel.user_id == user_id
+                )
+            )
+            .where(and_(*conditions))
+            .distinct()
+            .order_by(TaskModel.due_date.asc(), TaskModel.title.asc())
+        )
+
+        results = self.db.execute(query).all()
+
+        return [
+            CalendarTask(
+                id=str(row.id),
+                title=row.title,
+                description=row.description,
+                project_id=str(row.project_id),
+                project_title=row.project_title,
+                column_id=str(row.column_id),
+                column_title=row.column_title,
+                priority=row.priority,
+                due_date=row.due_date,
+                assignee_id=str(row.assignee_id),
+                is_completed=bool(row.is_completed)
+            )
+            for row in results
+        ]
 
     def get_metrics(self, user_id: str, due_from: date, due_to: date) -> TaskMetricsAggregate:
         completed_condition = TaskModel.column_id.in_(
