@@ -11,13 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Calendar,
-  CalendarDays,
-  Filter,
-  LayoutList,
-  MoreHorizontal,
-} from "lucide-react";
+import { Calendar, CalendarDays, Filter, LayoutList } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import type { LayoutContextType } from "@/interfaces/Context";
 import {
@@ -45,6 +39,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
 
 function MyTasks() {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
@@ -52,7 +47,17 @@ function MyTasks() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const { tasks, totalCount, totalPages } = useTasks(currentPage, itemsPerPage);
+  const { tasks, totalCount, totalPages, loadTasks } = useTasks(
+    currentPage,
+    itemsPerPage,
+  );
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+
+  const openTaskSheet = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsTaskSheetOpen(true);
+  };
 
   useEffect(() => {
     setPageTitle("Mis tareas");
@@ -155,9 +160,13 @@ function MyTasks() {
             {tasks.map((task) => (
               <TableRow
                 key={task.id}
-                className="hover:bg-gray-50/50 border-b-gray-100 last:border-0 group"
+                onClick={() => openTaskSheet(task.id)}
+                className="hover:bg-gray-50/50 border-b-gray-100 last:border-0 group cursor-pointer"
               >
-                <TableCell className="pl-6">
+                <TableCell
+                  className="pl-6"
+                  onClick={(event) => event.stopPropagation()}
+                >
                   <Checkbox
                     checked={selectedTasks.includes(task.id)}
                     onCheckedChange={() => toggleSelectTask(task.id)}
@@ -214,16 +223,6 @@ function MyTasks() {
                         .label
                     }
                   </Badge>
-                </TableCell>
-
-                <TableCell className="pr-6">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-gray-400 group-hover:opacity-100 transition-opacity"
-                  >
-                    <MoreHorizontal className="h-5 w-5" />
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -300,6 +299,14 @@ function MyTasks() {
           </div>
         </div>
       </div>
+
+      <TaskDetailSheet
+        taskId={selectedTaskId}
+        open={isTaskSheetOpen}
+        onOpenChange={setIsTaskSheetOpen}
+        onTaskUpdated={loadTasks}
+        onTaskDeleted={loadTasks}
+      />
     </div>
   );
 }

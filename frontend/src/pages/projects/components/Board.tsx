@@ -5,9 +5,10 @@ import type { ProjectBoard } from "@/interfaces/Project";
 interface BoardProps {
   board: ProjectBoard;
   moveTask: (taskId: string, columnId: string) => void;
+  onTaskClick?: (taskId: string) => void;
 }
 
-export function Board({ board, moveTask }: BoardProps) {
+export function Board({ board, moveTask, onTaskClick }: BoardProps) {
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.canceled || !event.operation?.target) return;
 
@@ -26,6 +27,7 @@ export function Board({ board, moveTask }: BoardProps) {
             id={column.id}
             title={column.title}
             tasks={column.tasks}
+            onTaskClick={onTaskClick}
           ></Column>
         ))}
       </div>

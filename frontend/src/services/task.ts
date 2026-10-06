@@ -5,6 +5,8 @@ import type {
   Task,
   TaskCardSummary,
   TaskDashboardSummary,
+  TaskDetail,
+  UpdateTask,
 } from "./../interfaces/Task";
 import apiClient from "./api";
 
@@ -14,6 +16,24 @@ export const taskService = {
     projectId: string,
   ): Promise<ApiResponse<TaskCardSummary>> => {
     const response = await apiClient.post(`/tasks/${projectId}`, task);
+    return response.data;
+  },
+
+  get_by_id: async (taskId: string): Promise<ApiResponse<TaskDetail>> => {
+    const response = await apiClient.get(`/tasks/${taskId}`);
+    return response.data;
+  },
+
+  update: async (
+    task: UpdateTask,
+    taskId: string,
+  ): Promise<ApiResponse<Task>> => {
+    const response = await apiClient.put(`/tasks/${taskId}`, task);
+    return response.data;
+  },
+
+  delete: async (taskId: string): Promise<ApiResponse<null>> => {
+    const response = await apiClient.delete(`/tasks/${taskId}`);
     return response.data;
   },
 

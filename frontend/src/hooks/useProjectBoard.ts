@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { projectService } from "@/services/project";
 import type { ProjectBoard } from "@/interfaces/Project";
 import type { TaskCardSummary } from "@/interfaces/Task";
@@ -40,24 +40,27 @@ export const useProjectBoard = (projectId: string | undefined) => {
     });
   };
 
-  useEffect(() => {
-    if (!projectId) return;
+  const loadBoard = useCallback(
+    async (showLoader = true) => {
+      if (!projectId) return;
 
-    const loadBoard = async () => {
-      setIsLoading(true);
+      if (showLoader) setIsLoading(true);
       setError(null);
       try {
         const response = await projectService.get_project_board(projectId);
         setBoard(response.data);
-      } catch (error: any) {
+      } catch {
         setError("No se pudo cargar el tablero del proyecto.");
       } finally {
-        setIsLoading(false);
+        if (showLoader) setIsLoading(false);
       }
-    };
+    },
+    [projectId],
+  );
 
+  useEffect(() => {
     loadBoard();
-  }, [projectId]);
+  }, [loadBoard]);
 
   const moveTask = async (taskId: string, targetColumnId: string) => {
     setBoard((prevBoard) => {
@@ -101,5 +104,5 @@ export const useProjectBoard = (projectId: string | undefined) => {
     }
   };
 
-  return { board, isLoading, error, setBoard, moveTask, addTask };
+  return { board, isLoading, error, setBoard, moveTask, addTask, loadBoard };
 };

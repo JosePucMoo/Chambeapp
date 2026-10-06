@@ -27,5 +27,5 @@ export const useTasks = (page: number, pageSize: number) => {
     loadTasks();
   }, [loadTasks]);
 
-  return { tasks, isLoading, totalCount, totalPages };
+  return { tasks, isLoading, totalCount, totalPages, loadTasks };
 };

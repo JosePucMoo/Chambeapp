@@ -18,6 +18,28 @@ export interface CreateTask {
   assigneeId: string;
 }
 
+export interface UpdateTask {
+  title: string;
+  description: string;
+  priority: TaskPriorityEnum;
+  dueDate: Date;
+  assigneeId: string;
+}
+
+export interface TaskDetail {
+  id: string;
+  title: string;
+  description: string;
+  priority: TaskPriorityEnum;
+  dueDate: string;
+  columnId: string;
+  columnTitle: string;
+  projectId: string;
+  projectTitle: string;
+  assigneeId: string;
+  assigneeName: string | null;
+}
+
 export interface TaskCardSummary {
   id: string;
   title: string;

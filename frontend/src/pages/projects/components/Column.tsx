@@ -6,9 +6,10 @@ interface ColumnProps {
   id: string;
   title: string;
   tasks: TaskCardSummary[];
+  onTaskClick?: (taskId: string) => void;
 }
 
-export function Column({ id, title, tasks }: ColumnProps) {
+export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
   const { ref, isDropTarget } = useDroppable({
     id: id,
   });
@@ -34,7 +35,7 @@ export function Column({ id, title, tasks }: ColumnProps) {
             }`}
           >
             {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
+              <TaskCard key={task.id} task={task} onClick={onTaskClick} />
             ))}
           </div>
         )}

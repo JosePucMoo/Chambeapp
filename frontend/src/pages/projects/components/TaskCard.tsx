@@ -13,7 +13,12 @@ import { formatDate } from "@/utils/dateFormatter";
 import { useDraggable } from "@dnd-kit/react";
 import { CalendarDays } from "lucide-react";
 
-export function TaskCard({ task }: { task: TaskCardSummary }) {
+interface TaskCardProps {
+  task: TaskCardSummary;
+  onClick?: (taskId: string) => void;
+}
+
+export function TaskCard({ task, onClick }: TaskCardProps) {
   const { ref } = useDraggable({
     id: task.id,
   });
@@ -21,7 +26,25 @@ export function TaskCard({ task }: { task: TaskCardSummary }) {
   const priorityConfig = PRIORITY_CONFIG[task.priority as TaskPriorityEnum];
 
   return (
-    <Card ref={ref} className="mx-auto w-full pt-0 ring-0">
+    <Card
+      ref={ref}
+      onClick={() => onClick?.(task.id)}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClick(task.id);
+              }
+            }
+          : undefined
+      }
+      className={`mx-auto w-full pt-0 ring-0 ${
+        onClick ? "cursor-pointer transition-shadow hover:shadow-md" : ""
+      }`}
+    >
       <CardAction className="pt-2 pl-2">
         <Badge variant="secondary" className={`${priorityConfig.colorClass}`}>
           {priorityConfig.label}
