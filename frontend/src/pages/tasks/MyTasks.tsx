@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, CalendarDays, Filter, LayoutList } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Calendar, CalendarDays, LayoutList, Trash2 } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import type { LayoutContextType } from "@/interfaces/Context";
 import {
@@ -22,7 +32,9 @@ import {
   ColumnDefaultEnum,
   TaskPriorityEnum,
 } from "@/interfaces/constants/enums";
+import type { TaskFilters } from "@/interfaces/Task";
 import { useTasks } from "@/hooks/useTasks";
+import { taskService } from "@/services/task";
 import { formatDate } from "@/utils/dateFormatter";
 import {
   Select,
@@ -40,16 +52,39 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
+import { TaskFilterPopover } from "./components/TaskFilterPopover";
+import { toast } from "@/components/ui/toast";
+
+const EMPTY_FILTERS: TaskFilters = {
+  priority: undefined,
+  columnTitle: undefined,
+  projectId: undefined,
+  search: undefined,
+};
 
 function MyTasks() {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const { setPageTitle } = useOutletContext<LayoutContextType>();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [filters, setFilters] = useState<TaskFilters>(EMPTY_FILTERS);
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const memoizedFilters = useMemo(
+    () => ({
+      priority: filters.priority,
+      columnTitle: filters.columnTitle,
+      projectId: filters.projectId,
+      search: filters.search,
+    }),
+    [filters],
+  );
 
   const { tasks, totalCount, totalPages, loadTasks } = useTasks(
     currentPage,
     itemsPerPage,
+    memoizedFilters,
   );
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
@@ -79,10 +114,17 @@ function MyTasks() {
     }
   };
 
+  const handleApplyFilters = (newFilters: TaskFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
+    setSelectedTasks([]);
+  };
+
   const handlePageChange = (page: number, e: React.MouseEvent) => {
     e.preventDefault();
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+      setSelectedTasks([]);
     }
   };
 
@@ -90,6 +132,40 @@ function MyTasks() {
     if (!value) return;
     setItemsPerPage(Number(value));
     setCurrentPage(1);
+    setSelectedTasks([]);
+  };
+
+  const handleBulkDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await taskService.delete_many(selectedTasks);
+      const deletedCount = response.data.length;
+
+      toast.add({
+        type: "success",
+        title:
+          deletedCount === 1
+            ? "Tarea eliminada"
+            : `${deletedCount} tareas eliminadas`,
+        description: "Las tareas se eliminaron correctamente.",
+      });
+
+      setSelectedTasks([]);
+      setIsBulkDeleteDialogOpen(false);
+      await loadTasks();
+    } catch (error) {
+      console.error("Error eliminando las tareas", error);
+      toast.add({
+        type: "error",
+        title: "Error al eliminar",
+        description:
+          error instanceof Error
+            ? error.message
+            : "No pudimos eliminar las tareas seleccionadas.",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -117,12 +193,47 @@ function MyTasks() {
         </Tabs>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Button variant="outline" className="text-gray-700 font-medium h-10">
-            <Filter className="w-4 h-4 mr-2 text-gray-500" />
-            Filtro
-          </Button>
+          <TaskFilterPopover filters={filters} onApply={handleApplyFilters} />
         </div>
       </div>
+
+      {selectedTasks.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-6 py-3">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={
+                selectedTasks.length === tasks.length && tasks.length > 0
+              }
+              onCheckedChange={toggleSelectAll}
+              className="border-gray-300 rounded-lg"
+            />
+            <p className="text-sm text-blue-800 font-medium">
+              {selectedTasks.length}{" "}
+              {selectedTasks.length === 1
+                ? "tarea seleccionada"
+                : "tareas seleccionadas"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setSelectedTasks([])}
+              className="text-gray-700"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => setIsBulkDeleteDialogOpen(true)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar seleccionadas
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <Table>
@@ -299,6 +410,44 @@ function MyTasks() {
           </div>
         </div>
       </div>
+
+      <AlertDialog
+        open={isBulkDeleteDialogOpen}
+        onOpenChange={setIsBulkDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {selectedTasks.length}{" "}
+              {selectedTasks.length === 1
+                ? "tarea seleccionada"
+                : "tareas seleccionadas"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta accion eliminara permanentemente {selectedTasks.length}{" "}
+              {selectedTasks.length === 1
+                ? "la tarea seleccionada"
+                : "las tareas seleccionadas"}
+              . Esta accion no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(event) => {
+                event.preventDefault();
+                handleBulkDelete();
+              }}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? "Eliminando..." : "Eliminar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <TaskDetailSheet
         taskId={selectedTaskId}

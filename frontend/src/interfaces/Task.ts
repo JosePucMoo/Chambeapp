@@ -59,3 +59,10 @@ export interface TaskDashboardSummary {
   columnTitle: string;
   projectTitle: string;
 }
+
+export interface TaskFilters {
+  priority?: TaskPriorityEnum;
+  columnTitle?: string;
+  projectId?: string;
+  search?: string;
+}

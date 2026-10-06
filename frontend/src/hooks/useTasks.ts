@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import type { TaskDashboardSummary } from "@/interfaces/Task";
+import type { TaskDashboardSummary, TaskFilters } from "@/interfaces/Task";
 import { taskService } from "@/services/task";
 
-export const useTasks = (page: number, pageSize: number) => {
+export const useTasks = (
+  page: number,
+  pageSize: number,
+  filters?: TaskFilters,
+) => {
   const [tasks, setTasks] = useState<TaskDashboardSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
@@ -11,7 +15,11 @@ export const useTasks = (page: number, pageSize: number) => {
   const loadTasks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await taskService.get_dashboard_tasks(page, pageSize);
+      const response = await taskService.get_dashboard_tasks(
+        page,
+        pageSize,
+        filters,
+      );
 
       setTasks(response.data.data);
       setTotalCount(response.data.totalCount);
@@ -21,7 +29,7 @@ export const useTasks = (page: number, pageSize: number) => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize]);
+  }, [page, pageSize, filters]);
 
   useEffect(() => {
     loadTasks();

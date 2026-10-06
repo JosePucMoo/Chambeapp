@@ -6,6 +6,7 @@ import type {
   TaskCardSummary,
   TaskDashboardSummary,
   TaskDetail,
+  TaskFilters,
   UpdateTask,
 } from "./../interfaces/Task";
 import apiClient from "./api";
@@ -47,14 +48,26 @@ export const taskService = {
     return response.data;
   },
 
+  delete_many: async (taskIds: string[]): Promise<ApiResponse<string[]>> => {
+    const response = await apiClient.delete("/tasks/", {
+      data: { taskIds },
+    });
+    return response.data;
+  },
+
   get_dashboard_tasks: async (
     page: number = 1,
     pageSize: number = 10,
+    filters?: TaskFilters,
   ): Promise<ApiResponse<PaginatedResponse<TaskDashboardSummary>>> => {
     const response = await apiClient.get("/tasks/", {
       params: {
         page: page,
         page_size: pageSize,
+        priority: filters?.priority,
+        column_title: filters?.columnTitle,
+        project_id: filters?.projectId,
+        search: filters?.search,
       },
     });
 
