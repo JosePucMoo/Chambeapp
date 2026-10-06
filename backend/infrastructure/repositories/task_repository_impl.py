@@ -1,4 +1,3 @@
-from asyncio import Task, tasks
 from datetime import date, datetime, timedelta
 from typing import List
 
@@ -7,7 +6,9 @@ from sqlalchemy import and_, case, func, not_, select
 
 from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
-from domain.entities.task import DailyTaskActivity, TaskDashboardSummary, TaskDueSoon, TaskMetricsAggregate
+from infrastructure.db.models.user_model import UserModel
+from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
+from domain.entities.task import DailyTaskActivity, Task, TaskDashboardSummary, TaskDetail, TaskDueSoon, TaskMetricsAggregate
 from infrastructure.db.models.task_model import TaskModel
 from infrastructure.mappers.task_mappers import map_task_entity_to_model, map_task_model_to_entity
 from domain.repositories.task_repository import TaskRepository
@@ -32,6 +33,91 @@ class TaskRepositoryImpl(TaskRepository):
         )
 
         return map_task_model_to_entity(task_model) if task_model else None
+
+    def get_detail_by_id(self, user_id: str, task_id: str) -> TaskDetail:
+        query = (
+            select(
+                TaskModel.id,
+                TaskModel.title,
+                TaskModel.description,
+                TaskModel.priority,
+                TaskModel.due_date,
+                TaskModel.assignee_id,
+                ColumnModel.id.label("column_id"),
+                ColumnModel.title.label("column_title"),
+                ProjectModel.id.label("project_id"),
+                ProjectModel.title.label("project_title"),
+                UserModel.name.label("assignee_name"),
+            )
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(ProjectModel, ColumnModel.project_id == ProjectModel.id)
+            .join(UserProjectLinkModel, ProjectModel.id == UserProjectLinkModel.project_id)
+            .outerjoin(UserModel, TaskModel.assignee_id == UserModel.id)
+            .where(
+                TaskModel.id == task_id,
+                UserProjectLinkModel.user_id == user_id,
+            )
+        )
+
+        row = self.db.execute(query).one_or_none()
+
+        if not row:
+            return None
+
+        return TaskDetail(
+            id=row.id,
+            title=row.title,
+            description=row.description,
+            priority=row.priority,
+            due_date=row.due_date,
+            column_id=row.column_id,
+            column_title=row.column_title,
+            project_id=row.project_id,
+            project_title=row.project_title,
+            assignee_id=row.assignee_id,
+            assignee_name=row.assignee_name
+        )
+
+    def _get_task_model_from_user(self, user_id: str, task_id: str) -> TaskModel:
+        query = (
+            select(TaskModel)
+            .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
+            .join(UserProjectLinkModel, ColumnModel.project_id == UserProjectLinkModel.project_id)
+            .where(
+                TaskModel.id == task_id,
+                UserProjectLinkModel.user_id == user_id,
+            )
+        )
+
+        return self.db.execute(query).unique().scalar_one_or_none()
+
+    def update(self, user_id: str, task: Task) -> Task:
+        task_model = self._get_task_model_from_user(user_id=user_id, task_id=task.id)
+
+        if not task_model:
+            return None
+
+        task_model.title = task.title
+        task_model.description = task.description
+        task_model.priority = task.priority
+        task_model.due_date = task.due_date
+        task_model.assignee_id = task.assignee_id
+
+        self.db.commit()
+        self.db.refresh(task_model)
+
+        return map_task_model_to_entity(task_model)
+
+    def delete(self, user_id: str, task_id: str) -> bool:
+        task_model = self._get_task_model_from_user(user_id=user_id, task_id=task_id)
+
+        if not task_model:
+            return False
+
+        self.db.delete(task_model)
+        self.db.commit()
+
+        return True
 
     def change_column(self, task_id: str, column_id: str) -> Task:
         task_model = self.db.scalar(

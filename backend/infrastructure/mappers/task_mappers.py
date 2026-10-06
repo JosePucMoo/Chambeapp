@@ -1,4 +1,4 @@
-from infrastructure.schemas.task_schema import CreateTaskDTO, TaskBoardDTO, TaskDashboardSummaryDTO
+from infrastructure.schemas.task_schema import CreateTaskDTO, TaskBoardDTO, TaskDashboardSummaryDTO, UpdateTaskDTO
 from infrastructure.db.models.task_model import TaskModel
 from domain.entities.task import Task, TaskBoard, TaskDashboardSummary
 
@@ -31,6 +31,16 @@ def map_task_model_to_entity(task: TaskModel) -> TaskModel:
 
 def map_task_dto_to_entity(task: CreateTaskDTO) -> Task:
     return Task(
+        title=task.title,
+        description=task.description,
+        priority=task.priority,
+        due_date=task.due_date,
+        assignee_id=task.assignee_id
+    )
+
+def map_update_task_dto_to_entity(task: UpdateTaskDTO, task_id: str) -> Task:
+    return Task(
+        id=task_id,
         title=task.title,
         description=task.description,
         priority=task.priority,

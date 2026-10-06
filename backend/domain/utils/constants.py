@@ -25,6 +25,9 @@ class Constants:
 
     TASK_NOT_CREATED = "Ops! No se pudo crear tu tarea."
     TASK_NOT_FOUND = "No hemos podido encontrar tu tarea."
+    TASK_NOT_UPDATED = "Ops! No se pudo actualizar tu tarea."
+    TASK_NOT_DELETED = "Ops! No se pudo eliminar tu tarea."
+    ASSIGNEE_NOT_IN_PROJECT = "El responsable seleccionado no pertenece al proyecto."
 
     COLUMN_NOT_FOUND = "No hemos podido encontrar la columna."
     ANY_COLUMN_FOUND = "No hemos podido encontrar alguna columna."

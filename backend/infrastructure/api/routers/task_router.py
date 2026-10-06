@@ -6,15 +6,18 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from application.use_cases.task.create import CreateTaskUseCase
 from application.use_cases.task.change_column import ChangeColumnUseCase
+from application.use_cases.task.delete import DeleteTaskUseCase
 from application.use_cases.task.get import GetTaskUseCase
+from application.use_cases.task.update import UpdateTaskUseCase
 from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.exceptions.cannot_create_exception import CannotCreateException
+from domain.exceptions.cannot_update_exception import CannotUpdateException
 from domain.utils.constants import Constants
-from infrastructure.mappers.task_mappers import map_task_dto_to_entity
+from infrastructure.mappers.task_mappers import map_task_dto_to_entity, map_update_task_dto_to_entity
 from infrastructure.api.dependencies import ColumnRepositoryDep, CurrentUser, ProjectRepositoryDep, TaskRepositoryDep, get_current_user
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.task_schema import TaskDashboardSummaryDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO
+from infrastructure.schemas.task_schema import TaskDashboardSummaryDTO, TaskDetailDTO, TaskMoveDTO, TaskResponseDTO, CreateTaskDTO, UpdateTaskDTO
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"], dependencies=[Depends(get_current_user)])
@@ -46,6 +49,99 @@ def create_task(
     except CannotCreateException as e:
         raise HTTPException(
            status_code=status.HTTP_409_CONFLICT,
+           detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.get("/{task_id}", status_code=status.HTTP_200_OK, response_model=ApiResponse[TaskDetailDTO])
+def get_task(
+    task_id: str,
+    current_user: CurrentUser,
+    repository: TaskRepositoryDep
+):
+    try:
+        use_case = GetTaskUseCase(repository=repository)
+        task = use_case.execute_detail(user_id=current_user.id, task_id=task_id)
+
+        return ApiResponse(
+            ok=True,
+            message=f'Tarea: {task.title}',
+            data=TaskDetailDTO.model_validate(task)
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+           status_code=status.HTTP_404_NOT_FOUND,
+           detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.put(path="/{task_id}", status_code=status.HTTP_200_OK, response_model=ApiResponse[TaskResponseDTO])
+def update_task(
+    task_id: str,
+    update_data: UpdateTaskDTO,
+    current_user: CurrentUser,
+    repository: TaskRepositoryDep,
+    project_repository: ProjectRepositoryDep
+):
+    try:
+        use_case = UpdateTaskUseCase(
+            repository=repository,
+            project_repository=project_repository
+        )
+
+        updated_task = use_case.execute(
+            user_id=current_user.id,
+            task_id=task_id,
+            task_data=map_update_task_dto_to_entity(update_data, task_id)
+        )
+
+        return ApiResponse(
+            ok=True,
+            message="Tarea actualizada con éxito",
+            data=TaskResponseDTO.model_validate(updated_task)
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+           status_code=status.HTTP_404_NOT_FOUND,
+           detail=str(e)
+        )
+    except CannotUpdateException as e:
+        raise HTTPException(
+           status_code=status.HTTP_409_CONFLICT,
+           detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e)
+        )
+
+@router.delete(path="/{task_id}", status_code=status.HTTP_200_OK, response_model=ApiResponse)
+def delete_task(
+    task_id: str,
+    current_user: CurrentUser,
+    repository: TaskRepositoryDep
+):
+    try:
+        use_case = DeleteTaskUseCase(repository=repository)
+        use_case.execute(user_id=current_user.id, task_id=task_id)
+
+        return ApiResponse(
+            ok=True,
+            message="Tarea eliminada con éxito",
+            data=None
+        )
+    except NotFoundException as e:
+        raise HTTPException(
+           status_code=status.HTTP_404_NOT_FOUND,
            detail=str(e)
         )
     except Exception as e:

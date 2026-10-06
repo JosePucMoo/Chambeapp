@@ -38,6 +38,20 @@ class TaskDashboardSummary:
     column_title: str
 
 @dataclass
+class TaskDetail:
+    id: str
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    due_date: date
+    column_id: str
+    column_title: str
+    project_id: str
+    project_title: str
+    assignee_id: str
+    assignee_name: str | None = None
+
+@dataclass
 class TaskMetricsAggregate:
     total_tasks: int = 0
     completed_tasks: int = 0

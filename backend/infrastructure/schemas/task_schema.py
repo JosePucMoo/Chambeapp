@@ -28,6 +28,30 @@ class CreateTaskDTO(BaseSchema):
 
     model_config= ConfigDict(from_attributes=True)
 
+class UpdateTaskDTO(BaseSchema):
+    title: str = Field(min_length=3, max_length=50)
+    description: str
+    priority: TaskPriorityEnum
+    due_date: datetime
+    assignee_id: str
+
+    model_config= ConfigDict(from_attributes=True)
+
+class TaskDetailDTO(BaseSchema):
+    id: str
+    title: str
+    description: str
+    priority: TaskPriorityEnum
+    due_date: datetime
+    column_id: str
+    column_title: str
+    project_id: str
+    project_title: str
+    assignee_id: str
+    assignee_name: str | None = None
+
+    model_config= ConfigDict(from_attributes=True)
+
 class TaskBoardDTO(BaseSchema):
     id: str
     title: str

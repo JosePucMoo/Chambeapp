@@ -6,6 +6,7 @@ from domain.entities.task import (
     DailyTaskActivity,
     Task,
     TaskDashboardSummary,
+    TaskDetail,
     TaskDueSoon,
     TaskMetricsAggregate,
 )
@@ -22,7 +23,19 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
+    def get_detail_by_id(self, user_id: str, task_id: str) -> TaskDetail:
+        pass
+
+    @abstractmethod
     def change_column(self, task_id: str, column_id: str) -> Task:
+        pass
+
+    @abstractmethod
+    def update(self, user_id: str, task: Task) -> Task:
+        pass
+
+    @abstractmethod
+    def delete(self, user_id: str, task_id: str) -> bool:
         pass
 
     @abstractmethod
