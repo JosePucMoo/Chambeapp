@@ -10,7 +10,9 @@ from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyEx
 
 
 class RegisterUserUseCase:
-    def __init__(self, repository: UserRepository, password_hasher: PasswordHasher, email_sender: EmailSender):
+    def __init__(
+        self, repository: UserRepository, password_hasher: PasswordHasher, email_sender: EmailSender
+    ):
         self.repository = repository
         self.password_hasher = password_hasher
         self.email_sender = email_sender
@@ -26,16 +28,15 @@ class RegisterUserUseCase:
             name=user_data.name,
             email=user_data.email,
             password=password_hashed,
-            token=verification_token
+            token=verification_token,
         )
-        saved_user = self.repository.create(user) 
+        saved_user = self.repository.create(user)
 
         if not saved_user:
             raise CannotCreateException(Constants.USER_NOT_CREATED)
-                
+
         self.email_sender.send_verification_email(
-            to_email=saved_user.email, 
-            verification_token=verification_token
+            to_email=saved_user.email, verification_token=verification_token
         )
 
         return saved_user

@@ -1,4 +1,3 @@
-
 from typing import List
 
 from sqlalchemy import select, func
@@ -6,7 +5,7 @@ from sqlalchemy.orm import Session
 from infrastructure.mappers.user_mappers import map_user_entity_to_model, map_user_model_to_entity
 from infrastructure.db.models.user_model import UserModel
 from domain.repositories.user_repository import UserRepository
-from domain.entities.user import User 
+from domain.entities.user import User
 
 
 class UserRepositoryImpl(UserRepository):
@@ -21,7 +20,7 @@ class UserRepositoryImpl(UserRepository):
 
         return map_user_model_to_entity(user_model)
 
-    def get_by_email(self, email:str) -> User | None:
+    def get_by_email(self, email: str) -> User | None:
         query = select(UserModel).where(UserModel.email == email)
         user = self.db.scalars(query).one_or_none()
 
@@ -44,9 +43,9 @@ class UserRepositoryImpl(UserRepository):
         query = select(UserModel).where(UserModel.id == id)
         user = self.db.scalar(query)
 
-        if not user: 
+        if not user:
             return None
-        
+
         return map_user_model_to_entity(user)
 
     def update(self, user: User) -> User:

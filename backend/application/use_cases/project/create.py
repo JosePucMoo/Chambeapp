@@ -10,40 +10,33 @@ from domain.repositories.user_project_link_repository import UserProjectLinkRepo
 
 
 class CreateProjectUseCase:
-    def __init__(self, repository: ProjectRepository, column_repository: ColumnRepository, user_project_link_repository: UserProjectLinkRepository):
-        self.repository=repository
+    def __init__(
+        self,
+        repository: ProjectRepository,
+        column_repository: ColumnRepository,
+        user_project_link_repository: UserProjectLinkRepository,
+    ):
+        self.repository = repository
         self.column_repository = column_repository
         self.user_project_link_repository = user_project_link_repository
 
-    def execute(self, project_data, user_id: str)-> Project:
+    def execute(self, project_data, user_id: str) -> Project:
         project = self.repository.create(project_data)
 
         if not project:
             raise CannotCreateException(Constants.PROJECT_NOT_CREATED)
 
-        column_to_do = Column(
-            title=ColumnDefaultEnum.TO_DO,
-            position=1,
-            project_id=project.id
-        )
+        column_to_do = Column(title=ColumnDefaultEnum.TO_DO, position=1, project_id=project.id)
 
         column_in_progress = Column(
-            title=ColumnDefaultEnum.IN_PROGRESS,
-            position=2,
-            project_id=project.id
+            title=ColumnDefaultEnum.IN_PROGRESS, position=2, project_id=project.id
         )
 
         column_completed = Column(
-            title=ColumnDefaultEnum.COMPLETED,
-            position=3,
-            project_id=project.id
+            title=ColumnDefaultEnum.COMPLETED, position=3, project_id=project.id
         )
 
-        default_columns = [
-            column_to_do,
-            column_in_progress,
-            column_completed
-        ]
+        default_columns = [column_to_do, column_in_progress, column_completed]
 
         self.column_repository.create_default_columns(default_columns)
 
@@ -54,5 +47,5 @@ class CreateProjectUseCase:
         )
 
         self.user_project_link_repository.create(user_project_link)
-        
+
         return project

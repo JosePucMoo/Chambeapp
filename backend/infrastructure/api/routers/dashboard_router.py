@@ -14,7 +14,9 @@ from infrastructure.schemas.api_schema import ApiResponse
 from infrastructure.schemas.dashboard_schema import DashboardResponseDTO, DueSoonTaskDTO
 
 
-router = APIRouter(prefix="/dashboard", tags=["Dashboard"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    prefix="/dashboard", tags=["Dashboard"], dependencies=[Depends(get_current_user)]
+)
 
 
 @router.get(
@@ -51,8 +53,7 @@ def get_dashboard_metrics(
 ):
     try:
         use_case = GetDashboardUseCase(
-            project_repository=project_repository,
-            task_repository=task_repository
+            project_repository=project_repository, task_repository=task_repository
         )
 
         dashboard_metrics = use_case.execute(user_id=current_user.id)
@@ -60,12 +61,12 @@ def get_dashboard_metrics(
         return ApiResponse(
             ok=True,
             message="Dashboard metrics",
-            data=DashboardResponseDTO.from_entity(dashboard_metrics)
+            data=DashboardResponseDTO.from_entity(dashboard_metrics),
         )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=Constants.UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e),
         )
 
 
@@ -97,8 +98,7 @@ def get_due_soon_tasks(
 ):
     try:
         use_case = GetDashboardUseCase(
-            project_repository=project_repository,
-            task_repository=task_repository
+            project_repository=project_repository, task_repository=task_repository
         )
 
         due_soon_tasks = use_case.execute_due_soon_tasks(user_id=current_user.id)
@@ -106,10 +106,10 @@ def get_due_soon_tasks(
         return ApiResponse(
             ok=True,
             message="Tasks due soon",
-            data=[DueSoonTaskDTO.from_entity(task) for task in due_soon_tasks]
+            data=[DueSoonTaskDTO.from_entity(task) for task in due_soon_tasks],
         )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=Constants.UNEXPECTED_ERROR + str(e)
+            detail=Constants.UNEXPECTED_ERROR + str(e),
         )

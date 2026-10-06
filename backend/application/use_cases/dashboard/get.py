@@ -24,7 +24,7 @@ class GetDashboardUseCase:
         return self.task_repository.get_due_soon_tasks(
             user_id=user_id,
             due_from=today,
-            due_to=today + timedelta(days=Constants.DASHBOARD_DUE_SOON_DAYS)
+            due_to=today + timedelta(days=Constants.DASHBOARD_DUE_SOON_DAYS),
         )
 
     def execute(self, user_id: str, today: date = None) -> DashboardMetrics:
@@ -37,13 +37,11 @@ class GetDashboardUseCase:
         task_metrics = self.task_repository.get_metrics(
             user_id=user_id,
             due_from=today,
-            due_to=today + timedelta(days=Constants.DASHBOARD_DUE_SOON_DAYS)
+            due_to=today + timedelta(days=Constants.DASHBOARD_DUE_SOON_DAYS),
         )
 
         weekly_activity = self.task_repository.get_weekly_activity(
-            user_id=user_id,
-            start_at=window_start,
-            end_at=window_end
+            user_id=user_id, start_at=window_start, end_at=window_end
         )
 
         return DashboardMetrics(
@@ -52,21 +50,17 @@ class GetDashboardUseCase:
             total_tasks=task_metrics.total_tasks,
             completed_tasks=task_metrics.completed_tasks,
             tasks_due_soon=task_metrics.tasks_due_soon,
-            weekly_performance=self._build_weekly_performance(today, weekly_activity)
+            weekly_performance=self._build_weekly_performance(today, weekly_activity),
         )
 
     def _count_projects_by_status(self, project_summaries: List) -> List[ProjectStatusCount]:
-        counts = {
-            status: 0
-            for status in ProjectStatusEnum
-        }
+        counts = {status: 0 for status in ProjectStatusEnum}
 
         for summary in project_summaries:
             counts[summary.status] += 1
 
         return [
-            ProjectStatusCount(status=status, total=counts[status])
-            for status in ProjectStatusEnum
+            ProjectStatusCount(status=status, total=counts[status]) for status in ProjectStatusEnum
         ]
 
     def _weekly_window(self, today: date) -> tuple[datetime, datetime]:
@@ -91,7 +85,7 @@ class GetDashboardUseCase:
                 WeeklyPerformance(
                     name=Constants.WEEKDAY_SHORT_NAMES[day.weekday()],
                     completed=item.completed if item else 0,
-                    created=item.created if item else 0
+                    created=item.created if item else 0,
                 )
             )
 

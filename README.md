@@ -7,6 +7,7 @@ Project and task management web application with a Kanban-type system. It allows
 - **Frontend:** React, Vite, TypeScript, React Router, Tailwind CSS, shadcn/ui, Axios
 - **Backend:** Python, FastAPI, Uvicorn, SQLAlchemy, Pydantic, PyJWT
 - **Database:** PostgreSQL
+- **Tooling:** Ruff (lint + format), pytest
 - **Containers:** Docker, Docker Compose
 
 ## Prerequisites
@@ -67,6 +68,37 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The service is available at `http://localhost:8000` and the tables are created automatically on first boot.
+
+## Backend code quality — Ruff
+
+The backend uses [Ruff](https://docs.astral.sh/ruff/) as linter and formatter. It is pinned in
+`backend/requirements-dev.txt` together with the test dependencies, so it is installed together with
+the rest of the development tools:
+
+```bash
+cd backend
+source venv/bin/activate
+pip install -r requirements-dev.txt
+```
+
+The configuration lives in `backend/pyproject.toml` (target Python 3.12, line length 100, default
+Ruff rules: `E4`, `E7`, `E9`, `F`). The `F821` rule is ignored for `infrastructure/db/models/*`
+because SQLAlchemy resolves those relationships at runtime through string forward references.
+
+All commands are run from the `backend/` folder with the virtual environment activated:
+
+```bash
+ruff check .          # Lint: report errors
+ruff check . --fix    # Lint: apply the automatic fixes
+ruff format .         # Format all the source code
+ruff format --check . # Check the formatting without modifying files (useful in CI)
+```
+
+Recommended workflow before committing:
+
+```bash
+ruff check . --fix && ruff format . && ruff check .
+```
 
 ## Frontend installation
 

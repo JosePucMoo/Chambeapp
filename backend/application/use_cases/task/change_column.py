@@ -1,5 +1,3 @@
-
-
 from domain.exceptions.cannot_update_exception import CannotUpdateException
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.repositories.column_repository import ColumnRepository

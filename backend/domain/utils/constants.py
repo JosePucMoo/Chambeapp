@@ -8,10 +8,10 @@ class Constants:
     PASSWORD_TOO_SHORT = "La contraseña debe tener al menos 8 caracteres."
     INVALID_EMAIL = "El formato del correo electrónico no es válido."
     USER_NOT_CREATED = "Ops! No se pudo crear tu usuario."
-    
+
     INVALID_CREDENTIALS = "El correo electrónico o la contraseña son incorrectos."
     UNVERIFIED_ACCOUNT = "Por favor verifica tu correo electrónico antes de iniciar sesión."
-    
+
     TOKEN_EXPIRED = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
     LINK_EXPIRED = "El enlace ha expirado o no es válido."
     TOKEN_INVALID = "Las credenciales de autenticación son inválidas."
@@ -31,5 +31,3 @@ class Constants:
 
     COLUMN_NOT_FOUND = "No hemos podido encontrar la columna."
     ANY_COLUMN_FOUND = "No hemos podido encontrar alguna columna."
-
-

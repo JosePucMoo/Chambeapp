@@ -4,6 +4,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from application.interfaces.token_generator import TokenGenerator
 
+
 class JwtTokenGenerator(TokenGenerator):
     def __init__(self):
         self.secret_key = os.getenv("SECRET_KEY", "change-me-in-prod")
@@ -12,9 +13,9 @@ class JwtTokenGenerator(TokenGenerator):
 
     def generate_token(self, data: dict) -> str:
         to_encode = data.copy()
-        
+
         expire = datetime.now(timezone.utc) + timedelta(minutes=self.expire_minutes)
-        
+
         to_encode.update({"exp": expire})
 
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)

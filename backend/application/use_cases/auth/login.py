@@ -6,12 +6,13 @@ from domain.repositories.user_repository import UserRepository
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 
+
 class LoginUseCase:
     def __init__(
-        self, 
-        repository: UserRepository, 
+        self,
+        repository: UserRepository,
         password_hasher: PasswordHasher,
-        token_generator: TokenGenerator
+        token_generator: TokenGenerator,
     ):
         self.repository = repository
         self.password_hasher = password_hasher
@@ -26,7 +27,7 @@ class LoginUseCase:
 
         if not self.password_hasher.verify(password, user.password):
             raise InvalidCredentialsException(error_msg)
-            
+
         if not user.is_verified:
             raise UnverifiedAccountException(Constants.UNVERIFIED_ACCOUNT)
 
@@ -36,7 +37,4 @@ class LoginUseCase:
 
         token = self.token_generator.generate_token(payload)
 
-        return [
-            token, 
-            user
-        ]
+        return [token, user]

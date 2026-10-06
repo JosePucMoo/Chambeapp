@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class EmailSender(ABC):
     @abstractmethod
     def send_verification_email(self, to_email: str, verification_token: str) -> None:

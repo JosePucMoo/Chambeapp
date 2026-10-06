@@ -1,5 +1,3 @@
-
-
 from domain.repositories.column_repository import ColumnRepository
 from domain.exceptions.not_found_exception import NotFoundException
 from domain.repositories.project_repository import ProjectRepository
@@ -10,7 +8,12 @@ from domain.repositories.task_repository import TaskRepository
 
 
 class CreateTaskUseCase:
-    def __init__(self, repository: TaskRepository, project_repository: ProjectRepository, column_repository: ColumnRepository):
+    def __init__(
+        self,
+        repository: TaskRepository,
+        project_repository: ProjectRepository,
+        column_repository: ColumnRepository,
+    ):
         self.repository = repository
         self.project_repository = project_repository
         self.column_repository = column_repository

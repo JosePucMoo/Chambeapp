@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 from typing import List
 
@@ -10,20 +8,23 @@ from infrastructure.schemas.task_schema import TaskBoardDTO
 from domain.entities.project import ProjectBoard
 from infrastructure.schemas.base_schema import BaseSchema
 
+
 class BaseProjectDTO(BaseSchema):
     title: str = Field(min_length=3, max_length=50)
     description: str
     client: str
     delivery_date: datetime
 
-class CreateProjectDTO(BaseProjectDTO):
 
+class CreateProjectDTO(BaseProjectDTO):
     model_config = ConfigDict(from_attributes=True)
+
 
 class ProjectResponseDTO(BaseProjectDTO):
     id: str
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class ProjectDashboardSummaryDTO(BaseSchema):
     id: str
@@ -34,10 +35,12 @@ class ProjectDashboardSummaryDTO(BaseSchema):
     status: str
     progress_percentage: float
 
+
 class ProjectMemberResponseDTO(BaseSchema):
     id: str
     name: str
     email: str
+
 
 class ProjectBoardDTO(BaseSchema):
     project_id: str
@@ -62,9 +65,11 @@ class ProjectBoardDTO(BaseSchema):
                             priority=task.priority,
                             due_date=task.due_date,
                             assignee_id=task.assignee_id,
-                            assignee_name=task.assignee_name
-                        ) for task in col.tasks
-                    ]
-                ) for col in entity.columns
-            ]
+                            assignee_name=task.assignee_name,
+                        )
+                        for task in col.tasks
+                    ],
+                )
+                for col in entity.columns
+            ],
         )

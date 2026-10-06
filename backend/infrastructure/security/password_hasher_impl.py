@@ -3,8 +3,8 @@ from application.interfaces.password_hasher import PasswordHasher
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 class PasswordHasherImpl(PasswordHasher):
-    
     def hash(self, password: str) -> str:
         return pwd_context.hash(password)
 

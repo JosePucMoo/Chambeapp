@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from infrastructure.api.routers.auth_router import router as auth_router

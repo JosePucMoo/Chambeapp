@@ -3,14 +3,14 @@ from typing import List
 
 from domain.entities.user import User
 
-class UserRepository(ABC):
 
+class UserRepository(ABC):
     @abstractmethod
     def create(self, user: User) -> User:
         pass
 
     @abstractmethod
-    def get_by_email(self, email:str) -> User | None:
+    def get_by_email(self, email: str) -> User | None:
         pass
 
     @abstractmethod

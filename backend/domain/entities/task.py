@@ -5,6 +5,7 @@ import uuid
 
 from domain.entities.enums import TaskPriorityEnum
 
+
 @dataclass
 class Task:
     title: str
@@ -18,6 +19,7 @@ class Task:
     created_at: datetime = field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
+
 @dataclass
 class TaskBoard:
     id: str
@@ -28,6 +30,7 @@ class TaskBoard:
     assignee_id: str
     assignee_name: str | None = None
 
+
 @dataclass
 class TaskDashboardSummary:
     id: str
@@ -36,6 +39,7 @@ class TaskDashboardSummary:
     priority: TaskPriorityEnum
     due_date: date
     column_title: str
+
 
 @dataclass
 class TaskDetail:
@@ -51,6 +55,7 @@ class TaskDetail:
     assignee_id: str
     assignee_name: str | None = None
 
+
 @dataclass
 class TaskFilters:
     priority: Optional[TaskPriorityEnum] = None
@@ -59,6 +64,7 @@ class TaskFilters:
     search: Optional[str] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
+
 
 @dataclass
 class CalendarTask:
@@ -74,17 +80,20 @@ class CalendarTask:
     assignee_id: str
     is_completed: bool = False
 
+
 @dataclass
 class TaskMetricsAggregate:
     total_tasks: int = 0
     completed_tasks: int = 0
     tasks_due_soon: int = 0
 
+
 @dataclass
 class DailyTaskActivity:
     day: date
     completed: int = 0
     created: int = 0
+
 
 @dataclass
 class TaskDueSoon:
@@ -94,4 +103,3 @@ class TaskDueSoon:
     priority: TaskPriorityEnum
     due_date: date
     column_title: str
-

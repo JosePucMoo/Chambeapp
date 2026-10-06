@@ -1,4 +1,3 @@
-
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.utils.constants import Constants
 from domain.exceptions.invalid_token_exception import InvalidTokenException
@@ -18,4 +17,4 @@ class VerifyTokenUseCase:
         if not user.is_verified:
             raise UnverifiedAccountException(Constants.UNVERIFIED_ACCOUNT)
 
-        return 
+        return

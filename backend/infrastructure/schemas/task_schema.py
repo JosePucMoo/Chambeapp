@@ -1,10 +1,10 @@
-
 from datetime import date, datetime
 
 from pydantic import ConfigDict, Field
 
 from domain.entities.enums import TaskPriorityEnum
 from infrastructure.schemas.base_schema import BaseSchema
+
 
 class BaseTaskDTO(BaseSchema):
     title: str
@@ -14,10 +14,12 @@ class BaseTaskDTO(BaseSchema):
     column_id: str
     assignee_id: str
 
+
 class TaskResponseDTO(BaseTaskDTO):
     id: str
-    
-    model_config= ConfigDict(from_attributes=True)
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CreateTaskDTO(BaseSchema):
     title: str = Field(min_length=3, max_length=50)
@@ -26,7 +28,8 @@ class CreateTaskDTO(BaseSchema):
     due_date: datetime
     assignee_id: str
 
-    model_config= ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
+
 
 class UpdateTaskDTO(BaseSchema):
     title: str = Field(min_length=3, max_length=50)
@@ -35,12 +38,14 @@ class UpdateTaskDTO(BaseSchema):
     due_date: datetime
     assignee_id: str
 
-    model_config= ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
+
 
 class BulkDeleteTasksDTO(BaseSchema):
     task_ids: list[str] = Field(min_length=1)
 
-    model_config= ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
+
 
 class TaskDetailDTO(BaseSchema):
     id: str
@@ -55,7 +60,8 @@ class TaskDetailDTO(BaseSchema):
     assignee_id: str
     assignee_name: str | None = None
 
-    model_config= ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
+
 
 class TaskBoardDTO(BaseSchema):
     id: str
@@ -66,8 +72,10 @@ class TaskBoardDTO(BaseSchema):
     assignee_id: str
     assignee_name: str
 
+
 class TaskMoveDTO(BaseSchema):
     column_id: str
+
 
 class TaskDashboardSummaryDTO(BaseSchema):
     id: str
@@ -76,6 +84,7 @@ class TaskDashboardSummaryDTO(BaseSchema):
     due_date: datetime
     priority: TaskPriorityEnum
     column_title: str
+
 
 class CalendarTaskDTO(BaseSchema):
     id: str

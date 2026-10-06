@@ -2,6 +2,7 @@ from domain.utils.constants import Constants
 from domain.exceptions.invalid_token_exception import InvalidTokenException
 from domain.repositories.user_repository import UserRepository
 
+
 class VerifyEmailUseCase:
     def __init__(self, repository: UserRepository):
         self.repository = repository

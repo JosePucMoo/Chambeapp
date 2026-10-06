@@ -15,9 +15,8 @@ from domain.entities.task import (
 
 
 class TaskRepository(ABC):
-
     @abstractmethod
-    def create(self, task: Task)-> Task:
+    def create(self, task: Task) -> Task:
         pass
 
     @abstractmethod
@@ -45,11 +44,15 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def get_paginated_dashboard_tasks(self, user_id: str, page: int, page_size: int, filters: TaskFilters = None) -> tuple[int, List[TaskDashboardSummary]]:
+    def get_paginated_dashboard_tasks(
+        self, user_id: str, page: int, page_size: int, filters: TaskFilters = None
+    ) -> tuple[int, List[TaskDashboardSummary]]:
         pass
 
     @abstractmethod
-    def get_calendar_tasks(self, user_id: str, start_date: date, end_date: date, filters: TaskFilters = None) -> List[CalendarTask]:
+    def get_calendar_tasks(
+        self, user_id: str, start_date: date, end_date: date, filters: TaskFilters = None
+    ) -> List[CalendarTask]:
         pass
 
     @abstractmethod
@@ -61,5 +64,7 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def get_weekly_activity(self, user_id: str, start_at: datetime, end_at: datetime) -> List[DailyTaskActivity]:
+    def get_weekly_activity(
+        self, user_id: str, start_at: datetime, end_at: datetime
+    ) -> List[DailyTaskActivity]:
         pass

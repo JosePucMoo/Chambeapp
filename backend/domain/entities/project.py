@@ -8,6 +8,7 @@ from sqlalchemy import Column
 
 from domain.entities.enums import ProjectStatusEnum, RoleEnum
 
+
 @dataclass
 class Project:
     title: str
@@ -28,7 +29,7 @@ class ProjectDashboardSummary:
     total_tasks: int
     completed_tasks: int
     not_started_tasks: int
-    
+
     progress_percentage: float = field(init=False)
     status: ProjectStatusEnum = field(init=False)
 
@@ -42,26 +43,28 @@ class ProjectDashboardSummary:
 
         today = date.today()
 
-        if self.delivery_date < today and (self.completed_tasks != self.total_tasks) :
+        if self.delivery_date < today and (self.completed_tasks != self.total_tasks):
             self.status = ProjectStatusEnum.DELAYED
-    
+
         elif self.total_tasks == 0:
             self.status = ProjectStatusEnum.NOT_STARTED
-            
-        elif self.completed_tasks == self.total_tasks: 
+
+        elif self.completed_tasks == self.total_tasks:
             self.status = ProjectStatusEnum.COMPLETED
-            
+
         elif self.not_started_tasks == self.total_tasks:
             self.status = ProjectStatusEnum.NOT_STARTED
-            
+
         else:
             self.status = ProjectStatusEnum.ACTIVE
+
 
 @dataclass
 class ProjectMember:
     id: str
     name: str
     email: str
+
 
 @dataclass
 class ProjectBoard:

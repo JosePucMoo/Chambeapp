@@ -7,8 +7,9 @@ from infrastructure.db.models.base_model import Base
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+
 class ColumnModel(Base):
-    __tablename__="columns"
+    __tablename__ = "columns"
 
     id: Mapped[uuid.UUID] = mapped_column(String, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -18,4 +19,3 @@ class ColumnModel(Base):
 
     project: Mapped["ProjectModel"] = relationship(back_populates="columns")
     tasks: Mapped[List["TaskModel"]] = relationship(back_populates="column")
-    
