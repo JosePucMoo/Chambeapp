@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -22,7 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Calendar, CalendarDays, LayoutList, Trash2 } from "lucide-react";
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import type { LayoutContextType } from "@/interfaces/Context";
 import {
   COLUMN_STATE_CONFIG,
@@ -52,7 +51,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
-import { TaskFilterPopover } from "./components/TaskFilterPopover";
+import { TaskFilterPopover } from "@/components/task/TaskFilterPopover";
 import { toast } from "@/components/ui/toast";
 
 const EMPTY_FILTERS: TaskFilters = {
@@ -173,24 +172,23 @@ function MyTasks() {
   return (
     <div className="flex flex-col space-y-6 w-full mx-auto px-10 py-5">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Tabs defaultValue="list" className="w-100 ">
-          <TabsList className="bg-transparent p-0 border-b border-gray-200 rounded-none">
-            <TabsTrigger
-              value="list"
-              className="data-active:text-blue-600 data-active:border-b-blue-600 text-gray-500 rounded-none font-medium text-base gap-2 px-3"
-            >
-              <LayoutList className="w-5 h-5" />
-              Lista
-            </TabsTrigger>
-            <TabsTrigger
-              value="calendary"
-              className="data-active:text-blue-600 data-active:border-b-blue-600 text-gray-500 rounded-none font-medium text-base gap-2 px-3"
-            >
-              <Calendar className="w-5 h-5" />
-              Calendario
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <nav className="flex w-100 border-b border-gray-200">
+          <Link
+            to="/tasks"
+            aria-current="page"
+            className="flex items-center gap-2 border-b-2 border-blue-600 px-3 pb-2.5 text-base font-medium text-blue-600"
+          >
+            <LayoutList className="w-5 h-5" />
+            Lista
+          </Link>
+          <Link
+            to="/calendar"
+            className="flex items-center gap-2 border-b-2 border-transparent px-3 pb-2.5 text-base font-medium text-gray-500 transition hover:text-gray-700"
+          >
+            <Calendar className="w-5 h-5" />
+            Calendario
+          </Link>
+        </nav>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <TaskFilterPopover filters={filters} onApply={handleApplyFilters} />

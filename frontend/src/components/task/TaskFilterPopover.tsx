@@ -18,7 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
-import { ColumnDefaultEnum, TaskPriorityEnum } from "@/interfaces/constants/enums";
+import {
+  ColumnDefaultEnum,
+  TaskPriorityEnum,
+} from "@/interfaces/constants/enums";
 import { PRIORITY_CONFIG } from "@/interfaces/constants/taskMappings";
 import type { TaskFilters } from "@/interfaces/Task";
 import { useProjects } from "@/hooks/useProjects";
@@ -37,7 +40,10 @@ interface TaskFilterPopoverProps {
   onApply: (filters: TaskFilters) => void;
 }
 
-export function TaskFilterPopover({ filters, onApply }: TaskFilterPopoverProps) {
+export const TaskFilterPopover = ({
+  filters,
+  onApply,
+}: TaskFilterPopoverProps) => {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<TaskFilters>(EMPTY_FILTERS);
   const { projects } = useProjects(1, 50);
@@ -150,7 +156,8 @@ export function TaskFilterPopover({ filters, onApply }: TaskFilterPopoverProps) 
                 onValueChange={(value) =>
                   setDraft((prev) => ({
                     ...prev,
-                    columnTitle: value === ALL_OPTION || !value ? undefined : value,
+                    columnTitle:
+                      value === ALL_OPTION || !value ? undefined : value,
                   }))
                 }
               >
@@ -171,13 +178,16 @@ export function TaskFilterPopover({ filters, onApply }: TaskFilterPopoverProps) 
 
           <div className="space-y-2">
             <Field>
-              <FieldLabel className="text-sm text-slate-600">Proyecto</FieldLabel>
+              <FieldLabel className="text-sm text-slate-600">
+                Proyecto
+              </FieldLabel>
               <Select
                 value={draft.projectId ?? ALL_OPTION}
                 onValueChange={(value) =>
                   setDraft((prev) => ({
                     ...prev,
-                    projectId: value === ALL_OPTION || !value ? undefined : value,
+                    projectId:
+                      value === ALL_OPTION || !value ? undefined : value,
                   }))
                 }
               >
@@ -224,4 +234,4 @@ export function TaskFilterPopover({ filters, onApply }: TaskFilterPopoverProps) 
       </PopoverContent>
     </Popover>
   );
-}
+};

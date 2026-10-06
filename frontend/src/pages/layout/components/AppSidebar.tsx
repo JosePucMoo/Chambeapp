@@ -1,5 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutGrid, ListPlus, FolderKanban, LogOut } from "lucide-react";
+import {
+  CalendarDays,
+  LayoutGrid,
+  ListPlus,
+  FolderKanban,
+  LogOut,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -66,6 +72,20 @@ export function AppSidebar() {
                 >
                   <ListPlus className="w-5 h-5" />
                   <span className="text-base font-medium">Mis tareas</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={location.pathname === "/calendar"}
+                className="hover:bg-blue-700 hover:text-white h-11 p-0"
+              >
+                <Link
+                  to="/calendar"
+                  className="flex items-center gap-2 pl-3 w-full h-full"
+                >
+                  <CalendarDays className="w-5 h-5" />
+                  <span className="text-base font-medium">Calendario</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

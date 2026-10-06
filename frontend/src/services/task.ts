@@ -1,6 +1,7 @@
 import type { PaginatedResponse } from "@/interfaces/Paginated";
 import type { ApiResponse } from "./../interfaces/Api";
 import type {
+  CalendarTask,
   CreateTask,
   Task,
   TaskCardSummary,
@@ -9,6 +10,7 @@ import type {
   TaskFilters,
   UpdateTask,
 } from "./../interfaces/Task";
+import { toDateString } from "@/utils/date";
 import apiClient from "./api";
 
 export const taskService = {
@@ -16,7 +18,10 @@ export const taskService = {
     task: CreateTask,
     projectId: string,
   ): Promise<ApiResponse<TaskCardSummary>> => {
-    const response = await apiClient.post(`/tasks/${projectId}`, task);
+    const response = await apiClient.post(`/tasks/${projectId}`, {
+      ...task,
+      dueDate: toDateString(task.dueDate),
+    });
     return response.data;
   },
 
@@ -29,7 +34,10 @@ export const taskService = {
     task: UpdateTask,
     taskId: string,
   ): Promise<ApiResponse<Task>> => {
-    const response = await apiClient.put(`/tasks/${taskId}`, task);
+    const response = await apiClient.put(`/tasks/${taskId}`, {
+      ...task,
+      dueDate: toDateString(task.dueDate),
+    });
     return response.data;
   },
 
@@ -64,6 +72,25 @@ export const taskService = {
       params: {
         page: page,
         page_size: pageSize,
+        priority: filters?.priority,
+        column_title: filters?.columnTitle,
+        project_id: filters?.projectId,
+        search: filters?.search,
+      },
+    });
+
+    return response.data;
+  },
+
+  get_calendar_tasks: async (
+    startDate: string,
+    endDate: string,
+    filters?: TaskFilters,
+  ): Promise<ApiResponse<CalendarTask[]>> => {
+    const response = await apiClient.get("/tasks/calendar", {
+      params: {
+        start_date: startDate,
+        end_date: endDate,
         priority: filters?.priority,
         column_title: filters?.columnTitle,
         project_id: filters?.projectId,

@@ -12,27 +12,61 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/components/ui/toast";
 import { FieldLabel, Field, FieldError } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePickerSimple } from "@/components/ui/datepicker";
 import type { CreateTask, TaskCardSummary } from "@/interfaces/Task";
 import { useProjectMembers } from "@/hooks/useProjectMembers";
+import { useProjects } from "@/hooks/useProjects";
 import { AssigneeSelect } from "./AssigneSelect";
 import { taskService } from "@/services/task";
 import { PrioritySelect } from "./PrioritySelect";
+import { parseDateOnly } from "@/utils/date";
 
 interface CreateTaskDialogProps {
-  projectId: string;
-  addTask: (task: TaskCardSummary) => void;
+  projectId?: string;
+  addTask?: (task: TaskCardSummary) => void;
+  onCreated?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultDueDate?: Date | string;
+  trigger?: React.ReactElement;
 }
 
 export function CreateTaskDialog({
   projectId,
   addTask,
+  onCreated,
+  open: controlledOpen,
+  onOpenChange,
+  defaultDueDate,
+  trigger,
 }: CreateTaskDialogProps) {
-  const [open, setOpen] = useState(false);
-  const { members } = useProjectMembers(projectId);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const { members } = useProjectMembers(
+    projectId ?? selectedProjectId ?? "",
+  );
+  const { projects } = useProjects(1, 50);
+
+  const effectiveProjectId =
+    projectId ?? (projects.length === 1 ? projects[0].id : selectedProjectId);
+
+  const initialDueDate = defaultDueDate
+    ? defaultDueDate instanceof Date
+      ? defaultDueDate
+      : parseDateOnly(defaultDueDate)
+    : undefined;
 
   const {
     register,
@@ -45,16 +79,33 @@ export function CreateTaskDialog({
       title: "",
       description: "",
       priority: undefined,
-      dueDate: undefined,
+      dueDate: initialDueDate,
       assigneeId: "",
     },
   });
 
-  const onSubmit = async (task: CreateTask) => {
-    try {
-      const response = await taskService.create(task, projectId);
+  const setOpen = (nextOpen: boolean) => {
+    if (!nextOpen) reset();
 
-      addTask(response.data);
+    if (!isControlled) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  };
+
+  const onSubmit = async (task: CreateTask) => {
+    if (!effectiveProjectId) {
+      toast.add({
+        type: "error",
+        title: "Falta el proyecto",
+        description: "Selecciona el proyecto al que pertenece la tarea.",
+      });
+      return;
+    }
+
+    try {
+      const response = await taskService.create(task, effectiveProjectId);
+
+      addTask?.(response.data);
+      onCreated?.();
 
       toast.add({
         type: "success",
@@ -64,25 +115,32 @@ export function CreateTaskDialog({
 
       reset();
       setOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         type: "error",
         title: "Error al crear",
-        description: error.message,
+        description:
+          error instanceof Error && error.message
+            ? error.message
+            : "No pudimos crear la tarea.",
       });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button className="bg-blue-500 hover:bg-blue-700 text-white font-medium h-10">
-            <Plus className="w-4 h-4" />
-            Nueva tarea
-          </Button>
-        }
-      />
+      {trigger ? (
+        <DialogTrigger render={trigger} />
+      ) : isControlled ? null : (
+        <DialogTrigger
+          render={
+            <Button className="bg-blue-500 hover:bg-blue-700 text-white font-medium h-10">
+              <Plus className="w-4 h-4" />
+              Nueva tarea
+            </Button>
+          }
+        />
+      )}
 
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -96,11 +154,41 @@ export function CreateTaskDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-6">
+            {!projectId && (
+              <div className="space-y-2">
+                <Field data-invalid={!effectiveProjectId}>
+                  <FieldLabel
+                    htmlFor="project"
+                    className="text-md font-medium text-slate-700"
+                  >
+                    Proyecto
+                  </FieldLabel>
+                  <Select
+                    value={effectiveProjectId}
+                    onValueChange={(value) =>
+                      setSelectedProjectId(value ?? "")
+                    }
+                  >
+                    <SelectTrigger id="project" className="w-full">
+                      <SelectValue placeholder="Selecciona un proyecto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Field data-invalid={!!errors.title}>
                 <FieldLabel
                   htmlFor="title"
-                  className={`text-md font-medium" ${!!errors.title ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.title ? "" : "text-slate-700"}`}
                 >
                   Titulo de la tarea
                 </FieldLabel>
@@ -130,7 +218,7 @@ export function CreateTaskDialog({
               <Field data-invalid={!!errors.description}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.description ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.description ? "" : "text-slate-700"}`}
                 >
                   Descripción
                 </FieldLabel>
@@ -160,7 +248,7 @@ export function CreateTaskDialog({
               <Field data-invalid={!!errors.dueDate}>
                 <FieldLabel
                   htmlFor="dueDate"
-                  className={`text-md font-medium" ${!!errors.dueDate ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.dueDate ? "" : "text-slate-700"}`}
                 >
                   Fecha de vencimiento
                 </FieldLabel>

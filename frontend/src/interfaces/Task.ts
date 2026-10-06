@@ -66,3 +66,17 @@ export interface TaskFilters {
   projectId?: string;
   search?: string;
 }
+
+export interface CalendarTask {
+  id: string;
+  title: string;
+  description: string;
+  projectId: string;
+  projectTitle: string;
+  columnId: string;
+  columnTitle: string;
+  priority: TaskPriorityEnum;
+  dueDate: string;
+  assigneeId: string;
+  isCompleted: boolean;
+}

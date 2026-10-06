@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./pages/layout/ProtectedRoute";
 import MainLayout from "./pages/layout/MainLayout";
 import MyTasks from "./pages/tasks/MyTasks";
+import CalendarPage from "./pages/calendar/CalendarPage";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProjectBoard from "./pages/projects/ProjectBoard";
 import ProjectsList from "./pages/projects/ProjectsList";
@@ -30,6 +31,8 @@ function App() {
               <Route index element={<Dashboard />} />
 
               <Route path="tasks" element={<MyTasks />} />
+
+              <Route path="calendar" element={<CalendarPage />} />
 
               <Route path="projects" element={<ProjectsList />} />
               <Route path="projects/:projectId" element={<ProjectBoard />} />
