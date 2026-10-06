@@ -15,7 +15,7 @@ interface AssigneSelectProps {
   members: ProjectMember[];
 }
 
-export function AssigneeSelect({ control, members }: AssigneSelectProps) {
+export const AssigneeSelect = ({ control, members }: AssigneSelectProps) => {
   return (
     <Controller
       name="assigneeId"
@@ -29,7 +29,7 @@ export function AssigneeSelect({ control, members }: AssigneSelectProps) {
         return (
           <Field data-invalid={fieldState.invalid} className="w-full">
             <FieldLabel
-              className={`text-md font-medium" ${!!fieldState.error ? "" : "text-slate-700"}`}
+              className={`text-md font-medium" ${fieldState.error ? "" : "text-slate-700"}`}
             >
               Asignar a
             </FieldLabel>
@@ -65,4 +65,4 @@ export function AssigneeSelect({ control, members }: AssigneSelectProps) {
       }}
     />
   );
-}
+};

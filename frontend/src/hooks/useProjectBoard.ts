@@ -40,27 +40,44 @@ export const useProjectBoard = (projectId: string | undefined) => {
     });
   };
 
+  const [prevProjectId, setPrevProjectId] = useState(projectId);
+  if (prevProjectId !== projectId) {
+    setPrevProjectId(projectId);
+    if (projectId) {
+      setIsLoading(true);
+      setError(null);
+    }
+  }
+
+  const fetchBoard = useCallback(async () => {
+    if (!projectId) return;
+
+    try {
+      const response = await projectService.get_project_board(projectId);
+      setBoard(response.data);
+    } catch {
+      setError("No se pudo cargar el tablero del proyecto.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [projectId]);
+
   const loadBoard = useCallback(
     async (showLoader = true) => {
       if (!projectId) return;
 
       if (showLoader) setIsLoading(true);
       setError(null);
-      try {
-        const response = await projectService.get_project_board(projectId);
-        setBoard(response.data);
-      } catch {
-        setError("No se pudo cargar el tablero del proyecto.");
-      } finally {
-        if (showLoader) setIsLoading(false);
-      }
+      await fetchBoard();
     },
-    [projectId],
+    [projectId, fetchBoard],
   );
 
   useEffect(() => {
-    loadBoard();
-  }, [loadBoard]);
+    void (async () => {
+      await fetchBoard();
+    })();
+  }, [fetchBoard]);
 
   const moveTask = async (taskId: string, targetColumnId: string) => {
     setBoard((prevBoard) => {
@@ -99,7 +116,7 @@ export const useProjectBoard = (projectId: string | undefined) => {
 
     try {
       await taskService.updateTaskPosition(taskId, targetColumnId);
-    } catch (error) {
+    } catch {
       return;
     }
   };

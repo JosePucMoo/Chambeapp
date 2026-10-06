@@ -9,7 +9,7 @@ interface ColumnProps {
   onTaskClick?: (taskId: string) => void;
 }
 
-export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
+export const Column = ({ id, title, tasks, onTaskClick }: ColumnProps) => {
   const { ref, isDropTarget } = useDroppable({
     id: id,
   });
@@ -42,4 +42,4 @@ export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
       </div>
     </div>
   );
-}
+};

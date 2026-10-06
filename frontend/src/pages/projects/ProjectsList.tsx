@@ -31,7 +31,7 @@ import { CreateProjectDialog } from "./components/CreateProjectDialog";
 import { useProjects } from "@/hooks/useProjects";
 import { ProjectTableRow } from "./components/ProjectTableRow";
 
-function ProjectsList() {
+const ProjectsList = () => {
   const { setPageTitle } = useOutletContext<LayoutContextType>();
 
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
@@ -237,6 +237,6 @@ function ProjectsList() {
       </div>
     </div>
   );
-}
+};
 
 export default ProjectsList;

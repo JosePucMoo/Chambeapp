@@ -36,11 +36,12 @@ const Login = () => {
         title: "¡Bienvenido a Chambeapp!",
       });
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         type: "error",
         title: "Error al iniciar sesión",
-        description: error.message,
+        description:
+          error instanceof Error ? error.message : "Error inesperado",
       });
     }
   };
@@ -57,7 +58,7 @@ const Login = () => {
           <Field data-invalid={!!errors.email}>
             <FieldLabel
               htmlFor="email"
-              className={`text-md font-medium ${!!errors.email ? "" : "text-gray-800"}`}
+              className={`text-md font-medium ${errors.email ? "" : "text-gray-800"}`}
             >
               Correo Electrónico
             </FieldLabel>
@@ -83,7 +84,7 @@ const Login = () => {
           <Field data-invalid={!!errors.password}>
             <FieldLabel
               htmlFor="password"
-              className={`text-md font-medium ${!!errors.password ? "" : "text-gray-800"}`}
+              className={`text-md font-medium ${errors.password ? "" : "text-gray-800"}`}
             >
               Contraseña
             </FieldLabel>

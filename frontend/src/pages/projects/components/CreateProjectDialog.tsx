@@ -23,9 +23,9 @@ interface CreateProjectDialogProps {
   loadProyects: () => void;
 }
 
-export function CreateProjectDialog({
+export const CreateProjectDialog = ({
   loadProyects,
-}: CreateProjectDialogProps) {
+}: CreateProjectDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const {
@@ -57,11 +57,12 @@ export function CreateProjectDialog({
 
       reset();
       setOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         type: "error",
         title: "Error al crear",
-        description: error.message,
+        description:
+          error instanceof Error ? error.message : "Error inesperado",
       });
     }
   };
@@ -94,7 +95,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.title}>
                 <FieldLabel
                   htmlFor="title"
-                  className={`text-md font-medium" ${!!errors.title ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.title ? "" : "text-slate-700"}`}
                 >
                   Nombre del Proyecto
                 </FieldLabel>
@@ -124,7 +125,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.description}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.description ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.description ? "" : "text-slate-700"}`}
                 >
                   Descripción
                 </FieldLabel>
@@ -148,7 +149,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.client}>
                 <FieldLabel
                   htmlFor="description"
-                  className={`text-md font-medium" ${!!errors.client ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.client ? "" : "text-slate-700"}`}
                 >
                   Cliente / Área
                 </FieldLabel>
@@ -170,7 +171,7 @@ export function CreateProjectDialog({
               <Field data-invalid={!!errors.deliveryDate}>
                 <FieldLabel
                   htmlFor="deliveryDate"
-                  className={`text-md font-medium" ${!!errors.deliveryDate ? "" : "text-slate-700"}`}
+                  className={`text-md font-medium" ${errors.deliveryDate ? "" : "text-slate-700"}`}
                 >
                   Fecha de entrega
                 </FieldLabel>
@@ -217,4 +218,4 @@ export function CreateProjectDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};

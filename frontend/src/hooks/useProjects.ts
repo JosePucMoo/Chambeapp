@@ -8,8 +8,15 @@ export const useProjects = (page: number, pageSize: number) => {
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const loadProjects = useCallback(async () => {
+  const requestKey = `${page}:${pageSize}`;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+
+  if (prevRequestKey !== requestKey) {
+    setPrevRequestKey(requestKey);
     setIsLoading(true);
+  }
+
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await projectService.get_dashboard_projects(
         page,
@@ -26,9 +33,16 @@ export const useProjects = (page: number, pageSize: number) => {
     }
   }, [page, pageSize]);
 
+  const loadProjects = useCallback(async () => {
+    setIsLoading(true);
+    await fetchProjects();
+  }, [fetchProjects]);
+
   useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+    void (async () => {
+      await fetchProjects();
+    })();
+  }, [fetchProjects]);
 
   return { projects, isLoading, totalCount, totalPages, loadProjects };
 };

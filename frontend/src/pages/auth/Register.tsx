@@ -39,11 +39,11 @@ const Register = () => {
       });
 
       navigate("/auth/login");
-    } catch (err: any) {
+    } catch (err) {
       toast.add({
         type: "error",
         title: "Error al registrarse",
-        description: err.message,
+        description: err instanceof Error ? err.message : "Error inesperado",
       });
     }
   };
@@ -61,7 +61,7 @@ const Register = () => {
           <Field data-invalid={!!errors.name}>
             <FieldLabel
               htmlFor="name"
-              className={`text-md font-medium"  ${!!errors.name ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors.name ? "" : "text-gray-700"}`}
             >
               Nombre
             </FieldLabel>
@@ -87,7 +87,7 @@ const Register = () => {
           <Field data-invalid={!!errors.email}>
             <FieldLabel
               htmlFor="email"
-              className={`text-md font-medium"  ${!!errors.email ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors.email ? "" : "text-gray-700"}`}
             >
               Correo Electrónico
             </FieldLabel>
@@ -114,7 +114,7 @@ const Register = () => {
           <Field data-invalid={!!errors.password}>
             <FieldLabel
               htmlFor="password"
-              className={`text-md font-medium"  ${!!errors ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors ? "" : "text-gray-700"}`}
             >
               Contraseña
             </FieldLabel>
@@ -140,7 +140,7 @@ const Register = () => {
           <Field data-invalid={!!errors.confirmPassword}>
             <FieldLabel
               htmlFor="confirmPassword"
-              className={`text-md font-medium"  ${!!errors.confirmPassword ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors.confirmPassword ? "" : "text-gray-700"}`}
             >
               Repetir contraseña
             </FieldLabel>

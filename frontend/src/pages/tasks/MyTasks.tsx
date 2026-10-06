@@ -61,7 +61,7 @@ const EMPTY_FILTERS: TaskFilters = {
   search: undefined,
 };
 
-function MyTasks() {
+const MyTasks = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const { setPageTitle } = useOutletContext<LayoutContextType>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -456,6 +456,6 @@ function MyTasks() {
       />
     </div>
   );
-}
+};
 
 export default MyTasks;

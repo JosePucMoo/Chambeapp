@@ -15,7 +15,7 @@ interface PrioritySelectProps {
   control: Control<CreateTask>;
 }
 
-export function PrioritySelect({ control }: PrioritySelectProps) {
+export const PrioritySelect = ({ control }: PrioritySelectProps) => {
   return (
     <Controller
       name="priority"
@@ -71,4 +71,4 @@ export function PrioritySelect({ control }: PrioritySelectProps) {
       }}
     />
   );
-}
+};

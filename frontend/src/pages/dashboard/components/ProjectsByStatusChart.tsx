@@ -95,8 +95,7 @@ const ProjectsByStatusChart = ({
                     <span
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{
-                        backgroundColor:
-                          STATUS_COLORS[entry.name] ?? "#cbd5e1",
+                        backgroundColor: STATUS_COLORS[entry.name] ?? "#cbd5e1",
                       }}
                     />
                     {entry.name}

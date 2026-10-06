@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const user = response.data || null;
 
         setUser(user);
-      } catch (error) {
+      } catch {
         localStorage.removeItem("token");
         setUser(null);
       } finally {

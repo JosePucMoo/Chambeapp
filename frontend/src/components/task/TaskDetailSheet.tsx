@@ -207,7 +207,10 @@ export function TaskDetailSheet({
             <p className="text-sm text-slate-600">{error}</p>
           </div>
         ) : !task ? null : (
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-6"
+          >
             {task.projectTitle && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-500">
@@ -242,7 +245,9 @@ export function TaskDetailSheet({
                   })}
                   aria-invalid={!!errors.title}
                 />
-                {errors.title && <FieldError>{errors.title.message}</FieldError>}
+                {errors.title && (
+                  <FieldError>{errors.title.message}</FieldError>
+                )}
               </Field>
             </div>
 

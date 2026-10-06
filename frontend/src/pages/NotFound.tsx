@@ -10,13 +10,13 @@ interface ResourceNotFoundProps {
   backText?: string;
 }
 
-export function ResourceNotFound({
+export const ResourceNotFound = ({
   title = "Recurso no encontrado",
   description = "Lo que estás buscando no existe o fue eliminado.",
   icon: Icon = FileQuestion, // Ícono por defecto
   backUrl = "/",
   backText = "Volver al inicio",
-}: ResourceNotFoundProps) {
+}: ResourceNotFoundProps) => {
   return (
     <div className="flex flex-col items-center justify-center h-[70vh] w-full max-w-md mx-auto text-center space-y-4">
       <div className="p-4 bg-gray-100 rounded-full text-gray-400 mb-2">
@@ -35,4 +35,4 @@ export function ResourceNotFound({
       </div>
     </div>
   );
-}
+};

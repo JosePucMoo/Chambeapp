@@ -41,7 +41,7 @@ interface CreateTaskDialogProps {
   trigger?: React.ReactElement;
 }
 
-export function CreateTaskDialog({
+export const CreateTaskDialog = ({
   projectId,
   addTask,
   onCreated,
@@ -49,14 +49,12 @@ export function CreateTaskDialog({
   onOpenChange,
   defaultDueDate,
   trigger,
-}: CreateTaskDialogProps) {
+}: CreateTaskDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
-  const { members } = useProjectMembers(
-    projectId ?? selectedProjectId ?? "",
-  );
+  const { members } = useProjectMembers(projectId ?? selectedProjectId ?? "");
   const { projects } = useProjects(1, 50);
 
   const effectiveProjectId =
@@ -165,9 +163,7 @@ export function CreateTaskDialog({
                   </FieldLabel>
                   <Select
                     value={effectiveProjectId}
-                    onValueChange={(value) =>
-                      setSelectedProjectId(value ?? "")
-                    }
+                    onValueChange={(value) => setSelectedProjectId(value ?? "")}
                   >
                     <SelectTrigger id="project" className="w-full">
                       <SelectValue placeholder="Selecciona un proyecto" />
@@ -293,4 +289,4 @@ export function CreateTaskDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};

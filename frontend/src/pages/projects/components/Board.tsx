@@ -8,7 +8,7 @@ interface BoardProps {
   onTaskClick?: (taskId: string) => void;
 }
 
-export function Board({ board, moveTask, onTaskClick }: BoardProps) {
+export const Board = ({ board, moveTask, onTaskClick }: BoardProps) => {
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.canceled || !event.operation?.target) return;
 
@@ -33,4 +33,4 @@ export function Board({ board, moveTask, onTaskClick }: BoardProps) {
       </div>
     </DragDropProvider>
   );
-}
+};

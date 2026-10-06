@@ -18,7 +18,7 @@ interface TaskCardProps {
   onClick?: (taskId: string) => void;
 }
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export const TaskCard = ({ task, onClick }: TaskCardProps) => {
   const { ref } = useDraggable({
     id: task.id,
   });
@@ -63,4 +63,4 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       </CardFooter>
     </Card>
   );
-}
+};

@@ -10,7 +10,9 @@ export const dashboardService = {
     return response.data;
   },
 
-  get_due_soon_tasks: async (): Promise<ApiResponse<TaskDashboardSummary[]>> => {
+  get_due_soon_tasks: async (): Promise<
+    ApiResponse<TaskDashboardSummary[]>
+  > => {
     const response = await apiClient.get("/dashboard/tasks/due-soon");
 
     return response.data;

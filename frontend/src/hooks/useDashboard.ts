@@ -42,7 +42,9 @@ export const useDashboard = () => {
   }, [fetchMetrics]);
 
   useEffect(() => {
-    fetchMetrics();
+    void (async () => {
+      await fetchMetrics();
+    })();
   }, [fetchMetrics]);
 
   const isEmpty = metrics.totalTasks === 0 && metrics.totalProjects === 0;

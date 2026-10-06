@@ -12,8 +12,15 @@ export const useTasks = (
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const loadTasks = useCallback(async () => {
+  const requestKey = `${page}:${pageSize}:${JSON.stringify(filters ?? {})}`;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+
+  if (prevRequestKey !== requestKey) {
+    setPrevRequestKey(requestKey);
     setIsLoading(true);
+  }
+
+  const fetchTasks = useCallback(async () => {
     try {
       const response = await taskService.get_dashboard_tasks(
         page,
@@ -31,9 +38,16 @@ export const useTasks = (
     }
   }, [page, pageSize, filters]);
 
+  const loadTasks = useCallback(async () => {
+    setIsLoading(true);
+    await fetchTasks();
+  }, [fetchTasks]);
+
   useEffect(() => {
-    loadTasks();
-  }, [loadTasks]);
+    void (async () => {
+      await fetchTasks();
+    })();
+  }, [fetchTasks]);
 
   return { tasks, isLoading, totalCount, totalPages, loadTasks };
 };

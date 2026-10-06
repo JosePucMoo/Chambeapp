@@ -22,14 +22,18 @@ const VerifyAccount = () => {
         const response = await authService.verifyEmail(token);
         setConfirmedAccount(true);
         setMessage(response.message);
-      } catch (err: any) {
-        setMessage(err.message);
+      } catch (err) {
+        setMessage(
+          err instanceof Error
+            ? err.message
+            : "No pudimos verificar tu cuenta.",
+        );
       } finally {
         setIsLoading(false);
       }
     };
     confirmAccount();
-  }, []);
+  }, [token]);
 
   if (isLoading) {
     return (

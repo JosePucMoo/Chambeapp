@@ -29,11 +29,12 @@ const ForgotPassword = () => {
         description: response.message,
       });
       navigate("/auth/login");
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         type: "error",
         title: "Cambios no guardados",
-        description: error.message,
+        description:
+          error instanceof Error ? error.message : "Error inesperado",
       });
     }
   };
@@ -50,7 +51,7 @@ const ForgotPassword = () => {
           <Field data-invalid={!!errors.email}>
             <FieldLabel
               htmlFor="email"
-              className={`text-md font-medium"  ${!!errors.email ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors.email ? "" : "text-gray-700"}`}
             >
               Correo Electrónico
             </FieldLabel>

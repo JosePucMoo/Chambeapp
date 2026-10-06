@@ -36,11 +36,12 @@ const ResetPassword = () => {
         description: response.message,
       });
       navigate("/auth/login");
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         type: "error",
         title: "Cambios no guardados",
-        description: error.message,
+        description:
+          error instanceof Error ? error.message : "Error inesperado",
       });
     }
   };
@@ -56,7 +57,7 @@ const ResetPassword = () => {
         <form className="mt-5 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <Field data-invalid={!!errors.newPassword}>
             <FieldLabel
-              className={`block text-md font-medium ${!!errors.newPassword ? "" : "text-gray-700"}`}
+              className={`block text-md font-medium ${errors.newPassword ? "" : "text-gray-700"}`}
             >
               Nueva contraseña
             </FieldLabel>
@@ -80,7 +81,7 @@ const ResetPassword = () => {
           <Field data-invalid={!!errors.confirmPassword}>
             <FieldLabel
               htmlFor="confirmPassword"
-              className={`text-md font-medium"  ${!!errors.confirmPassword ? "" : "text-gray-700"}`}
+              className={`text-md font-medium"  ${errors.confirmPassword ? "" : "text-gray-700"}`}
             >
               Repetir contraseña
             </FieldLabel>

@@ -15,11 +15,11 @@ interface ProjectTableRowProps {
   onToggleSelect: (id: string) => void;
 }
 
-export function ProjectTableRow({
+export const ProjectTableRow = ({
   project,
   isSelected,
   onToggleSelect,
-}: ProjectTableRowProps) {
+}: ProjectTableRowProps) => {
   return (
     <TableRow className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors">
       <TableCell className="pl-6">
@@ -101,4 +101,4 @@ export function ProjectTableRow({
       </TableCell>
     </TableRow>
   );
-}
+};
