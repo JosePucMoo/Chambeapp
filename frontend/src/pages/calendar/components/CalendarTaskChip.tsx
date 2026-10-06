@@ -54,7 +54,7 @@ export const CalendarTaskChip = ({
             handleOpenDetail();
           }
         }}
-        className={`flex w-full cursor-grab items-center gap-1.5 rounded-md border border-gray-200 bg-white px-1.5 py-1 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md active:cursor-grabbing ${
+        className={`flex w-full cursor-grab items-center gap-1.5 rounded-md border border-gray-200 bg-white px-1.5 py-2 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md active:cursor-grabbing ${
           task.isCompleted ? "opacity-70" : ""
         }`}
       >
@@ -62,7 +62,7 @@ export const CalendarTaskChip = ({
           className={`h-2.5 w-1 shrink-0 rounded-full ${getPriorityDot(task.priority)}`}
         />
         <span
-          className={`min-w-0 flex-1 truncate text-[11px] leading-tight text-gray-700 ${
+          className={`min-w-0 flex-1 truncate text-xs leading-tight text-gray-700 ${
             task.isCompleted ? "line-through" : ""
           }`}
           title={`${task.title} · ${task.projectTitle}`}
