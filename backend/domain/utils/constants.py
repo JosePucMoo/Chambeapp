@@ -22,6 +22,7 @@ class Constants:
 
     PROJECT_NOT_CREATED = "Ops! No se pudo crear tu proyecto."
     PROJECT_NOT_FOUND = "No hemos podido encontrar tu proyecto."
+    PROJECT_FORBIDDEN = "Al parecer no tienes permisos para este proyecto"
 
     TASK_NOT_CREATED = "Ops! No se pudo crear tu tarea."
     TASK_NOT_FOUND = "No hemos podido encontrar tu tarea."
@@ -31,3 +32,10 @@ class Constants:
 
     COLUMN_NOT_FOUND = "No hemos podido encontrar la columna."
     ANY_COLUMN_FOUND = "No hemos podido encontrar alguna columna."
+
+    INVITEE_NOT_REGISTERED = "El correo no está registrado."
+    ALREADY_MEMBER = "Ya es miembro en tu proyecto."
+    INVITATION_ALREADY_SENT = "Ya has enviado invitación a este usuario."
+    INVITATION_EXPIRED = "La invitación ha expirado."
+    INVITATION_ACCEPTED = "Invitación aceptada."
+    PROJECT_INVITATION_SENT = "Hemos enviado la invitación al correo del usuario."
