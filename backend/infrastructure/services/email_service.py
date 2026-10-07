@@ -77,3 +77,38 @@ class MailtrapEmailSender(EmailSender):
                 server.sendmail(self.from_email, to_email, message.as_string())
         except Exception as e:
             print(f"Error enviando correo a {to_email}: {str(e)}")
+
+    def send_project_invitation_email(
+        self, to_email: str, verification_token: str, sender_name: str, project_title: str
+    ) -> None:
+        verification_link = f"{self.FRONTEND_URL}/invitations/{verification_token}"
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Invitación de proyecto"
+        message["From"] = self.from_email
+        message["To"] = to_email
+
+        text = f"Hola,\n\nTe han invitado al proyecto {project_title} por {sender_name}, haz clic en el siguiente enlace para aceptar la invitación:\n{verification_link}\n\n"
+        html = f"""\
+            <html>
+              <body>
+                <h2>¡Invitación de proyecto!</h2>
+                <p>Te han invitado al proyecto {project_title} por {sender_name}</p>
+                <p>Para aceptar la invitación, haz clic en el siguiente botón:</p>
+                <a href="{verification_link}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Aceptar invitación</a>
+              </body>
+            </html>
+            """
+
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        message.attach(part1)
+        message.attach(part2)
+
+        try:
+            with smtplib.SMTP(self.host, self.port) as server:
+                server.starttls()
+                server.login(self.username, self.password)
+                server.sendmail(self.from_email, to_email, message.as_string())
+        except Exception as e:
+            print(f"Error enviando correo a {to_email}: {str(e)}")
