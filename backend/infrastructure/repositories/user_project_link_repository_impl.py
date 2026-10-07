@@ -1,5 +1,7 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
 from infrastructure.mappers.user_project_link_mappers import (
     map_user_project_link_entity_to_model,
     map_user_project_link_model_to_entity,
@@ -20,3 +22,13 @@ class UserProjectLinkRepositoryImpl(UserProjectLinkRepository):
         self.db.refresh(user_project_link_model)
 
         return map_user_project_link_model_to_entity(user_project_link_model)
+
+    def get_by_user_and_project(self, user_id: str, project_id: str) -> UserProjectLink:
+        query = select(UserProjectLinkModel).where(
+            UserProjectLinkModel.user_id == user_id
+            and UserProjectLinkModel.project_id == project_id
+        )
+
+        model = self.db.scalar(query)
+
+        return map_user_project_link_model_to_entity(model) if model else None
