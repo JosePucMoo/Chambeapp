@@ -25,8 +25,7 @@ class UserProjectLinkRepositoryImpl(UserProjectLinkRepository):
 
     def get_by_user_and_project(self, user_id: str, project_id: str) -> UserProjectLink:
         query = select(UserProjectLinkModel).where(
-            UserProjectLinkModel.user_id == user_id
-            and UserProjectLinkModel.project_id == project_id
+            UserProjectLinkModel.user_id == user_id, UserProjectLinkModel.project_id == project_id
         )
 
         model = self.db.scalar(query)

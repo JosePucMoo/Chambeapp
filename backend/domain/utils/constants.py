@@ -39,4 +39,5 @@ class Constants:
     INVITATION_EXPIRED = "La invitación ha expirado."
     INVITATION_NOT_FOUND = "La invitación no existe."
     INVITATION_ACCEPTED = "Invitación aceptada."
+    INVITATION_FORBIDDEN = "El correo de la invitación no coincide con tu usuario."
     PROJECT_INVITATION_SENT = "Hemos enviado la invitación al correo del usuario."

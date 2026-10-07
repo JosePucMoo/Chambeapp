@@ -16,3 +16,7 @@ class InvitePreviewDTO(BaseSchema):
     invitee_email: str
     status: InvitationStatusEnum
     expires_at: datetime
+
+
+class AcceptInvitationDTO(BaseSchema):
+    project_id: str

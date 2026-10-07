@@ -54,8 +54,8 @@ class InvitationRepositoryImpl(InvitationRepository):
 
     def has_alredy_been_sent_invitation(self, invitee_email: str, project_id: str) -> bool:
         query = select(ProjectInvitationModel).where(
-            ProjectInvitationModel.invitee_email == invitee_email
-            and ProjectInvitationModel.project_id == project_id
+            ProjectInvitationModel.invitee_email == invitee_email,
+            ProjectInvitationModel.project_id == project_id,
         )
 
         invitation_model = self.db.scalar(query)
@@ -64,3 +64,21 @@ class InvitationRepositoryImpl(InvitationRepository):
             return False
 
         return invitation_model.status == InvitationStatusEnum.PENDING
+
+    def get_by_token(self, token: str) -> ProjectInvitation:
+        query = select(ProjectInvitationModel).where(ProjectInvitationModel.token == token)
+        invitation = self.db.scalar(query)
+
+        return map_invitation_model_to_entity(invitation) if invitation else None
+
+    def update_status(self, token: str, status: InvitationStatusEnum) -> ProjectInvitation:
+        query = select(ProjectInvitationModel).where(ProjectInvitationModel.token == token)
+
+        invitation = self.db.scalar(query)
+
+        invitation.status = status
+
+        self.db.commit()
+        self.db.refresh(invitation)
+
+        return invitation
