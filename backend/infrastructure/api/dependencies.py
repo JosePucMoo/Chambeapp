@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
 from application.interfaces.email_sender import EmailSender
+from domain.repositories.invitation_repository import InvitationRepository
+from infrastructure.repositories.invitation_repository_impl import InvitationRepositoryImpl
 from domain.repositories.task_repository import TaskRepository
 from infrastructure.repositories.task_repository_impl import TaskRepositoryImpl
 from domain.entities.user import User
@@ -97,6 +99,10 @@ def get_current_user(
     return user
 
 
+def get_invitation_repository(db: Session = Depends(get_db)) -> InvitationRepository:
+    return InvitationRepositoryImpl(db)
+
+
 CurrentUser = Annotated[User, Depends(get_current_user)]
 TokenGeneratorDep = Annotated[TokenGenerator, Depends(get_token_generator)]
 PasswordHasherDep = Annotated[PasswordHasher, Depends(get_password_hasher)]
@@ -109,3 +115,4 @@ UserProjectLinkRepositoryDep = Annotated[
     UserProjectLinkRepository, Depends(get_user_project_link_repository)
 ]
 TaskRepositoryDep = Annotated[TaskRepository, Depends(get_task_repository)]
+InvitationRepositoryDep = Annotated[InvitationRepository, Depends(get_invitation_repository)]
