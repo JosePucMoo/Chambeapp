@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { FolderX, UserPlus } from "lucide-react";
+import { FolderX } from "lucide-react";
 import { Board } from "./components/Board";
 import { CreateTaskDialog } from "./components/CreateTaskDialog";
+import { InviteMemberPopover } from "./components/InviteMemberPopover";
 import { useParams } from "react-router-dom";
 import { ResourceNotFound } from "../NotFound";
 import { useProjectBoard } from "@/hooks/useProjectBoard";
+import { useProjectMembers } from "@/hooks/useProjectMembers";
+import { useAuth } from "@/hooks/useAuth";
 import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
 import { TaskFilterPopover } from "@/components/task/TaskFilterPopover";
+import { RoleEnum } from "@/interfaces/constants/enums";
 import type { TaskFilters } from "@/interfaces/Task";
 
 const EMPTY_FILTERS: TaskFilters = {
@@ -23,6 +26,12 @@ const ProjectBoard = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   const [filters, setFilters] = useState<TaskFilters>(EMPTY_FILTERS);
+
+  const { user } = useAuth();
+  const { members } = useProjectMembers(projectId);
+  const isOwner = members.some(
+    (member) => member.id === user?.id && member.role === RoleEnum.OWNER,
+  );
 
   const { board, moveTask, addTask, isLoading, error, loadBoard } =
     useProjectBoard(projectId, filters);
@@ -62,12 +71,7 @@ const ProjectBoard = () => {
           </h1>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            className="text-slate-700 font-medium h-10 border-slate-300"
-          >
-            <UserPlus className="w-4 h-4 text-slate-500" /> Invitar
-          </Button>
+          {isOwner && <InviteMemberPopover projectId={projectId} />}
           <TaskFilterPopover
             label="Filtrar"
             filters={filters}

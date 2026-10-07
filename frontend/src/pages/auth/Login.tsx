@@ -35,6 +35,14 @@ const Login = () => {
         type: "success",
         title: "¡Bienvenido a Chambeapp!",
       });
+
+      const pendingRedirect = localStorage.getItem("pendingRedirect");
+      if (pendingRedirect) {
+        localStorage.removeItem("pendingRedirect");
+        navigate(pendingRedirect);
+        return;
+      }
+
       navigate("/");
     } catch (error) {
       toast.add({

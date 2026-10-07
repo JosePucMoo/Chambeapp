@@ -5,6 +5,7 @@ import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyAccount from "./pages/auth/VerifyAccount";
 import ResetPassword from "./pages/auth/ResetPassword";
+import AcceptInvitation from "./pages/invitations/AcceptInvitation";
 import { Toaster } from "./components/ui/toast";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./pages/layout/ProtectedRoute";
@@ -25,6 +26,9 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password/:token" element={<ResetPassword />} />
             <Route path="verify-account/:token" element={<VerifyAccount />} />
+          </Route>
+          <Route element={<AuthLayout />}>
+            <Route path="invitations/:token" element={<AcceptInvitation />} />
           </Route>
           <Route path="/" element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>

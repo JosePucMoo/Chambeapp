@@ -9,6 +9,7 @@ import type {
   ProjectMember,
 } from "@/interfaces/Project";
 import type { TaskFilters } from "@/interfaces/Task";
+import type { InviteMemberDTO } from "@/interfaces/Invitation";
 
 export const projectService = {
   get_dashboard_projects: async (
@@ -57,6 +58,17 @@ export const projectService = {
     const response = await apiClient.get(`/projects/${projectId}/board`, {
       params,
     });
+    return response.data;
+  },
+
+  sendInvitation: async (
+    project_id: string,
+    invitation_member: InviteMemberDTO,
+  ): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post(
+      `/invitations/project/${project_id}`,
+      invitation_member,
+    );
     return response.data;
   },
 };
