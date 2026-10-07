@@ -4,6 +4,7 @@ from .project_model import ProjectModel
 from .user_project_link_model import UserProjectLinkModel
 from .task_model import TaskModel
 from .column_model import ColumnModel
+from .project_invitation_model import ProjectInvitationModel
 
 __all__ = [
     "Base",
@@ -12,4 +13,5 @@ __all__ = [
     "UserProjectLinkModel",
     "TaskModel",
     "ColumnModel",
+    "ProjectInvitationModel"
 ]

@@ -24,3 +24,8 @@ class ProjectStatusEnum(str, Enum):
     ACTIVE = "Activo"
     DELAYED = "Retrasado"
     COMPLETED = "Completado"
+
+class InvitationStatusEnum(str, Enum):
+    PENDING = "Pendiente"
+    ACCEPTED = "Aceptada"
+    DECLINED = "Rechazada"
