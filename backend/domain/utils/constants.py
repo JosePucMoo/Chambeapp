@@ -37,5 +37,6 @@ class Constants:
     ALREADY_MEMBER = "Ya es miembro en tu proyecto."
     INVITATION_ALREADY_SENT = "Ya has enviado invitación a este usuario."
     INVITATION_EXPIRED = "La invitación ha expirado."
+    INVITATION_NOT_FOUND = "La invitación no existe."
     INVITATION_ACCEPTED = "Invitación aceptada."
     PROJECT_INVITATION_SENT = "Hemos enviado la invitación al correo del usuario."

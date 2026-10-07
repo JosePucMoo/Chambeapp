@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 
 from application.use_cases.project.invite_member import InviteMemberUseCase
+from application.use_cases.project.get_invitation import GetInvitationUseCase
 from domain.utils.constants import Constants
 from domain.exceptions.forbidden_exception import ForbiddenException
 from domain.exceptions.not_found_exception import NotFoundException
+from domain.exceptions.resource_expired_exception import ResourceExpiredException
 from domain.exceptions.resource_alredy_exists_exception import ResourceAlreadyExistsException
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.invitation_schema import InviteMemberDTO
+from infrastructure.schemas.invitation_schema import InviteMemberDTO, InvitePreviewDTO
 from infrastructure.api.dependencies import (
     CurrentUser,
     EmailSenderDep,
@@ -14,13 +16,9 @@ from infrastructure.api.dependencies import (
     ProjectRepositoryDep,
     UserProjectLinkRepositoryDep,
     UserRepositoryDep,
-    get_current_user,
 )
 
-
-router = APIRouter(
-    prefix="/invitations", tags=["Invitations"], dependencies=[Depends(get_current_user)]
-)
+router = APIRouter(prefix="/invitations", tags=["Invitations"])
 
 
 @router.post(
@@ -56,6 +54,31 @@ def send_invitation(
     except NotFoundException as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except ResourceAlreadyExistsException as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post(
+    path="/{token}",
+    status_code=status.HTTP_200_OK,
+    response_model=ApiResponse[InvitePreviewDTO],
+)
+def get_invitation_by_token(
+    token: str,
+    repository: InvitationRepositoryDep,
+):
+    try:
+        use_case = GetInvitationUseCase(
+            repository=repository,
+        )
+        invitation = use_case.execute(token=token)
+        data = InvitePreviewDTO.model_validate(invitation)
+
+        return ApiResponse(ok=True, message=Constants.INVITATION_ACCEPTED, data=data)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except ResourceExpiredException as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.project_invitation import ProjectInvitation
+from domain.entities.project_invitation import InvitationPreview, ProjectInvitation
 
 
 class InvitationRepository(ABC):
     @abstractmethod
-    def get_by_token(self, token: str) -> ProjectInvitation:
+    def get_by_token(self, token: str) -> InvitationPreview:
         pass
 
     @abstractmethod

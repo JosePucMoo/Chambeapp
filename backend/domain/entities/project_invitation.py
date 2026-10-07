@@ -18,3 +18,12 @@ class ProjectInvitation:
 
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     created_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class InvitationPreview:
+    owner_name: str
+    project_title: str
+    invitee_email: str
+    status: InvitationStatusEnum
+    expires_at: datetime
