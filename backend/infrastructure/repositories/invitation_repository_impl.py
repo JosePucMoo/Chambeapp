@@ -17,7 +17,7 @@ class InvitationRepositoryImpl(InvitationRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_token(self, token: str) -> InvitationPreview:
+    def get_token_preview(self, token: str) -> InvitationPreview:
         query = (
             select(
                 ProjectInvitationModel.invitee_email,

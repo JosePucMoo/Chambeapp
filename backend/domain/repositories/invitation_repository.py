@@ -4,8 +4,9 @@ from domain.entities.project_invitation import InvitationPreview, ProjectInvitat
 
 
 class InvitationRepository(ABC):
+
     @abstractmethod
-    def get_by_token(self, token: str) -> InvitationPreview:
+    def get_token_preview(self, token: str) -> InvitationPreview:
         pass
 
     @abstractmethod

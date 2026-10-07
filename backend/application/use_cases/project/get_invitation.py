@@ -12,7 +12,7 @@ class GetInvitationUseCase:
         self.repository = repository
 
     def execute(self, token: str) -> InvitationPreview:
-        invitation = self.repository.get_by_token(token=token)
+        invitation = self.repository.get_token_preview(token=token)
 
         if not invitation:
             raise NotFoundException(Constants.INVITATION_NOT_FOUND)
