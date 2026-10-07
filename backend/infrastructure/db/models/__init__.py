@@ -13,5 +13,5 @@ __all__ = [
     "UserProjectLinkModel",
     "TaskModel",
     "ColumnModel",
-    "ProjectInvitationModel"
+    "ProjectInvitationModel",
 ]
