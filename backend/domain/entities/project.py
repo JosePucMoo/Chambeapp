@@ -64,6 +64,7 @@ class ProjectMember:
     id: str
     name: str
     email: str
+    role: RoleEnum
 
 
 @dataclass

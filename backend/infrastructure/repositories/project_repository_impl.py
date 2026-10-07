@@ -133,17 +133,16 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def get_project_members(self, project_id: str) -> List[ProjectMember]:
         results = (
-            self.db.query(
-                UserModel.id,
-                UserModel.name,
-                UserModel.email,
-            )
+            self.db.query(UserModel.id, UserModel.name, UserModel.email, UserProjectLinkModel.role)
             .join(UserProjectLinkModel, UserModel.id == UserProjectLinkModel.user_id)
             .filter(UserProjectLinkModel.project_id == project_id)
             .all()
         )
 
-        return [ProjectMember(id=row.id, name=row.name, email=row.email) for row in results]
+        return [
+            ProjectMember(id=row.id, name=row.name, email=row.email, role=row.role)
+            for row in results
+        ]
 
     def get_project_board(
         self, project_id: str, filters: Optional[TaskFilters] = None

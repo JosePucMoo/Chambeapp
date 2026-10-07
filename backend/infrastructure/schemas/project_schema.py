@@ -3,6 +3,7 @@ from typing import List
 
 from pydantic import ConfigDict, Field
 
+from domain.entities.enums import RoleEnum
 from infrastructure.schemas.column_schema import ColumnBoardDTO
 from infrastructure.schemas.task_schema import TaskBoardDTO
 from domain.entities.project import ProjectBoard
@@ -40,6 +41,7 @@ class ProjectMemberResponseDTO(BaseSchema):
     id: str
     name: str
     email: str
+    role: RoleEnum
 
 
 class ProjectBoardDTO(BaseSchema):
