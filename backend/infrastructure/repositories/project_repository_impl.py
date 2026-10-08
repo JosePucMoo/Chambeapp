@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import date
 
 from sqlalchemy import and_, case, func, select
 from sqlalchemy.orm import joinedload
@@ -6,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from domain.entities.column import ColumnBoard
 from domain.entities.task import TaskBoard, TaskFilters
 from infrastructure.db.models.user_model import UserModel
-from domain.entities.enums import RoleEnum, TaskPriorityEnum
+from domain.entities.enums import ProjectStatusEnum, RoleEnum, TaskPriorityEnum
 from infrastructure.db.models.column_model import ColumnModel
 from infrastructure.db.models.project_model import ProjectModel
 from infrastructure.db.models.user_project_link_model import UserProjectLinkModel
@@ -15,7 +16,13 @@ from infrastructure.mappers.project_mappers import (
     map_project_entity_to_model,
     map_project_model_to_entity,
 )
-from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
+from domain.entities.project import (
+    Project,
+    ProjectBoard,
+    ProjectDashboardSummary,
+    ProjectFilters,
+    ProjectMember,
+)
 from domain.repositories.project_repository import ProjectRepository
 from sqlalchemy.orm import Session
 
@@ -103,21 +110,55 @@ class ProjectRepositoryImpl(ProjectRepository):
             for row in results
         ]
 
+    @staticmethod
+    def _status_expression(summaries) -> case:
+        today = date.today()
+        return case(
+            (
+                and_(
+                    summaries.c.delivery_date < today,
+                    summaries.c.completed_tasks != summaries.c.total_tasks,
+                ),
+                ProjectStatusEnum.DELAYED.value,
+            ),
+            (summaries.c.total_tasks == 0, ProjectStatusEnum.NOT_STARTED.value),
+            (
+                summaries.c.completed_tasks == summaries.c.total_tasks,
+                ProjectStatusEnum.COMPLETED.value,
+            ),
+            (
+                summaries.c.not_started_tasks == summaries.c.total_tasks,
+                ProjectStatusEnum.NOT_STARTED.value,
+            ),
+            else_=ProjectStatusEnum.ACTIVE.value,
+        )
+
     def get_user_project_summaries(self, user_id: str) -> List[ProjectDashboardSummary]:
         return self._map_summaries(self._summaries_query(user_id).all())
 
     def get_paginated_dashboard_projects(
-        self, user_id: int, page: int = 1, page_size: int = 10
+        self,
+        user_id: str,
+        page: int = 1,
+        page_size: int = 10,
+        filters: Optional[ProjectFilters] = None,
     ) -> tuple[int, List[ProjectDashboardSummary]]:
 
-        query = self._summaries_query(user_id)
+        summaries = self._summaries_query(user_id).subquery()
 
-        total_items = (
-            self.db.query(func.count(ProjectModel.id))
-            .join(UserProjectLinkModel, ProjectModel.id == UserProjectLinkModel.project_id)
-            .filter(UserProjectLinkModel.user_id == user_id)
-            .scalar()
-        )
+        query = self.db.query(summaries)
+
+        if filters:
+            if filters.search:
+                query = query.filter(summaries.c.title.ilike(f"%{filters.search.strip()}%"))
+
+            if filters.role:
+                query = query.filter(summaries.c.role == filters.role.value)
+
+            if filters.status:
+                query = query.filter(self._status_expression(summaries) == filters.status.value)
+
+        total_items = query.count()
 
         offset = (page - 1) * page_size
         results = query.offset(offset).limit(page_size).all()

@@ -1,7 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from domain.entities.project import Project, ProjectBoard, ProjectDashboardSummary, ProjectMember
+from domain.entities.project import (
+    Project,
+    ProjectBoard,
+    ProjectDashboardSummary,
+    ProjectFilters,
+    ProjectMember,
+)
 from domain.entities.task import TaskFilters
 
 
@@ -12,7 +18,11 @@ class ProjectRepository(ABC):
 
     @abstractmethod
     def get_paginated_dashboard_projects(
-        self, user_id: str, page: int, page_size: int
+        self,
+        user_id: str,
+        page: int,
+        page_size: int,
+        filters: Optional[ProjectFilters] = None,
     ) -> tuple[int, List[ProjectDashboardSummary]]:
         pass
 

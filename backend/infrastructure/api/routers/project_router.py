@@ -8,7 +8,8 @@ from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.utils.constants import Constants
 from application.use_cases.project.create import CreateProjectUseCase
-from domain.entities.enums import TaskPriorityEnum
+from domain.entities.enums import ProjectStatusEnum, RoleEnum, TaskPriorityEnum
+from domain.entities.project import ProjectFilters
 from domain.entities.task import TaskFilters
 from infrastructure.api.dependencies import (
     ColumnRepositoryDep,
@@ -71,13 +72,17 @@ def get_paginated_summary_projects(
     repository: ProjectRepositoryDep,
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=5, le=50)] = 10,
+    search: Annotated[Optional[str], Query(max_length=50)] = None,
+    status: Annotated[Optional[ProjectStatusEnum], Query()] = None,
+    role: Annotated[Optional[RoleEnum], Query()] = None,
 ):
     try:
         use_case = GetProjectUseCase(
             repository=repository,
         )
+        filters = ProjectFilters(search=search, status=status, role=role)
         [total_count, projects_summary] = use_case.execute_paginated_summary(
-            user_id=curren_user.id, page=page, page_size=page_size
+            user_id=curren_user.id, page=page, page_size=page_size, filters=filters
         )
 
         data = PaginatedResponseDTO.create(

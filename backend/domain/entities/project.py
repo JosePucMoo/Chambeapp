@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime
 import math
-from typing import List
+from typing import List, Optional
 import uuid
 
 from sqlalchemy import Column
@@ -72,3 +72,10 @@ class ProjectBoard:
     project_id: str
     project_title: str
     columns: List[Column]
+
+
+@dataclass
+class ProjectFilters:
+    search: Optional[str] = None
+    status: Optional[ProjectStatusEnum] = None
+    role: Optional[RoleEnum] = None
