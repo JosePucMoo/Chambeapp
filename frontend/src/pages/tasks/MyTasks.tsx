@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -20,21 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Calendar, CalendarDays, LayoutList, Trash2 } from "lucide-react";
+import { Calendar, LayoutList, Trash2 } from "lucide-react";
 import { Link, useOutletContext } from "react-router-dom";
 import type { LayoutContextType } from "@/interfaces/Context";
-import {
-  COLUMN_STATE_CONFIG,
-  PRIORITY_CONFIG,
-} from "@/interfaces/constants/taskMappings";
-import {
-  ColumnDefaultEnum,
-  TaskPriorityEnum,
-} from "@/interfaces/constants/enums";
 import type { TaskFilters } from "@/interfaces/Task";
 import { useTasks } from "@/hooks/useTasks";
 import { taskService } from "@/services/task";
-import { formatDate } from "@/utils/dateFormatter";
 import {
   Select,
   SelectContent,
@@ -52,6 +42,7 @@ import {
 } from "@/components/ui/pagination";
 import { TaskDetailSheet } from "@/components/task/TaskDetailSheet";
 import { TaskFilterPopover } from "@/components/task/TaskFilterPopover";
+import { TaskTableRow } from "./components/TaskTableRow";
 import { toast } from "@/components/ui/toast";
 
 const EMPTY_FILTERS: TaskFilters = {
@@ -80,7 +71,7 @@ const MyTasks = () => {
     [filters],
   );
 
-  const { tasks, totalCount, totalPages, loadTasks } = useTasks(
+  const { tasks, totalCount, isLoading, totalPages, loadTasks } = useTasks(
     currentPage,
     itemsPerPage,
     memoizedFilters,
@@ -266,75 +257,29 @@ const MyTasks = () => {
           </TableHeader>
 
           <TableBody>
-            {tasks.map((task) => (
-              <TableRow
-                key={task.id}
-                onClick={() => openTaskSheet(task.id)}
-                className="hover:bg-gray-50/50 border-b-gray-100 last:border-0 group cursor-pointer"
-              >
-                <TableCell
-                  className="pl-6"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Checkbox
-                    checked={selectedTasks.includes(task.id)}
-                    onCheckedChange={() => toggleSelectTask(task.id)}
-                    className="border-gray-300 rounded-lg"
-                  />
-                </TableCell>
-
-                <TableCell className="font-medium text-gray-900">
-                  {task.title}
-                </TableCell>
-
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold`}
-                    >
-                      {task.projectTitle.charAt(0)}
-                    </div>
-                    <span className="text-gray-600">{task.projectTitle}</span>
-                  </div>
-                </TableCell>
-
-                <TableCell>
-                  <div className="flex items-center text-gray-600 font-medium gap-2 text-sm">
-                    <CalendarDays className="w-4 h-4 text-gray-400" />
-                    {formatDate(task.dueDate)}
-                  </div>
-                  <span className="text-xs text-gray-400 pl-6">
-                    {formatDate(task.dueDate, "relative")}
-                  </span>
-                </TableCell>
-
-                <TableCell>
-                  <Badge
-                    variant="secondary"
-                    className={
-                      PRIORITY_CONFIG[task.priority as TaskPriorityEnum]
-                        .colorClass
-                    }
-                  >
-                    {PRIORITY_CONFIG[task.priority as TaskPriorityEnum].label}
-                  </Badge>
-                </TableCell>
-
-                <TableCell>
-                  <Badge
-                    className={
-                      COLUMN_STATE_CONFIG[task.columnTitle as ColumnDefaultEnum]
-                        .colorClass
-                    }
-                  >
-                    {
-                      COLUMN_STATE_CONFIG[task.columnTitle as ColumnDefaultEnum]
-                        .label
-                    }
-                  </Badge>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center">
+                  Cargando tareas...
                 </TableCell>
               </TableRow>
-            ))}
+            ) : tasks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center">
+                  No se encontraron tareas.
+                </TableCell>
+              </TableRow>
+            ) : (
+              tasks.map((task) => (
+                <TaskTableRow
+                  key={task.id}
+                  task={task}
+                  isSelected={selectedTasks.includes(task.id)}
+                  onToggleSelect={toggleSelectTask}
+                  onOpenTaskSheet={openTaskSheet}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
         <div className="border-t border-slate-200 py-4 px-6 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
