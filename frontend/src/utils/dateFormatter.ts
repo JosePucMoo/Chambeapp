@@ -1,3 +1,5 @@
+import { parseDateOnly } from "./date";
+
 export type DateFormatStyle = "short" | "medium" | "long" | "relative";
 
 export const formatDate = (
@@ -7,7 +9,7 @@ export const formatDate = (
 ): string => {
   if (!dateString) return "--";
 
-  const date = new Date(dateString);
+  const date = parseDateOnly(dateString);
 
   if (isNaN(date.getTime())) return "Fecha inválida";
 

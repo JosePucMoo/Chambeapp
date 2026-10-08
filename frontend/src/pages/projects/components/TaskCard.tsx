@@ -58,7 +58,7 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
       <CardFooter className="flex justify-end bg-white py-2">
         <div className="flex items-center text-gray-500 font-medium gap-2 text-sm">
           <CalendarDays className="w-4 h-4" />
-          {formatDate(task.dueDate.toString())}
+          {formatDate(task.dueDate)}
         </div>
       </CardFooter>
     </Card>
