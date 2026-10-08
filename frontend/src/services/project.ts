@@ -6,6 +6,7 @@ import type {
   Project,
   ProjectBoard,
   ProjectDashboardSummary,
+  ProjectFilters,
   ProjectMember,
 } from "@/interfaces/Project";
 import type { TaskFilters } from "@/interfaces/Task";
@@ -15,13 +16,17 @@ export const projectService = {
   get_dashboard_projects: async (
     page: number = 1,
     pageSize: number = 10,
+    filters?: ProjectFilters,
   ): Promise<ApiResponse<PaginatedResponse<ProjectDashboardSummary>>> => {
-    const response = await apiClient.get("/projects/", {
-      params: {
-        page: page,
-        page_size: pageSize,
-      },
-    });
+    const params: Record<string, string> = {
+      page: String(page),
+      page_size: String(pageSize),
+    };
+    if (filters?.search) params.search = filters.search;
+    if (filters?.status) params.status = filters.status;
+    if (filters?.role) params.role = filters.role;
+
+    const response = await apiClient.get("/projects/", { params });
 
     return response.data;
   },

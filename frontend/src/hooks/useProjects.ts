@@ -1,14 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { projectService } from "@/services/project";
-import type { ProjectDashboardSummary } from "@/interfaces/Project";
+import type {
+  ProjectDashboardSummary,
+  ProjectFilters,
+} from "@/interfaces/Project";
 
-export const useProjects = (page: number, pageSize: number) => {
+export const useProjects = (
+  page: number,
+  pageSize: number,
+  filters?: ProjectFilters,
+) => {
   const [projects, setProjects] = useState<ProjectDashboardSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const requestKey = `${page}:${pageSize}`;
+  const requestKey = `${page}:${pageSize}:${JSON.stringify(filters ?? {})}`;
   const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
 
   if (prevRequestKey !== requestKey) {
@@ -21,6 +28,7 @@ export const useProjects = (page: number, pageSize: number) => {
       const response = await projectService.get_dashboard_projects(
         page,
         pageSize,
+        filters,
       );
 
       setProjects(response.data.data);
@@ -31,7 +39,7 @@ export const useProjects = (page: number, pageSize: number) => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize]);
+  }, [page, pageSize, filters]);
 
   const loadProjects = useCallback(async () => {
     setIsLoading(true);

@@ -38,3 +38,9 @@ export interface ProjectBoard {
   projectTitle: string;
   columns: ColumnBoard[];
 }
+
+export interface ProjectFilters {
+  search?: string;
+  status?: ProjectStatusEnum;
+  role?: RoleEnum;
+}

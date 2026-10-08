@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -18,7 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Filter, FolderGit2 } from "lucide-react";
+import { FolderGit2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -27,9 +26,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { LayoutContextType } from "@/interfaces/Context";
+import type { ProjectFilters } from "@/interfaces/Project";
 import { CreateProjectDialog } from "./components/CreateProjectDialog";
 import { useProjects } from "@/hooks/useProjects";
 import { ProjectTableRow } from "./components/ProjectTableRow";
+import { ProjectFilterPopover } from "./components/ProjectFilterPopover";
+
+const EMPTY_FILTERS: ProjectFilters = {
+  search: undefined,
+  status: undefined,
+  role: undefined,
+};
 
 const ProjectsList = () => {
   const { setPageTitle } = useOutletContext<LayoutContextType>();
@@ -37,9 +44,10 @@ const ProjectsList = () => {
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [filters, setFilters] = useState<ProjectFilters>(EMPTY_FILTERS);
 
   const { projects, isLoading, totalCount, totalPages, loadProjects } =
-    useProjects(currentPage, itemsPerPage);
+    useProjects(currentPage, itemsPerPage, filters);
 
   useEffect(() => {
     setPageTitle("Proyectos");
@@ -56,6 +64,12 @@ const ProjectsList = () => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const handleApplyFilters = (newFilters: ProjectFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
+    setSelectedProjects([]);
   };
 
   const toggleSelectAll = () => {
@@ -94,13 +108,10 @@ const ProjectsList = () => {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            className="text-slate-700 font-medium h-10 border-slate-300"
-          >
-            <Filter className="w-4 h-4 mr-2 text-slate-500" />
-            Filtrar
-          </Button>
+          <ProjectFilterPopover
+            filters={filters}
+            onApply={handleApplyFilters}
+          />
           <CreateProjectDialog loadProyects={loadProjects} />
         </div>
       </div>
