@@ -1,16 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  CalendarDays,
-  LayoutGrid,
-  ListPlus,
-  FolderKanban,
-  LogOut,
-} from "lucide-react";
+import { CalendarDays, LayoutGrid, ListPlus, FolderKanban } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -96,20 +89,6 @@ export function AppSidebar() {
           <hr className="border-gray-200" />
         </div>
       </SidebarContent>
-
-      <SidebarFooter className="p-4 mb-2">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className="hover:text-gray-800 hover:bg-gray-50 h-11"
-              onClick={() => console.log("Cerrar sesión")}
-            >
-              <LogOut className="h-5 w-5 mr-1" />
-              <span className="text-base font-medium">Cerrar sesión</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }
