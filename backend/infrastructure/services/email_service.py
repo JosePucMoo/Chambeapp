@@ -1,8 +1,11 @@
+import logging
 import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from application.interfaces.email_sender import EmailSender
+
+logger = logging.getLogger(__name__)
 
 
 class SmtpEmailSender(EmailSender):
@@ -39,12 +42,12 @@ class SmtpEmailSender(EmailSender):
         message.attach(part2)
 
         try:
-            with smtplib.SMTP(self.host, self.port) as server:
+            with smtplib.SMTP(self.host, self.port, timeout=10) as server:
                 server.starttls()
                 server.login(self.username, self.password)
                 server.sendmail(self.from_email, to_email, message.as_string())
         except Exception as e:
-            print(f"Error enviando correo a {to_email}: {str(e)}")
+            logger.error("Error enviando correo a %s: %s", to_email, e)
 
     def send_password_reset_email(self, to_email: str, verification_token: str) -> None:
         verification_link = f"{self.FRONTEND_URL}/auth/reset-password/{verification_token}"
@@ -71,12 +74,12 @@ class SmtpEmailSender(EmailSender):
         message.attach(part2)
 
         try:
-            with smtplib.SMTP(self.host, self.port) as server:
+            with smtplib.SMTP(self.host, self.port, timeout=10) as server:
                 server.starttls()
                 server.login(self.username, self.password)
                 server.sendmail(self.from_email, to_email, message.as_string())
         except Exception as e:
-            print(f"Error enviando correo a {to_email}: {str(e)}")
+            logger.error("Error enviando correo a %s: %s", to_email, e)
 
     def send_project_invitation_email(
         self, to_email: str, verification_token: str, sender_name: str, project_title: str
@@ -106,9 +109,9 @@ class SmtpEmailSender(EmailSender):
         message.attach(part2)
 
         try:
-            with smtplib.SMTP(self.host, self.port) as server:
+            with smtplib.SMTP(self.host, self.port, timeout=10) as server:
                 server.starttls()
                 server.login(self.username, self.password)
                 server.sendmail(self.from_email, to_email, message.as_string())
         except Exception as e:
-            print(f"Error enviando correo a {to_email}: {str(e)}")
+            logger.error("Error enviando correo a %s: %s", to_email, e)
