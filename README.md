@@ -180,6 +180,13 @@ PostgreSQL data is stored in the `postgres_data` volume. The backend code is mou
 
 The app is deployable with free tiers:
 
+## Live demo
+
+- **Frontend:** https://chambe-app.netlify.app
+- **API (Swagger):** https://chambeapp.onrender.com/docs
+
+This demo is deployed automatically from the `main` branch. Email delivery uses Brevo's SMTP relay on port `2525`, because @render.com blocks outbound SMTP on ports 25, 587, and 465.
+
 - **Frontend → Netlify**: base directory `frontend`, install `pnpm install`, build `pnpm build`, publish `dist`. Set `VITE_CHAMBEAPP_API_ORIGIN` to the API URL. The `public/_redirects` file provides the SPA fallback for client routes (`/invitations/:token`, `/projects/:id`, `/auth/*`).
 - **Backend → Render** (web service, root directory `backend`): start command `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}`. Runtime Python, installs `requirements.txt`.
 - **Database → Supabase** (free PostgreSQL): set `POSTGRES_SSLMODE=require` and the `POSTGRES_HOST/PORT/USER/PASSWORD/NAME` connection parameters. Tables are created on first boot via `Base.metadata.create_all`.
