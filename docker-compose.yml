@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secretpassword
-      POSTGRES_DB: chambeapp_db
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secretpassword}
+      POSTGRES_DB: ${POSTGRES_NAME:-chambeapp_db}
     ports:
       - "5432:5432"
     volumes:
@@ -21,7 +21,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DATABASE_URL: postgresql+psycopg://admin:secretpassword@db:5432/chambeapp_db
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-secretpassword}@db:5432/${POSTGRES_NAME:-chambeapp_db}
     depends_on:
       - db
 

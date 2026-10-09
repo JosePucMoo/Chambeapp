@@ -27,13 +27,15 @@ POSTGRES_PASSWORD=
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 POSTGRES_NAME=
+POSTGRES_SSLMODE=disable
 
 SECRET_KEY=
 
-MAILTRAP_USER=
-MAILTRAP_PASS=
-MAILTRAP_HOST=sandbox.smtp.mailtrap.io
-MAILTRAP_PORT=2525
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=no-reply@chambeapp.com
 
 FRONTEND_URL=http://localhost:5173
 ```
@@ -173,6 +175,16 @@ docker compose ps # View the status of services
 ```
 
 PostgreSQL data is stored in the `postgres_data` volume. The backend code is mounted as a volume, so changes are applied without rebuilding the image. Use `docker compose down -v` to remove the data as well.
+
+## Deployment (Netlify + Render + Supabase)
+
+The app is deployable with free tiers:
+
+- **Frontend → Netlify**: base directory `frontend`, install `pnpm install`, build `pnpm build`, publish `dist`. Set `VITE_CHAMBEAPP_API_ORIGIN` to the API URL. The `public/_redirects` file provides the SPA fallback for client routes (`/invitations/:token`, `/projects/:id`, `/auth/*`).
+- **Backend → Render** (web service, root directory `backend`): start command `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}`. Runtime Python, installs `requirements.txt`.
+- **Database → Supabase** (free PostgreSQL): set `POSTGRES_SSLMODE=require` and the `POSTGRES_HOST/PORT/USER/PASSWORD/NAME` connection parameters. Tables are created on first boot via `Base.metadata.create_all`.
+- **Email → any transactional provider** that exposes SMTP relay (e.g. Brevo, SendGrid). Configure `SMTP_HOST/PORT/USER/PASS` and `SMTP_FROM` (a verified sender address). The backend uses the `SmtpEmailSender` implementation with STARTTLS.
+- Both platforms deploy from the `main` branch. Environment variables are set on each dashboard, never committed.
 
 ## API Documentation
 

@@ -11,12 +11,11 @@ DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 DB_HOST = os.getenv("POSTGRES_HOST")
 DB_PORT = os.getenv("POSTGRES_PORT")
 DB_NAME = os.getenv("POSTGRES_NAME")
+DB_SSLMODE = os.getenv("POSTGRES_SSLMODE", "disable")
 
-DATABASE_URL = f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
 
-print("Conectado a:", DATABASE_URL)
-
-engine = create_engine(DATABASE_URL, echo=True, future=True)
+engine = create_engine(DATABASE_URL, echo=False, future=True)
 
 SessionLocal = sessionmaker(bind=engine, autoflush=false, class_=Session)
 

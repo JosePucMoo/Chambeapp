@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from application.interfaces.email_sender import EmailSender
 
 
-class MailtrapEmailSender(EmailSender):
+class SmtpEmailSender(EmailSender):
     def __init__(self, host: str, port: int, username: str, password: str, from_email: str):
         self.host = host
         self.port = port

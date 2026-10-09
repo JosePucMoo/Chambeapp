@@ -7,7 +7,11 @@ from application.interfaces.token_generator import TokenGenerator
 
 class JwtTokenGenerator(TokenGenerator):
     def __init__(self):
-        self.secret_key = os.getenv("SECRET_KEY", "change-me-in-prod")
+        self.secret_key = os.getenv("SECRET_KEY")
+
+        if not self.secret_key:
+            raise ValueError("SECRET_KEY environment variable is required")
+
         self.algorithm = os.getenv("ALGORITHM", "HS256")
         self.expire_minutes = int(os.getenv("TOKEN_EXPIRE_MINUTES", "1440"))
 

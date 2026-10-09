@@ -24,7 +24,7 @@ from infrastructure.repositories.project_repository_impl import ProjectRepositor
 from domain.utils.constants import Constants
 from infrastructure.security.jwt_token_generator import JwtTokenGenerator
 from infrastructure.security.password_hasher_impl import PasswordHasherImpl
-from infrastructure.services.email_service import MailtrapEmailSender
+from infrastructure.services.email_service import SmtpEmailSender
 from domain.repositories.user_repository import UserRepository
 from infrastructure.repositories.user_repository_impl import UserRepositoryImpl
 from infrastructure.db.database import get_db
@@ -59,12 +59,12 @@ def get_password_hasher() -> PasswordHasher:
 
 
 def get_email_sender() -> EmailSender:
-    return MailtrapEmailSender(
-        host=os.getenv("MAILTRAP_HOST"),
-        port=int(os.getenv("MAILTRAP_PORT")),
-        username=os.getenv("MAILTRAP_USER"),
-        password=os.getenv("MAILTRAP_PASS"),
-        from_email="no-reply@chambeapp.com",
+    return SmtpEmailSender(
+        host=os.getenv("SMTP_HOST"),
+        port=int(os.getenv("SMTP_PORT")),
+        username=os.getenv("SMTP_USER"),
+        password=os.getenv("SMTP_PASS"),
+        from_email=os.getenv("SMTP_FROM"),
     )
 
 
