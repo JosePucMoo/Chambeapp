@@ -1,0 +1,107 @@
+name: Deploy status
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  frontend:
+    name: Frontend (Netlify)
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: frontend
+          desc: "Netlify production (${{ github.sha }})"
+
+      - name: Wait for Netlify deploy
+        id: wait
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 80); do
+            resp=$(curl -sf -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+              "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID/deploys?per_page=50")
+            state=$(echo "$resp" | jq -r --arg sha "$GITHUB_SHA" \
+              '.[] | select(.commit_ref==$sha) | .state' | head -n1)
+            echo "netlify state: ${state:-pending}"
+            case "$state" in
+              ready) exit 0 ;;
+              error) exit 1 ;;
+              "") sleep 10 ;;
+              *) sleep 15 ;;
+            esac
+          done
+          echo "Timeout waiting for Netlify deploy"
+          exit 1
+
+      - name: Finish deployment
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ steps.wait.outcome == 'success' && 'success' || 'failure' }}
+          env: ${{ steps.deployment.outputs.env }}
+          env_url: https://chambe-app.netlify.app
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+  backend:
+    name: Backend (Render)
+    runs-on: ubuntu-latest
+    env:
+      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+    steps:
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: backend
+          desc: "Render production (${{ github.sha }})"
+
+      - name: Wait for Render deploy
+        id: wait
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 80); do
+            resp=$(curl -sf -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Accept: application/json" \
+              "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys?limit=20")
+            status=$(echo "$resp" | jq -r --arg sha "$GITHUB_SHA" \
+              '.[] | select(.deploy.commit.id==$sha) | .deploy.status' | head -n1)
+            echo "render status: ${status:-pending}"
+            case "$status" in
+              live) exit 0 ;;
+              build_failed|update_failed|pre_deploy_failed|canceled) exit 1 ;;
+              *) sleep 15 ;;
+            esac
+          done
+          echo "Timeout waiting for Render deploy"
+          exit 1
+
+      - name: Finish deployment
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ steps.wait.outcome == 'success' && 'success' || 'failure' }}
+          env: ${{ steps.deployment.outputs.env }}
+          env_url: https://chambeapp.onrender.com
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
