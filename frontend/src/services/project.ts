@@ -8,6 +8,7 @@ import type {
   ProjectDashboardSummary,
   ProjectFilters,
   ProjectMember,
+  UpdateProject,
 } from "@/interfaces/Project";
 import type { TaskFilters } from "@/interfaces/Task";
 import type { InviteMemberDTO } from "@/interfaces/Invitation";
@@ -33,6 +34,14 @@ export const projectService = {
 
   create: async (project: CreateProject): Promise<ApiResponse<Project>> => {
     const response = await apiClient.post("/projects/", project);
+    return response.data;
+  },
+
+  update: async (
+    projectId: string,
+    project: UpdateProject,
+  ): Promise<ApiResponse<Project>> => {
+    const response = await apiClient.put(`/projects/${projectId}`, project);
     return response.data;
   },
 

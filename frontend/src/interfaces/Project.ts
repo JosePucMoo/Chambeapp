@@ -16,10 +16,17 @@ export interface Project {
   title: string;
   description: string;
   client: string;
-  deliveryDate?: Date;
+  deliveryDate: string;
 }
 
 export interface CreateProject {
+  title: string;
+  description: string;
+  client: string;
+  deliveryDate?: Date;
+}
+
+export interface UpdateProject {
   title: string;
   description: string;
   client: string;

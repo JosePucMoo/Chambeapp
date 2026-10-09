@@ -2,26 +2,45 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { RoleEnum } from "@/interfaces/constants/enums";
 import type { ProjectDashboardSummary } from "@/interfaces/Project";
-import { CalendarDays, Crown, MoreHorizontal, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { CalendarDays, Crown, Pencil, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import ProjectStatusBadge from "./ProjectStatusBadge";
 import { Progress, ProgressValue } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { formatDate } from "@/utils/dateFormatter";
 
 interface ProjectTableRowProps {
   project: ProjectDashboardSummary;
   isSelected: boolean;
   onToggleSelect: (id: string) => void;
+  onEdit?: (id: string) => void;
 }
 
 export const ProjectTableRow = ({
   project,
   isSelected,
   onToggleSelect,
+  onEdit,
 }: ProjectTableRowProps) => {
+  const navigate = useNavigate();
+  const isOwner = project.role === RoleEnum.OWNER;
+
+  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+    if ((e.target as HTMLElement).closest("a, button, input")) return;
+
+    navigate(`/projects/${project.id}`);
+  };
+
   return (
-    <TableRow className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors cursor-pointer">
+    <TableRow
+      onClick={handleRowClick}
+      className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors cursor-pointer"
+    >
       <TableCell className="pl-6">
         <Checkbox
           checked={isSelected}
@@ -51,7 +70,7 @@ export const ProjectTableRow = ({
 
       <TableCell>
         <div className="flex items-center gap-2 text-sm font-medium">
-          {project.role === RoleEnum.OWNER ? (
+          {isOwner ? (
             <>
               <Crown className="w-4 h-4 text-amber-500" />
               <span className="text-gray-500">Dueño</span>
@@ -91,13 +110,23 @@ export const ProjectTableRow = ({
       </TableCell>
 
       <TableCell className="pr-6">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-gray-500 group-hover:opacity-100 transition-opacity"
-        >
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
+        {onEdit && isOwner ? (
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(project.id)}
+                  className="h-8 w-8 text-gray-500 group-hover:opacity-100 transition-opacity hover:cursor-pointer"
+                />
+              }
+            >
+              <Pencil className="h-5 w-5" />
+            </TooltipTrigger>
+            <TooltipContent>Editar proyecto</TooltipContent>
+          </Tooltip>
+        ) : null}
       </TableCell>
     </TableRow>
   );
