@@ -182,7 +182,7 @@ const Register = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
+            className="hover:cursor-pointer w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
           >
             {isSubmitting ? "Registrando..." : "Crear Cuenta"}
           </Button>
