@@ -42,6 +42,22 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         return map_project_model_to_entity(project_model)
 
+    def update(self, project: Project) -> Optional[Project]:
+        project_model = self.db.query(ProjectModel).filter(ProjectModel.id == project.id).first()
+
+        if not project_model:
+            return None
+
+        project_model.title = project.title
+        project_model.description = project.description
+        project_model.client = project.client
+        project_model.delivery_date = project.delivery_date
+
+        self.db.commit()
+        self.db.refresh(project_model)
+
+        return map_project_model_to_entity(project_model)
+
     def _summaries_query(self, user_id: str):
         subquery_positions = (
             self.db.query(

@@ -80,6 +80,7 @@ class TaskMoveDTO(BaseSchema):
 class TaskDashboardSummaryDTO(BaseSchema):
     id: str
     title: str
+    project_id: str
     project_title: str
     due_date: datetime
     priority: TaskPriorityEnum

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MetricCard from "./components/MetricCard";
 import ProjectsByStatusChart from "./components/ProjectsByStatusChart";
 import DueSoonTasksDialog from "./components/DueSoonTasksDialog";
@@ -29,9 +29,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useDashboard, useDueSoonTasks } from "@/hooks/useDashboard";
+import { useOutletContext } from "react-router-dom";
+import type { LayoutContextType } from "@/interfaces/Context";
 
 const Dashboard = () => {
   const { metrics, isLoading, error, isEmpty, loadMetrics } = useDashboard();
+  const { setPageTitle } = useOutletContext<LayoutContextType>();
   const [isDueSoonOpen, setIsDueSoonOpen] = useState(false);
   const {
     tasks: dueSoonTasks,
@@ -39,6 +42,10 @@ const Dashboard = () => {
     error: dueSoonError,
     loadTasks: loadDueSoonTasks,
   } = useDueSoonTasks();
+
+  useEffect(() => {
+    setPageTitle("Tablero");
+  });
 
   const handleDueSoonClick = () => {
     setIsDueSoonOpen(true);

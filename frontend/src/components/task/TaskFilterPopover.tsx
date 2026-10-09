@@ -82,7 +82,7 @@ export const TaskFilterPopover = ({
         render={
           <Button
             variant="outline"
-            className={`text-gray-700 font-medium h-10 ${
+            className={`hover:cursor-pointer text-gray-700 font-medium h-10 ${
               activeCount > 0 ? "border-blue-300 bg-blue-50" : ""
             }`}
           />
@@ -226,18 +226,22 @@ export const TaskFilterPopover = ({
             variant="ghost"
             onClick={handleClear}
             disabled={activeCount === 0}
-            className="text-slate-500"
+            className="text-slate-500 hover:cursor-pointer"
           >
             <X className="w-4 h-4 mr-1" />
             Limpiar
           </Button>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="hover:cursor-pointer"
+            >
               Cancelar
             </Button>
             <Button
               onClick={handleApply}
-              className="bg-blue-500 hover:bg-blue-700"
+              className="hover:cursor-pointer bg-blue-500 hover:bg-blue-700"
             >
               Aplicar
             </Button>

@@ -31,6 +31,7 @@ import { CreateProjectDialog } from "./components/CreateProjectDialog";
 import { useProjects } from "@/hooks/useProjects";
 import { ProjectTableRow } from "./components/ProjectTableRow";
 import { ProjectFilterPopover } from "./components/ProjectFilterPopover";
+import { ProjectDetailSheet } from "./components/ProjectDetailSheet";
 
 const EMPTY_FILTERS: ProjectFilters = {
   search: undefined,
@@ -45,6 +46,8 @@ const ProjectsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [filters, setFilters] = useState<ProjectFilters>(EMPTY_FILTERS);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [isProjectSheetOpen, setIsProjectSheetOpen] = useState(false);
 
   const { projects, isLoading, totalCount, totalPages, loadProjects } =
     useProjects(currentPage, itemsPerPage, filters);
@@ -169,6 +172,10 @@ const ProjectsList = () => {
                   project={project}
                   isSelected={selectedProjects.includes(project.id)}
                   onToggleSelect={toggleSelectProject}
+                  onEdit={(id) => {
+                    setEditingProjectId(id);
+                    setIsProjectSheetOpen(true);
+                  }}
                 />
               ))
             )}
@@ -246,6 +253,13 @@ const ProjectsList = () => {
           </div>
         </div>
       </div>
+
+      <ProjectDetailSheet
+        projectId={editingProjectId}
+        open={isProjectSheetOpen}
+        onOpenChange={setIsProjectSheetOpen}
+        onProjectUpdated={loadProjects}
+      />
     </div>
   );
 };

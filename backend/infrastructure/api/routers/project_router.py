@@ -4,10 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from application.use_cases.project.get import GetProjectUseCase
 from domain.exceptions.not_found_exception import NotFoundException
+from domain.exceptions.cannot_update_exception import CannotUpdateException
+from domain.exceptions.forbidden_exception import ForbiddenException
 from infrastructure.schemas.pagination_schema import PaginatedResponseDTO
 from domain.exceptions.cannot_create_exception import CannotCreateException
 from domain.utils.constants import Constants
 from application.use_cases.project.create import CreateProjectUseCase
+from application.use_cases.project.update import UpdateProjectUseCase
 from domain.entities.enums import ProjectStatusEnum, RoleEnum, TaskPriorityEnum
 from domain.entities.project import ProjectFilters
 from domain.entities.task import TaskFilters
@@ -25,8 +28,12 @@ from infrastructure.schemas.project_schema import (
     ProjectMemberResponseDTO,
     ProjectResponseDTO,
     ProjectDashboardSummaryDTO,
+    UpdateProjectDTO,
 )
-from infrastructure.mappers.project_mappers import map_create_project_dto_to_entity
+from infrastructure.mappers.project_mappers import (
+    map_create_project_dto_to_entity,
+    map_update_project_dto_to_entity,
+)
 
 
 router = APIRouter(prefix="/projects", tags=["Projects"], dependencies=[Depends(get_current_user)])
@@ -54,6 +61,38 @@ def create_project(
         data = ProjectResponseDTO.model_validate(project)
         return ApiResponse(ok=True, message="Proyecto creado con éxito", data=data)
     except CannotCreateException as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=Constants.UNEXPECTED_ERROR + str(e),
+        )
+
+
+@router.put(
+    "/{project_id}", status_code=status.HTTP_200_OK, response_model=ApiResponse[ProjectResponseDTO]
+)
+def update_project(
+    project_id: str,
+    project_data: UpdateProjectDTO,
+    current_user: CurrentUser,
+    repository: ProjectRepositoryDep,
+):
+    try:
+        use_case = UpdateProjectUseCase(repository=repository)
+
+        updated_project = use_case.execute(
+            user_id=current_user.id,
+            project_data=map_update_project_dto_to_entity(project_data, project_id),
+        )
+
+        data = ProjectResponseDTO.model_validate(updated_project)
+        return ApiResponse(ok=True, message="Proyecto actualizado con éxito", data=data)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except ForbiddenException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except CannotUpdateException as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
     except Exception as e:
         raise HTTPException(

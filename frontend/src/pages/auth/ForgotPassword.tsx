@@ -83,7 +83,7 @@ const ForgotPassword = () => {
             </Link>
             <Link
               className="text-gray-500 block text-start text-sm"
-              to={"/auth/forgot-password"}
+              to={"/auth/register"}
             >
               ¿No tienes una cuenta?
             </Link>
@@ -92,7 +92,7 @@ const ForgotPassword = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
+            className="hover:cursor-pointer w-full mt-4 mb-2 uppercase bg-blue-500 hover:bg-blue-700 text-white rounded-xs text-base font-bold h-12"
           >
             {isSubmitting ? "Enviando..." : "Enviar Instrucciones"}
           </Button>

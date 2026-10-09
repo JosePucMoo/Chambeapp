@@ -35,6 +35,7 @@ class TaskBoard:
 class TaskDashboardSummary:
     id: str
     title: str
+    project_id: str
     project_title: str
     priority: TaskPriorityEnum
     due_date: date

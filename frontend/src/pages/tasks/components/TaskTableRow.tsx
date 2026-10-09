@@ -10,7 +10,14 @@ import {
   TaskPriorityEnum,
 } from "@/interfaces/constants/enums";
 import type { TaskDashboardSummary } from "@/interfaces/Task";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { formatDate } from "@/utils/dateFormatter";
 
 interface TaskTableRowProps {
@@ -26,10 +33,18 @@ export const TaskTableRow = ({
   onToggleSelect,
   onOpenTaskSheet,
 }: TaskTableRowProps) => {
+  const navigate = useNavigate();
+
+  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+    if ((e.target as HTMLElement).closest("a, button, input")) return;
+
+    navigate(`/projects/${task.projectId}`);
+  };
+
   return (
     <TableRow
-      onClick={() => onOpenTaskSheet(task.id)}
-      className="hover:bg-gray-50/50 border-b-gray-100 last:border-0 group cursor-pointer"
+      onClick={handleRowClick}
+      className="hover:bg-gray-100 border-b-gray-100 last:border-0 group cursor-pointer transition-colors"
     >
       <TableCell className="pl-6" onClick={(event) => event.stopPropagation()}>
         <Checkbox
@@ -80,6 +95,24 @@ export const TaskTableRow = ({
         >
           {COLUMN_STATE_CONFIG[task.columnTitle as ColumnDefaultEnum].label}
         </Badge>
+      </TableCell>
+
+      <TableCell className="pr-6">
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onOpenTaskSheet(task.id)}
+                className="h-8 w-8 text-gray-500 group-hover:opacity-100 transition-opacity hover:cursor-pointer"
+              />
+            }
+          >
+            <Pencil className="h-5 w-5" />
+          </TooltipTrigger>
+          <TooltipContent>Editar tarea</TooltipContent>
+        </Tooltip>
       </TableCell>
     </TableRow>
   );

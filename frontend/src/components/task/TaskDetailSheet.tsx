@@ -311,7 +311,7 @@ export function TaskDetailSheet({
                     <Button
                       type="button"
                       variant="outline"
-                      className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700"
+                      className="hover:cursor-pointer text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700"
                     />
                   }
                 >
@@ -331,11 +331,13 @@ export function TaskDetailSheet({
                   </AlertDialogHeader>
 
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogCancel className="hover:cursor-pointer">
+                      Cancelar
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDelete}
                       disabled={isDeleting}
-                      className="bg-rose-600 hover:bg-rose-700"
+                      className="bg-rose-600 hover:bg-rose-700 hover:cursor-pointer"
                     >
                       {isDeleting ? "Eliminando..." : "Sí, eliminar"}
                     </AlertDialogAction>
@@ -348,13 +350,14 @@ export function TaskDetailSheet({
                   type="button"
                   variant="outline"
                   onClick={() => onOpenChange(false)}
+                  className="hover:cursor-pointer"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-blue-500 hover:bg-blue-700"
+                  className="bg-blue-500 hover:bg-blue-700 hover:cursor-pointer "
                 >
                   {isSubmitting ? "Guardando..." : "Guardar cambios"}
                 </Button>
