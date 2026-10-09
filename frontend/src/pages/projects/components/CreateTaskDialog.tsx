@@ -1,0 +1,292 @@
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/toast";
+import { FieldLabel, Field, FieldError } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import { DatePickerSimple } from "@/components/ui/datepicker";
+import type { CreateTask, TaskCardSummary } from "@/interfaces/Task";
+import { useProjectMembers } from "@/hooks/useProjectMembers";
+import { useProjects } from "@/hooks/useProjects";
+import { AssigneeSelect } from "./AssigneSelect";
+import { taskService } from "@/services/task";
+import { PrioritySelect } from "./PrioritySelect";
+import { parseDateOnly } from "@/utils/date";
+
+interface CreateTaskDialogProps {
+  projectId?: string;
+  addTask?: (task: TaskCardSummary) => void;
+  onCreated?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultDueDate?: Date | string;
+  trigger?: React.ReactElement;
+}
+
+export const CreateTaskDialog = ({
+  projectId,
+  addTask,
+  onCreated,
+  open: controlledOpen,
+  onOpenChange,
+  defaultDueDate,
+  trigger,
+}: CreateTaskDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const { members } = useProjectMembers(projectId ?? selectedProjectId ?? "");
+  const { projects } = useProjects(1, 50);
+
+  const effectiveProjectId =
+    projectId ?? (projects.length === 1 ? projects[0].id : selectedProjectId);
+
+  const initialDueDate = defaultDueDate
+    ? defaultDueDate instanceof Date
+      ? defaultDueDate
+      : parseDateOnly(defaultDueDate)
+    : undefined;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateTask>({
+    defaultValues: {
+      title: "",
+      description: "",
+      priority: undefined,
+      dueDate: initialDueDate,
+      assigneeId: "",
+    },
+  });
+
+  const setOpen = (nextOpen: boolean) => {
+    if (!nextOpen) reset();
+
+    if (!isControlled) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  };
+
+  const onSubmit = async (task: CreateTask) => {
+    if (!effectiveProjectId) {
+      toast.add({
+        type: "error",
+        title: "Falta el proyecto",
+        description: "Selecciona el proyecto al que pertenece la tarea.",
+      });
+      return;
+    }
+
+    try {
+      const response = await taskService.create(task, effectiveProjectId);
+
+      addTask?.(response.data);
+      onCreated?.();
+
+      toast.add({
+        type: "success",
+        title: "¡Registro exitoso!",
+        description: response.message,
+      });
+
+      reset();
+      setOpen(false);
+    } catch (error) {
+      toast.add({
+        type: "error",
+        title: "Error al crear",
+        description:
+          error instanceof Error && error.message
+            ? error.message
+            : "No pudimos crear la tarea.",
+      });
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      {trigger ? (
+        <DialogTrigger render={trigger} />
+      ) : isControlled ? null : (
+        <DialogTrigger
+          render={
+            <Button className="bg-blue-500 hover:bg-blue-700 text-white font-medium h-10">
+              <Plus className="w-4 h-4" />
+              Nueva tarea
+            </Button>
+          }
+        />
+      )}
+
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle className="text-slate-700 text-xl">
+              Crear Nueva Tarea
+            </DialogTitle>
+            <DialogDescription>
+              Define bien tu tarea y comienza a chambear
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-6">
+            {!projectId && (
+              <div className="space-y-2">
+                <Field data-invalid={!effectiveProjectId}>
+                  <FieldLabel
+                    htmlFor="project"
+                    className="text-md font-medium text-slate-700"
+                  >
+                    Proyecto
+                  </FieldLabel>
+                  <Select
+                    value={effectiveProjectId}
+                    onValueChange={(value) => setSelectedProjectId(value ?? "")}
+                  >
+                    <SelectTrigger id="project" className="w-full">
+                      <SelectValue placeholder="Selecciona un proyecto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Field data-invalid={!!errors.title}>
+                <FieldLabel
+                  htmlFor="title"
+                  className={`text-md font-medium" ${errors.title ? "" : "text-slate-700"}`}
+                >
+                  Titulo de la tarea
+                </FieldLabel>
+                <Input
+                  id="title"
+                  placeholder="Ej. Diseñar arquitectura"
+                  {...register("title", {
+                    required: "El titulo es obligatorio",
+                    minLength: {
+                      value: 3,
+                      message: "El titulo debe tener al menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "El titulo no puede exceder los 50 caracteres",
+                    },
+                  })}
+                  aria-invalid={!!errors.title}
+                />
+                {errors.title && (
+                  <FieldError>{errors.title.message}</FieldError>
+                )}
+              </Field>
+            </div>
+
+            <div className="space-y-2">
+              <Field data-invalid={!!errors.description}>
+                <FieldLabel
+                  htmlFor="description"
+                  className={`text-md font-medium" ${errors.description ? "" : "text-slate-700"}`}
+                >
+                  Descripción
+                </FieldLabel>
+                <Textarea
+                  id="description"
+                  placeholder="Describe tu tarea de la mejor manera"
+                  {...register("description", {
+                    required: "La descripción es obligatoria",
+                  })}
+                  aria-invalid={!!errors.description}
+                />
+                {errors.description && (
+                  <FieldError>{errors.description.message}</FieldError>
+                )}
+              </Field>
+            </div>
+
+            <div className="space-y-2">
+              <PrioritySelect control={control} />
+            </div>
+
+            <div className="space-y-2">
+              <AssigneeSelect control={control} members={members} />
+            </div>
+
+            <div className="space-y-2 w-fit">
+              <Field data-invalid={!!errors.dueDate}>
+                <FieldLabel
+                  htmlFor="dueDate"
+                  className={`text-md font-medium" ${errors.dueDate ? "" : "text-slate-700"}`}
+                >
+                  Fecha de vencimiento
+                </FieldLabel>
+
+                <Controller
+                  name="dueDate"
+                  control={control}
+                  rules={{ required: "La fecha de vencimiento es obligatoria" }}
+                  render={({ field }) => (
+                    <DatePickerSimple
+                      date={field.value}
+                      onChange={field.onChange}
+                      placeholder="Selecciona la fecha límite"
+                    />
+                  )}
+                />
+
+                {errors.dueDate && (
+                  <FieldError>{errors.dueDate.message}</FieldError>
+                )}
+              </Field>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-500 hover:bg-blue-700"
+            >
+              {isSubmitting ? "Guardando..." : "Crear Tarea"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
