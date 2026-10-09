@@ -68,7 +68,7 @@ export const InviteMemberPopover = ({
         render={
           <Button
             variant="outline"
-            className="text-slate-700 font-medium h-10 border-slate-300"
+            className="hover:cursor-pointer text-slate-700 font-medium h-10 border-slate-300"
           />
         }
       >
@@ -119,14 +119,14 @@ export const InviteMemberPopover = ({
               type="button"
               variant="ghost"
               onClick={() => setOpen(false)}
-              className="text-slate-500"
+              className="text-slate-500 hover:cursor-pointer"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-500 hover:bg-blue-700"
+              className="hover:cursor-pointer bg-blue-500 hover:bg-blue-700"
             >
               {isSubmitting ? "Enviando..." : "Enviar invitación"}
             </Button>

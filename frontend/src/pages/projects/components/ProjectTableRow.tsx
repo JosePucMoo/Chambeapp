@@ -21,7 +21,7 @@ export const ProjectTableRow = ({
   onToggleSelect,
 }: ProjectTableRowProps) => {
   return (
-    <TableRow className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors">
+    <TableRow className="hover:bg-gray-100 border-b-gray-100 last:border-0 group transition-colors cursor-pointer">
       <TableCell className="pl-6">
         <Checkbox
           checked={isSelected}

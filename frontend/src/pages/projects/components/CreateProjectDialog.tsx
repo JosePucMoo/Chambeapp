@@ -71,7 +71,7 @@ export const CreateProjectDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium h-10">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium h-10 hover:cursor-pointer">
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Proyecto
           </Button>
@@ -203,13 +203,14 @@ export const CreateProjectDialog = ({
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="hover:cursor-pointer"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="hover:cursor-pointer bg-blue-600 hover:bg-blue-700"
             >
               {isSubmitting ? "Guardando..." : "Crear Proyecto"}
             </Button>

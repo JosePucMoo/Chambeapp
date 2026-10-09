@@ -29,7 +29,7 @@ export const TaskTableRow = ({
   return (
     <TableRow
       onClick={() => onOpenTaskSheet(task.id)}
-      className="hover:bg-gray-50/50 border-b-gray-100 last:border-0 group cursor-pointer"
+      className="hover:bg-gray-100 border-b-gray-100 last:border-0 group cursor-pointer transition-colors"
     >
       <TableCell className="pl-6" onClick={(event) => event.stopPropagation()}>
         <Checkbox

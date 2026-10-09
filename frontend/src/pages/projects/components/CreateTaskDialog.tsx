@@ -132,7 +132,7 @@ export const CreateTaskDialog = ({
       ) : isControlled ? null : (
         <DialogTrigger
           render={
-            <Button className="bg-blue-500 hover:bg-blue-700 text-white font-medium h-10">
+            <Button className="hover:cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-medium h-10">
               <Plus className="w-4 h-4" />
               Nueva tarea
             </Button>
@@ -274,13 +274,14 @@ export const CreateTaskDialog = ({
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="hover:cursor-pointer"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-500 hover:bg-blue-700"
+              className="bg-blue-500 hover:bg-blue-700 hover:cursor-pointer"
             >
               {isSubmitting ? "Guardando..." : "Crear Tarea"}
             </Button>
