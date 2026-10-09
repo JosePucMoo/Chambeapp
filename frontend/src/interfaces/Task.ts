@@ -57,6 +57,7 @@ export interface TaskDashboardSummary {
   priority: TaskPriorityEnum;
   dueDate: string;
   columnTitle: string;
+  projectId: string;
   projectTitle: string;
 }
 
