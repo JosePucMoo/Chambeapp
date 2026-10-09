@@ -21,6 +21,10 @@ class CreateProjectDTO(BaseProjectDTO):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UpdateProjectDTO(BaseProjectDTO):
+    model_config = ConfigDict(from_attributes=True)
+
+
 class ProjectResponseDTO(BaseProjectDTO):
     id: str
 

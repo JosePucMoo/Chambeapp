@@ -17,6 +17,10 @@ class ProjectRepository(ABC):
         pass
 
     @abstractmethod
+    def update(self, project: Project) -> Optional[Project]:
+        pass
+
+    @abstractmethod
     def get_paginated_dashboard_projects(
         self,
         user_id: str,
