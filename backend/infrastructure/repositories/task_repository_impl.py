@@ -213,6 +213,7 @@ class TaskRepositoryImpl(TaskRepository):
                 TaskModel.due_date,
                 TaskModel.priority,
                 ColumnModel.title.label("column_title"),
+                ProjectModel.id.label("project_id"),
                 ProjectModel.title.label("project_title"),
             )
             .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
@@ -229,6 +230,7 @@ class TaskRepositoryImpl(TaskRepository):
             TaskDashboardSummary(
                 id=row.id,
                 title=row.title,
+                project_id=row.project_id,
                 priority=row.priority,
                 due_date=row.due_date,
                 column_title=row.column_title,
