@@ -15,6 +15,17 @@ from domain.repositories.user_repository import UserRepository
 
 class TestLoginUseCase:
     
+    @pytest.fixture
+    def fake_user(self) -> User:
+        user = User(
+            name="test",
+            email="test@email.com",
+            password="hashed_password",
+            is_verified=True,
+            token="jwt.fake.token"
+        )
+        return user
+    
     def test_login_succesfully(
         self,
         login_use_case: LoginUseCase,
