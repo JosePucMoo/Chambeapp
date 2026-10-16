@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from domain.entities.user import User
 
@@ -10,7 +10,7 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_email(self, email: str) -> User | None:
+    def get_by_email(self, email: str) -> Optional[User]:
         pass
 
     @abstractmethod
@@ -18,7 +18,7 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, id: str) -> User | None:
+    def get_by_id(self, id: str) -> Optional[User]:
         pass
 
     @abstractmethod
@@ -26,5 +26,5 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_token(self, token: str) -> User | None:
+    def get_by_token(self, token: str) -> Optional[User]:
         pass
