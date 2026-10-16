@@ -1,11 +1,11 @@
 
-from mockito import mock, verify, when
+from mockito import verify, when
 
 import pytest
 
-from application.use_cases.auth.login import LoginUseCase
 from application.interfaces.password_hasher import PasswordHasher
 from application.interfaces.token_generator import TokenGenerator
+from application.use_cases.auth.login import LoginUseCase
 from domain.exceptions.unverified_account_exception import UnverifiedAccountException
 from domain.exceptions.invalid_credentials_exception import InvalidCredentialsException
 from domain.utils.constants import Constants
@@ -14,46 +14,10 @@ from domain.repositories.user_repository import UserRepository
 
 
 class TestLoginUseCase:
-
-    @pytest.fixture
-    def mock_repository(self) -> UserRepository:
-        return mock(UserRepository)
-    
-    @pytest.fixture
-    def mock_password_hasher(self) -> PasswordHasher:
-        return mock(PasswordHasher)
-    
-    @pytest.fixture
-    def mock_token_generator(self) -> TokenGenerator:
-        return mock(TokenGenerator)
-    
-    @pytest.fixture
-    def login_use_case(
-        self,
-        mock_repository: UserRepository,
-        mock_password_hasher: PasswordHasher,
-        mock_token_generator: TokenGenerator,
-        ) -> LoginUseCase:
-        return LoginUseCase(
-            repository=mock_repository,
-            password_hasher=mock_password_hasher,
-            token_generator=mock_token_generator
-        )
-    
-    @pytest.fixture
-    def fake_user(self) -> User:
-        user = User(
-            name="test",
-            email="test@email.com",
-            password="hashed_password",
-            is_verified=True,
-            token="jwt.fake.token"
-        )
-        return user
     
     def test_login_succesfully(
         self,
-        login_use_case,
+        login_use_case: LoginUseCase,
         mock_repository: UserRepository,
         mock_password_hasher: PasswordHasher,
         mock_token_generator: TokenGenerator,
@@ -84,7 +48,6 @@ class TestLoginUseCase:
             self,
             login_use_case,
             mock_repository: UserRepository,
-            mock_password_hasher: PasswordHasher,
             fake_user: User
         ):
             
