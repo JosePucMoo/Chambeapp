@@ -2,9 +2,7 @@ from typing import List
 
 from domain.entities.dashboard import DashboardMetrics, ProjectStatusCount
 from domain.entities.enums import ProjectStatusEnum
-from domain.entities.task import TaskDueSoon
 from infrastructure.schemas.base_schema import BaseSchema
-from infrastructure.schemas.task_schema import TaskDashboardSummaryDTO
 
 
 class ProjectStatusCountDTO(BaseSchema):
@@ -14,20 +12,6 @@ class ProjectStatusCountDTO(BaseSchema):
     @classmethod
     def from_entity(cls, entity: ProjectStatusCount) -> "ProjectStatusCountDTO":
         return cls(status=entity.status, total=entity.total)
-
-
-class DueSoonTaskDTO(TaskDashboardSummaryDTO):
-    @classmethod
-    def from_entity(cls, task: TaskDueSoon) -> "DueSoonTaskDTO":
-        return cls(
-            id=task.id,
-            title=task.title,
-            project_title=task.project_title,
-            due_date=task.due_date,
-            priority=task.priority,
-            column_title=task.column_title,
-        )
-
 
 class WeeklyPerformanceDTO(BaseSchema):
     name: str
