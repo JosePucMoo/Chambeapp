@@ -94,13 +94,3 @@ class DailyTaskActivity:
     day: date
     completed: int = 0
     created: int = 0
-
-
-@dataclass
-class TaskDueSoon:
-    id: str
-    title: str
-    project_title: str
-    priority: TaskPriorityEnum
-    due_date: date
-    column_title: str
