@@ -28,7 +28,7 @@ class TaskBoard:
     priority: TaskPriorityEnum
     due_date: date
     assignee_id: str
-    assignee_name: str | None = None
+    assignee_name: Optional[str] = None
 
 
 @dataclass
@@ -54,7 +54,7 @@ class TaskDetail:
     project_id: str
     project_title: str
     assignee_id: str
-    assignee_name: str | None = None
+    assignee_name: Optional[str] = None
 
 
 @dataclass

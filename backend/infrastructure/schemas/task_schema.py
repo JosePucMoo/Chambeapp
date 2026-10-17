@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Optional
 
 from pydantic import ConfigDict, Field
 
@@ -58,7 +59,7 @@ class TaskDetailDTO(BaseSchema):
     project_id: str
     project_title: str
     assignee_id: str
-    assignee_name: str | None = None
+    assignee_name: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

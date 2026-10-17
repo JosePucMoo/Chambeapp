@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
@@ -20,7 +20,7 @@ class UserRepositoryImpl(UserRepository):
 
         return map_user_model_to_entity(user_model)
 
-    def get_by_email(self, email: str) -> User | None:
+    def get_by_email(self, email: str) -> Optional[User]:
         query = select(UserModel).where(UserModel.email == email)
         user = self.db.scalars(query).one_or_none()
 
@@ -39,7 +39,7 @@ class UserRepositoryImpl(UserRepository):
 
         return users, total_count
 
-    def get_by_id(self, id: str) -> User | None:
+    def get_by_id(self, id: str) -> Optional[User]:
         query = select(UserModel).where(UserModel.id == id)
         user = self.db.scalar(query)
 
@@ -63,7 +63,7 @@ class UserRepositoryImpl(UserRepository):
 
         return map_user_model_to_entity(user_updated)
 
-    def get_by_token(self, token: str) -> User | None:
+    def get_by_token(self, token: str) -> Optional[User]:
         query = select(UserModel).where(UserModel.token == token)
         user = self.db.scalar(query)
         return map_user_model_to_entity(user) if user else None
