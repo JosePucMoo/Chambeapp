@@ -320,7 +320,7 @@ class TaskRepositoryImpl(TaskRepository):
             tasks_due_soon=row.tasks_due_soon,
         )
 
-    def get_due_soon_tasks(self, user_id: str, due_from: date, due_to: date) -> List[TaskDueSoon]:
+    def get_due_soon_tasks(self, user_id: str, due_from: date, due_to: date) -> List[TaskDashboardSummary]:
         query = (
             select(
                 TaskModel.id,
@@ -329,6 +329,7 @@ class TaskRepositoryImpl(TaskRepository):
                 TaskModel.priority,
                 ColumnModel.title.label("column_title"),
                 ProjectModel.title.label("project_title"),
+                ProjectModel.id.label("project_id")
             )
             .join(ColumnModel, TaskModel.column_id == ColumnModel.id)
             .join(ProjectModel, ColumnModel.project_id == ProjectModel.id)
@@ -344,13 +345,14 @@ class TaskRepositoryImpl(TaskRepository):
         results = self.db.execute(query).all()
 
         return [
-            TaskDueSoon(
+            TaskDashboardSummary(
                 id=row.id,
                 title=row.title,
                 priority=row.priority,
                 due_date=row.due_date,
                 column_title=row.column_title,
                 project_title=row.project_title,
+                project_id=row.project_id
             )
             for row in results
         ]

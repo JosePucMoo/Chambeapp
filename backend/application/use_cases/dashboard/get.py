@@ -7,7 +7,7 @@ from domain.entities.dashboard import (
     WeeklyPerformance,
 )
 from domain.entities.enums import ProjectStatusEnum
-from domain.entities.task import TaskDueSoon
+from domain.entities.task import TaskDashboardSummary
 from domain.repositories.project_repository import ProjectRepository
 from domain.repositories.task_repository import TaskRepository
 from domain.utils.constants import Constants
@@ -18,7 +18,7 @@ class GetDashboardUseCase:
         self.project_repository = project_repository
         self.task_repository = task_repository
 
-    def execute_due_soon_tasks(self, user_id: str, today: date = None) -> List[TaskDueSoon]:
+    def execute_due_soon_tasks(self, user_id: str, today: date = None) -> List[TaskDashboardSummary]:
         today = today or date.today()
 
         return self.task_repository.get_due_soon_tasks(

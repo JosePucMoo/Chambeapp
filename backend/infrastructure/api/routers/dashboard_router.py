@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from application.use_cases.dashboard.get import GetDashboardUseCase
+from infrastructure.schemas.task_schema import TaskDashboardSummaryDTO
 from domain.utils.constants import Constants
 from infrastructure.api.dependencies import (
     CurrentUser,
@@ -11,7 +12,7 @@ from infrastructure.api.dependencies import (
     get_current_user,
 )
 from infrastructure.schemas.api_schema import ApiResponse
-from infrastructure.schemas.dashboard_schema import DashboardResponseDTO, DueSoonTaskDTO
+from infrastructure.schemas.dashboard_schema import DashboardResponseDTO
 
 
 router = APIRouter(
@@ -73,7 +74,7 @@ def get_dashboard_metrics(
 @router.get(
     path="/tasks/due-soon",
     status_code=status.HTTP_200_OK,
-    response_model=ApiResponse[List[DueSoonTaskDTO]],
+    response_model=ApiResponse[List[TaskDashboardSummaryDTO]],
     summary="Tasks due soon",
     description=(
         "Returns the tasks behind the `tasksDueSoon` metric, so the dashboard can list them.\n\n"
@@ -106,7 +107,7 @@ def get_due_soon_tasks(
         return ApiResponse(
             ok=True,
             message="Tasks due soon",
-            data=[DueSoonTaskDTO.from_entity(task) for task in due_soon_tasks],
+            data=[TaskDashboardSummaryDTO.model_validate(task) for task in due_soon_tasks],
         )
     except Exception as e:
         raise HTTPException(
