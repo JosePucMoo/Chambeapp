@@ -8,7 +8,6 @@ from domain.entities.task import (
     Task,
     TaskDashboardSummary,
     TaskDetail,
-    TaskDueSoon,
     TaskFilters,
     TaskMetricsAggregate,
 )
@@ -60,7 +59,7 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def get_due_soon_tasks(self, user_id: str, due_from: date, due_to: date) -> List[TaskDueSoon]:
+    def get_due_soon_tasks(self, user_id: str, due_from: date, due_to: date) -> List[TaskDashboardSummary]:
         pass
 
     @abstractmethod
