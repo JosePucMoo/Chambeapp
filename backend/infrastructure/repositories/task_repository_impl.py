@@ -14,7 +14,6 @@ from domain.entities.task import (
     Task,
     TaskDashboardSummary,
     TaskDetail,
-    TaskDueSoon,
     TaskFilters,
     TaskMetricsAggregate,
 )
