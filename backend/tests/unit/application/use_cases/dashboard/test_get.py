@@ -6,7 +6,7 @@ from mockito import verify, when, ANY
 from application.use_cases.dashboard.get import GetDashboardUseCase
 from domain.entities.dashboard import ProjectStatusCount, WeeklyPerformance
 from domain.entities.enums import ProjectStatusEnum, TaskPriorityEnum
-from domain.entities.task import DailyTaskActivity, TaskDueSoon, TaskMetricsAggregate
+from domain.entities.task import DailyTaskActivity, TaskDashboardSummary, TaskMetricsAggregate
 from domain.repositories.project_repository import ProjectRepository
 from domain.repositories.task_repository import TaskRepository
 from domain.utils.constants import Constants
@@ -26,13 +26,14 @@ class TestGetDashboardUseCase:
         mock_task_repository: TaskRepository,
     ):
         due_soon = [
-            TaskDueSoon(
+            TaskDashboardSummary(
                 id="task-1",
                 title="Task",
                 project_title="Project",
                 priority=TaskPriorityEnum.HIGH,
                 due_date=TODAY,
                 column_title="To Do",
+                project_id="project_id"
             )
         ]
         when(mock_task_repository).get_due_soon_tasks(
