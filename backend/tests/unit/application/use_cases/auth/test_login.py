@@ -65,9 +65,7 @@ class TestLoginUseCase:
         when(mock_repository).get_by_email(input_user.email).thenReturn(None)
 
         with pytest.raises(InvalidCredentialsException, match=Constants.INVALID_CREDENTIALS):
-            token, user = login_use_case.execute(
-                email=input_user.email, password=input_user.password
-            )
+            login_use_case.execute(email=input_user.email, password=input_user.password)
 
         verify(mock_repository).get_by_email(input_user.email)
 
@@ -86,9 +84,7 @@ class TestLoginUseCase:
         )
 
         with pytest.raises(InvalidCredentialsException, match=Constants.INVALID_CREDENTIALS):
-            token, user = login_use_case.execute(
-                email=input_user.email, password=input_user.password
-            )
+            login_use_case.execute(email=input_user.email, password=input_user.password)
 
         verify(mock_repository).get_by_email(input_user.email)
         verify(mock_password_hasher).verify(input_user.password, expect_user.password)
@@ -109,9 +105,7 @@ class TestLoginUseCase:
         )
 
         with pytest.raises(UnverifiedAccountException, match=Constants.UNVERIFIED_ACCOUNT):
-            token, user = login_use_case.execute(
-                email=input_user.email, password=input_user.password
-            )
+            login_use_case.execute(email=input_user.email, password=input_user.password)
 
         verify(mock_repository).get_by_email(input_user.email)
         verify(mock_password_hasher).verify(input_user.password, expect_user.password)
