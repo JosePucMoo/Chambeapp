@@ -1,3 +1,5 @@
+import re
+
 from mockito import mock
 import pytest
 
@@ -6,6 +8,7 @@ from application.interfaces.token_generator import TokenGenerator
 from application.use_cases.auth.login import LoginUseCase
 from application.use_cases.auth.register_user import RegisterUserUseCase
 from application.interfaces.email_sender import EmailSender
+from application.use_cases.auth.request_password_reset import RequestPasswordResetUseCase
 from domain.repositories.user_repository import UserRepository
 
 
@@ -52,4 +55,14 @@ def register_user_use_case(
         repository=mock_repository,
         password_hasher=mock_password_hasher,
         email_sender=mock_email_sender,
+    )
+    
+@pytest.fixture
+def request_password_reset_use_case(
+    mock_repository: UserRepository,
+    mock_email_sender: EmailSender
+) -> RequestPasswordResetUseCase:
+    return RequestPasswordResetUseCase(
+        repository=mock_repository,
+        email_sender=mock_email_sender
     )
