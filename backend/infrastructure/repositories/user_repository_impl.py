@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from infrastructure.mappers.user_mappers import map_user_entity_to_model, map_user_model_to_entity
 from infrastructure.db.models.user_model import UserModel
@@ -25,19 +25,6 @@ class UserRepositoryImpl(UserRepository):
         user = self.db.scalars(query).one_or_none()
 
         return map_user_model_to_entity(user) if user else None
-
-    def get_all(self, page: int, page_size: int) -> List[User]:
-        count_query = select(func.count()).select_from(UserModel)
-        total_count = self.db.execute(count_query).scalar()
-
-        offset = (page - 1) * page_size
-        query = select(UserModel).offset(offset).limit(page_size)
-
-        user_models = self.db.scalars(query).all()
-
-        users = [map_user_model_to_entity(user_model) for user_model in user_models]
-
-        return users, total_count
 
     def get_by_id(self, id: str) -> Optional[User]:
         query = select(UserModel).where(UserModel.id == id)
