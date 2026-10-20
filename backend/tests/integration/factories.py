@@ -17,7 +17,7 @@ from infrastructure.mappers.column_mappers import map_column_entity_to_model, ma
 
 class Factories:
     @staticmethod
-    def create_user(session: Session, name: str ="Test", email: str =None, password: str ="hashed", is_verified: bool =False, token: str =None):
+    def create_user(session: Session, name: str ="Test", email: str ="test@test.com", password: str ="hashed", is_verified: bool =False, token: str =None):
         repo = UserRepositoryImpl(session)
         if email is None:
             email = f"{uuid.uuid4()}@test.com"
@@ -35,10 +35,11 @@ class Factories:
         return created_project
 
     @staticmethod
-    def create_default_columns(session: Session, project: str, titles: enumerate =("Por hacer", "En progreso", "Completado")):
+    def create_default_columns(session: Session, project: Project, titles: enumerate =("Por hacer", "En progreso", "Completado")):
         created = []
         for idx, title in enumerate(titles):
-            column = Column(title=title, position=idx, project_id=str(project.id))
+            real_position = idx + 1
+            column = Column(title=title, position=real_position, project_id=project.id)
             model = map_column_entity_to_model(column)
             session.add(model)
             session.commit()
