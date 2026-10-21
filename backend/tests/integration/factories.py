@@ -35,7 +35,7 @@ class Factories:
         return created_project
 
     @staticmethod
-    def create_default_columns(session: Session, project: Project, titles: enumerate =("Por hacer", "En progreso", "Completado")):
+    def create_columns(session: Session, project: Project, titles=("Por hacer", "En progreso", "Completado")):
         created = []
         for idx, title in enumerate(titles):
             real_position = idx + 1
@@ -46,6 +46,10 @@ class Factories:
             session.refresh(model)
             created.append(map_column_model_to_entity(model))
         return created
+
+    @staticmethod
+    def create_default_columns(session: Session, project: Project, titles=("Por hacer", "En progreso", "Completado")):
+        return Factories.create_columns(session, project, titles)
 
     @staticmethod
     def create_task(session: Session, column: Column, assignee: User, title: str ="Tarea", description: str ="Desc", priority: TaskPriorityEnum =TaskPriorityEnum.MEDIUM, due_date: datetime = datetime.now() + timedelta(days=10)):
