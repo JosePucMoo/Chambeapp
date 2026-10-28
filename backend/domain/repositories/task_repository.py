@@ -59,7 +59,9 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def get_due_soon_tasks(self, user_id: str, due_from: date, due_to: date) -> List[TaskDashboardSummary]:
+    def get_due_soon_tasks(
+        self, user_id: str, due_from: date, due_to: date
+    ) -> List[TaskDashboardSummary]:
         pass
 
     @abstractmethod

@@ -18,7 +18,9 @@ class GetDashboardUseCase:
         self.project_repository = project_repository
         self.task_repository = task_repository
 
-    def execute_due_soon_tasks(self, user_id: str, today: date = None) -> List[TaskDashboardSummary]:
+    def execute_due_soon_tasks(
+        self, user_id: str, today: date = None
+    ) -> List[TaskDashboardSummary]:
         today = today or date.today()
 
         return self.task_repository.get_due_soon_tasks(

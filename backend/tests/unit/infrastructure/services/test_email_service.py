@@ -76,9 +76,7 @@ def reset_fake_smtp():
 @pytest.fixture
 def email_sender(monkeypatch) -> SmtpEmailSender:
     monkeypatch.setenv("FRONTEND_URL", "https://app.test")
-    monkeypatch.setattr(
-        "infrastructure.services.email_service.smtplib.SMTP", FakeSMTP
-    )
+    monkeypatch.setattr("infrastructure.services.email_service.smtplib.SMTP", FakeSMTP)
     return SmtpEmailSender(
         host="smtp.test", port=587, username="user", password="pass", from_email="no-reply@test.com"
     )
@@ -132,9 +130,7 @@ class TestSmtpEmailSender:
 
     def test_smtp_failure_is_logged_and_not_propagated(self, monkeypatch):
         monkeypatch.setenv("FRONTEND_URL", "https://app.test")
-        monkeypatch.setattr(
-            "infrastructure.services.email_service.smtplib.SMTP", ExplodingSMTP
-        )
+        monkeypatch.setattr("infrastructure.services.email_service.smtplib.SMTP", ExplodingSMTP)
         sender = SmtpEmailSender(
             host="smtp.test",
             port=587,

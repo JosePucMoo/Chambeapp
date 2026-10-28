@@ -57,7 +57,8 @@ def register_user_use_case(
         password_hasher=mock_password_hasher,
         email_sender=mock_email_sender,
     )
-    
+
+
 @pytest.fixture
 def request_password_reset_use_case(
     mock_repository: UserRepository,

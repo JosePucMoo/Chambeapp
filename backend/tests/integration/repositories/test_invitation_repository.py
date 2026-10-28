@@ -6,6 +6,7 @@ from domain.entities.enums import InvitationStatusEnum
 from tests.integration.factories import Factories
 from datetime import datetime, timedelta
 
+
 class TestInvitationRepository:
     def test_create_and_get_by_id(self, db_session: Session):
         owner = Factories.create_user(db_session, email="inv_owner@test.com")

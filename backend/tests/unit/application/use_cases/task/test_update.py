@@ -55,7 +55,9 @@ class TestUpdateTaskUseCase:
         when(mock_task_repository).get_detail_by_id(
             user_id="user-1", task_id=task_detail.id
         ).thenReturn(task_detail)
-        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn([member])
+        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn(
+            [member]
+        )
         when(mock_task_repository).update(user_id="user-1", task=task_data).thenReturn(task_data)
 
         result = update_task_use_case.execute("user-1", task_detail.id, task_data)
@@ -97,7 +99,9 @@ class TestUpdateTaskUseCase:
         when(mock_task_repository).get_detail_by_id(
             user_id="user-1", task_id=task_detail.id
         ).thenReturn(task_detail)
-        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn([member])
+        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn(
+            [member]
+        )
 
         with pytest.raises(CannotUpdateException, match=Constants.ASSIGNEE_NOT_IN_PROJECT):
             update_task_use_case.execute("user-1", task_detail.id, task_data)
@@ -118,7 +122,9 @@ class TestUpdateTaskUseCase:
         when(mock_task_repository).get_detail_by_id(
             user_id="user-1", task_id=task_detail.id
         ).thenReturn(task_detail)
-        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn([member])
+        when(mock_project_repository).get_project_members(task_detail.project_id).thenReturn(
+            [member]
+        )
         when(mock_task_repository).update(user_id="user-1", task=task_data).thenReturn(None)
 
         with pytest.raises(CannotUpdateException, match=Constants.TASK_NOT_UPDATED):

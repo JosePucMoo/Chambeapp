@@ -142,7 +142,9 @@ class TestInviteMemberUseCase:
         with pytest.raises(ForbiddenException, match=Constants.PROJECT_FORBIDDEN):
             invite_member_use_case.execute(current_user, project.id, invitee.email)
 
-        verify(mock_user_project_link_repository).get_by_user_and_project(current_user.id, project.id)
+        verify(mock_user_project_link_repository).get_by_user_and_project(
+            current_user.id, project.id
+        )
 
     def test_invitee_not_registered(
         self,
@@ -154,9 +156,7 @@ class TestInviteMemberUseCase:
         project: Project,
         invitee: User,
     ):
-        link = UserProjectLink(
-            role="owner", user_id=current_user.id, project_id=project.id
-        )
+        link = UserProjectLink(role="owner", user_id=current_user.id, project_id=project.id)
         when(mock_project_repository).get_by_id(project.id).thenReturn(project)
         when(mock_user_project_link_repository).get_by_user_and_project(
             current_user.id, project.id
@@ -179,9 +179,7 @@ class TestInviteMemberUseCase:
         invitee: User,
     ):
         link = UserProjectLink(role="owner", user_id=current_user.id, project_id=project.id)
-        invitee_link = UserProjectLink(
-            role="guest", user_id=invitee.id, project_id=project.id
-        )
+        invitee_link = UserProjectLink(role="guest", user_id=invitee.id, project_id=project.id)
         when(mock_project_repository).get_by_id(project.id).thenReturn(project)
         when(mock_user_project_link_repository).get_by_user_and_project(
             current_user.id, project.id
@@ -220,9 +218,7 @@ class TestInviteMemberUseCase:
             invitee.email, project.id
         ).thenReturn(True)
 
-        with pytest.raises(
-            ResourceAlreadyExistsException, match=Constants.INVITATION_ALREADY_SENT
-        ):
+        with pytest.raises(ResourceAlreadyExistsException, match=Constants.INVITATION_ALREADY_SENT):
             invite_member_use_case.execute(current_user, project.id, invitee.email)
 
         verify(mock_invitation_repository).has_alredy_been_sent_invitation(

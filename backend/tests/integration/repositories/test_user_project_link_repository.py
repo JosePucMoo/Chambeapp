@@ -1,9 +1,11 @@
-
 from infrastructure.repositories.project_repository_impl import ProjectRepositoryImpl
-from infrastructure.repositories.user_project_link_repository_impl import UserProjectLinkRepositoryImpl
+from infrastructure.repositories.user_project_link_repository_impl import (
+    UserProjectLinkRepositoryImpl,
+)
 from domain.entities.user_project_link import UserProjectLink
 from domain.entities.enums import RoleEnum
 from tests.integration.factories import Factories
+
 
 class TestUserProjectLinkRepository:
     def test_create_and_get_by_user_and_project(self, db_session):

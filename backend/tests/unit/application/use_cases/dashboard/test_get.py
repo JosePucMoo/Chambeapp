@@ -33,7 +33,7 @@ class TestGetDashboardUseCase:
                 priority=TaskPriorityEnum.HIGH,
                 due_date=TODAY,
                 column_title="To Do",
-                project_id="project_id"
+                project_id="project_id",
             )
         ]
         when(mock_task_repository).get_due_soon_tasks(

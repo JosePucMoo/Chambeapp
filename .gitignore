@@ -4,6 +4,11 @@ backend/__pycache__/
 *.pyc
 .env
 
+**/.coverage
+**/htmlcov/
+**/.pytest_cache/
+**/.ruff_cache/
+
 # Node / Frontend (pnpm)
 frontend/node_modules/
 frontend/dist/

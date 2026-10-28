@@ -2,8 +2,11 @@ from datetime import date
 
 from domain.entities.enums import RoleEnum
 from infrastructure.repositories.project_repository_impl import ProjectRepositoryImpl
-from infrastructure.repositories.user_project_link_repository_impl import UserProjectLinkRepositoryImpl
+from infrastructure.repositories.user_project_link_repository_impl import (
+    UserProjectLinkRepositoryImpl,
+)
 from tests.integration.factories import Factories
+
 
 class TestProjectRepository:
     def test_create_and_get_by_id(self, db_session):
@@ -40,6 +43,7 @@ class TestProjectRepository:
 
         link_repo = UserProjectLinkRepositoryImpl(db_session)
         from domain.entities.user_project_link import UserProjectLink
+
         link = UserProjectLink(role=RoleEnum.GUEST, user_id=member.id, project_id=project.id)
         link_repo.create(link)
 
@@ -59,7 +63,9 @@ class TestProjectRepository:
         Factories.create_task(db_session, columns[2], owner)
 
         repo = ProjectRepositoryImpl(db_session)
-        total_count, summaries = repo.get_paginated_dashboard_projects(user_id=owner.id, page=1, page_size=10)
+        total_count, summaries = repo.get_paginated_dashboard_projects(
+            user_id=owner.id, page=1, page_size=10
+        )
 
         assert total_count == 1
         assert len(summaries) == 1
@@ -74,13 +80,18 @@ class TestProjectRepository:
 
         repo = ProjectRepositoryImpl(db_session)
         from domain.entities.project import ProjectFilters
-        total_count, summaries = repo.get_paginated_dashboard_projects(user_id=owner.id, page=1, page_size=10, filters=ProjectFilters(search="Alf"))
+
+        total_count, summaries = repo.get_paginated_dashboard_projects(
+            user_id=owner.id, page=1, page_size=10, filters=ProjectFilters(search="Alf")
+        )
         assert total_count == 1
         assert summaries[0].title == "Alfa"
 
     def test_execute_paginated_summary_empty(self, db_session):
         owner = Factories.create_user(db_session, name="Owner", email="owner@test.com")
         repo = ProjectRepositoryImpl(db_session)
-        total_count, summaries = repo.get_paginated_dashboard_projects(user_id=owner.id, page=1, page_size=10)
+        total_count, summaries = repo.get_paginated_dashboard_projects(
+            user_id=owner.id, page=1, page_size=10
+        )
         assert total_count == 0
         assert summaries == []

@@ -13,6 +13,7 @@ class ProjectStatusCountDTO(BaseSchema):
     def from_entity(cls, entity: ProjectStatusCount) -> "ProjectStatusCountDTO":
         return cls(status=entity.status, total=entity.total)
 
+
 class WeeklyPerformanceDTO(BaseSchema):
     name: str
     completed: int
