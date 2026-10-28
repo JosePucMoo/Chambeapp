@@ -1,20 +1,25 @@
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthLayout from "./pages/layout/AuthLayout";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import VerifyAccount from "./pages/auth/VerifyAccount";
-import ResetPassword from "./pages/auth/ResetPassword";
-import AcceptInvitation from "./pages/invitations/AcceptInvitation";
 import { Toaster } from "./components/ui/toast";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./pages/layout/ProtectedRoute";
 import MainLayout from "./pages/layout/MainLayout";
-import MyTasks from "./pages/tasks/MyTasks";
-import CalendarPage from "./pages/calendar/CalendarPage";
-import Dashboard from "./pages/dashboard/Dashboard";
-import ProjectBoard from "./pages/projects/ProjectBoard";
-import ProjectsList from "./pages/projects/ProjectsList";
+
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const VerifyAccount = lazy(() => import("./pages/auth/VerifyAccount"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const AcceptInvitation = lazy(
+  () => import("./pages/invitations/AcceptInvitation"),
+);
+const MyTasks = lazy(() => import("./pages/tasks/MyTasks"));
+const CalendarPage = lazy(() => import("./pages/calendar/CalendarPage"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const ProjectBoard = lazy(() => import("./pages/projects/ProjectBoard"));
+const ProjectsList = lazy(() => import("./pages/projects/ProjectsList"));
+
 function App() {
   return (
     <BrowserRouter>

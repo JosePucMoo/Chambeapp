@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import type { ResetPasswordRequest } from "@/interfaces/Auth";
 import { authService } from "@/services/auth";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ResetPassword = () => {
@@ -16,7 +16,7 @@ const ResetPassword = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -25,7 +25,7 @@ const ResetPassword = () => {
     },
   });
 
-  const newPassword = watch("newPassword");
+  const newPassword = useWatch({ control, name: "newPassword" });
 
   const onSubmit = async (data: ResetPasswordRequest) => {
     try {

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { authService } from "../../services/auth";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -26,7 +26,7 @@ const Register = () => {
     },
   });
 
-  const password = watch("password");
+  const password = useWatch({ control, name: "password" });
 
   const onSubmit = async (data: RegisterRequest) => {
     try {
